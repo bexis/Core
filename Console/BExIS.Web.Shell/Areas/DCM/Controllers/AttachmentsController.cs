@@ -15,6 +15,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
+using Vaiona.Entities.Common;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -55,10 +56,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == fileName);
             if (contentDescriptor == null)
                 throw new Exception("There is not any content descriptor having file name '" + fileName + "'. ");
+
             datasetVersion.ContentDescriptors.Remove(contentDescriptor);
-            dm.CheckOutDataset(dataset.Id, GetUsernameOrDefault());
+
+            datasetVersion.ModificationInfo = new EntityAuditInfo()
+            {
+                Performer = GetUsernameOrDefault(),
+                Comment = "Attachment",
+                ActionType = AuditActionType.Delete
+            };
+
             dm.EditDatasetVersion(datasetVersion, null, null, null);
-            dm.CheckInDataset(dataset.Id, "Delete dataset attachements", GetUsernameOrDefault(), ViewCreationBehavior.None);
+            dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
+
             dm?.Dispose();
             return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
         }
@@ -149,6 +159,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
             {
                 DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);
+
                 foreach (var file in attachments)
                 {
                     var fileName = Path.GetFileName(file.FileName);
@@ -160,8 +171,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     file.SaveAs(destinationPath);
                     AddFileInContentDiscriptor(datasetVersion, fileName, description);
                 }
+
+                //set modification
+                datasetVersion.ModificationInfo = new EntityAuditInfo()
+                {
+                    Performer = GetUsernameOrDefault(),
+                    Comment = "Attachment",
+                    ActionType = AuditActionType.Create
+                };
+
+                string filenameList = string.Join(", ", attachments.Select(f => f.FileName).ToArray());
+
                 dm.EditDatasetVersion(datasetVersion, null, null, null);
-                dm.CheckInDataset(dataset.Id, "upload dataset attachements", GetUsernameOrDefault(), ViewCreationBehavior.None);
+                dm.CheckInDataset(dataset.Id, filenameList, GetUsernameOrDefault(), ViewCreationBehavior.None);
             }
             dm?.Dispose();
         }

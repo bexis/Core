@@ -10,8 +10,9 @@
 @{  string value = "";
     int i = 0;
 
+
     string controller = Session["Controller"].ToString();
-   }
+}
 
 @if (this.Session["PropertiesDictionary"] as Dictionary<string, string> !=null)
 {
@@ -24,26 +25,19 @@
    value = Model.DefaultValue;
 }
     
- 
-
-@foreach (string s in @Model.Values)
-    {
-        if (s != value)
-        {
-            i++;
-        }
-        else { break; }
-    }
-
 
 
 @(Html.Telerik().DropDownList()
-             .Name(Model.DataSourceKey)
-             .SelectedIndex(i)
-             .BindTo(new SelectList(Model.Values))
-            .ClientEvents(events => events
-            .OnChange("onChange"))
+                 .Name(Model.DataSourceKey)
+                 .Placeholder("Select, please")
+                 .SelectedIndex(i)
+                 .BindTo(new SelectList(Model.Values))
+                .ClientEvents(events => events
+                .OnChange("onChange"))
 )
+
+
+
 </div>
 <script type="text/javascript">
     function onChange(e) {
@@ -56,16 +50,14 @@
 
         $.post('@Url.Action("FilterByDropDown", @controller, new RouteValueDictionary { { "area", "ddm" } })', { value: value, node: node }, function (response) {
             //alert(response);
-
+            console.log("update header");
+            console.log(response);
             $(".searchBreadcrumbNavigation").html(response);
         });
 
-        $.post('@Url.Action("UpdateContent", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
-            $("#resultContent").html(response);
-
-        })
-
         $.post('@Url.Action("UpdateFacets", @controller, new RouteValueDictionary { { "area", "ddm" } })', {}, function (response) {
+            console.log("update facets");
+            console.log(response);
             $("#searchTreeView").html(response);
         })
         
