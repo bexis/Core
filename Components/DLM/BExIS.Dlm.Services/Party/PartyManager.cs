@@ -635,12 +635,17 @@ namespace BExIS.Dlm.Services.Party
                     var latest = repo.Get(partyCustomAttributeValue.Id);
 
                     if (latest != null)
+                    {
+                        latest.CustomAttribute = null;
+                        latest.Party = null;
+                        repo.Put(latest);
                         repo.Delete(latest);
+                    }
 
                     uow.Commit();
                 }
             }
-            partyCustomAttributeValue.Party = UpdatePartyName(partyCustomAttributeValue.Party);
+            //partyCustomAttributeValue.Party = UpdatePartyName(partyCustomAttributeValue.Party);
             return (true);
         }
 
@@ -658,7 +663,12 @@ namespace BExIS.Dlm.Services.Party
                     var latest = repo.Get(entity.Id);
 
                     if (latest != null)
+                    {
+                        latest.CustomAttribute = null;
+                        latest.Party = null;
+                        repo.Put(latest);
                         repo.Delete(latest);
+                    }
                 }
                 uow.Commit();
             }
