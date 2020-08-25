@@ -567,14 +567,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             // add security
                             if (GetUsernameOrDefault() != "DEFAULT")
                             {
-                                entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                                entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, new List<RightType>() { RightType.Read, RightType.Write });
+                                entityPermissionManager.Create<Group>("administrator", "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                             }
-                        }
-                        else
-                        {
-                            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-                            entityPermissionManager.Create<User>(GetUsernameOrDefault(), "Dataset", typeof(Dataset), ds.Id, new List<RightType>() { RightType.Read, RightType.Write });
-                            entityPermissionManager.Create<Group>("administrator", "Dataset", typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                         }
 
                         TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];

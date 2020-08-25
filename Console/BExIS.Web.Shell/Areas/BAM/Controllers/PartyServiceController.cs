@@ -106,7 +106,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
             using (UserManager userManager = new UserManager())
             using (PartyRelationshipTypeManager partyRelationshipTypeManager = new PartyRelationshipTypeManager())
             {
-                partyRelationshipManager = new PartyRelationshipTypeManager();
                 var partyType = partyTypeManager.PartyTypeRepository.Get(party.PartyType.Id);
                 var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
 
@@ -119,9 +118,6 @@ namespace BExIS.Modules.Bam.UI.Controllers
                 var partyuser = partyManager.GetPartyByUser(user.Id);
                 if (partyuser == null)
                 {
-
-                    var partyType = partyTypeManager.PartyTypeRepository.Get(party.PartyType.Id);
-                    var partyStatusType = partyTypeManager.GetStatusType(partyType, "Created");
                     //Create party
                     party = partyManager.Create(partyType, party.Description, null, null, partyCustomAttributeValues.ToDictionary(cc => long.Parse(cc.Key), cc => cc.Value));
                     if (partyRelationships != null)
@@ -135,20 +131,22 @@ namespace BExIS.Modules.Bam.UI.Controllers
                         }
 
                     partyManager.AddPartyUser(party, user.Id);
-                partyManager.AddPartyUser(party, user.Id);
+                    partyManager.AddPartyUser(party, user.Id);
 
-                //set FullName in user
-                var p = partyManager.GetParty(party.Id);
-                string displayName = String.Join(" ",
-                    p.CustomAttributeValues.
-                    Where(ca => ca.CustomAttribute.IsMain.Equals(true)).
-                    OrderBy(ca => ca.CustomAttribute.Id).
-                    Select(ca => ca.Value).ToArray());
+                    //set FullName in user
+                    var p = partyManager.GetParty(party.Id);
+                    string displayName = String.Join(" ",
+                        p.CustomAttributeValues.
+                        Where(ca => ca.CustomAttribute.IsMain.Equals(true)).
+                        OrderBy(ca => ca.CustomAttribute.Id).
+                        Select(ca => ca.Value).ToArray());
 
-                user.DisplayName = displayName;
-                userManager.UpdateAsync(user);
+                    user.DisplayName = displayName;
+                    userManager.UpdateAsync(user);
 
 
+                  
+                }
                 return RedirectToAction("Index");
             }
         }
