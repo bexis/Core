@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 
@@ -57,4 +58,20 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public string Name { get; set; }
         public string MimeType { get; set; }
     }
+
+    public class ApiDataStatisticModel
+    {
+        public long VariableId { get; set; }
+        public DataTable uniqueValues { get; set; }
+        public string count { get; set; }
+        public string max { get; set; }
+        public string min { get; set; }
+        public string maxLength { get; set; }
+        public string minLength { get; set; }
+
+    }
+    public class ApiDataStatisticAllModel
+    {
+        public object variable { get; set; }
+}
 }
