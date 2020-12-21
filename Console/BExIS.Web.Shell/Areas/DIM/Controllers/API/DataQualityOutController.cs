@@ -31,7 +31,7 @@ using Vaiona.Persistence.Api;
 namespace BExIS.Modules.Dim.UI.Controllers
 {
 
-    public class DataStatisticOutController : ApiController
+    public class DataQualityOutController : ApiController
     {
 
         // GET: api/data
@@ -40,7 +40,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// </summary>
         /// <returns>List of ids</returns>
         [BExISApiAuthorize]
-        [GetRoute("api/DataStatistic")]
+        [GetRoute("api/DataQuality")]
         public List<int> Get()
         {
             List<int> structuredIds = new List<int>();
@@ -68,7 +68,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
         /// <param name="id">Dataset Id</param>
         [BExISApiAuthorize]
         //[Route("api/Data")]
-        [GetRoute("api/DataStatistic/{id}")]
+        [GetRoute("api/DataQuality/{id}")]
         [HttpGet]
         public HttpResponseMessage Get(int id)
         {
@@ -77,21 +77,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return getData(id, -1, token);
         }
 
-        /// <param name="id">Dataset Id</param>
-        /// <param name="variableId">Variable id</param>
-        /// <returns></returns>
-        [BExISApiAuthorize]
-        //[Route("api/Data")]
-        [GetRoute("api/DataStatistic/{id}/{variableId}")]
-        [HttpGet]
-        public HttpResponseMessage Get(long id, int variableId)
-        {
-
-            string token = this.Request.Headers.Authorization?.Parameter;
-
-            return getData(id, variableId, token);
-        }
-
+       
         private HttpResponseMessage getData(long id, int variableId, string token)
         {
             DatasetManager datasetManager = new DatasetManager();
@@ -144,72 +130,24 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             object stats = new object();
 
                             DataTable dt = new DataTable("Varibales");
-                            DataTable dtMissingValues = new DataTable("MissingValues");
-                            dtMissingValues.Columns.Add("placeholder", typeof(String));
-                            dtMissingValues.Columns.Add("displayName", typeof(String));
 
                             List<ApiDataStatisticModel> dataStatisticModels = new List<ApiDataStatisticModel>();
-                            StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(datasetVersion.Dataset.DataStructure.Id);
                             if (variableId == -1)
                             {
-                               
+                                StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(datasetVersion.Dataset.DataStructure.Id);
+                                List<string> varIds = new List<string>();
                                 foreach (Variable vs in structuredDataStructure.Variables)
                                 {
-                                    ApiDataStatisticModel dataStatisticModel = new ApiDataStatisticModel();
-                                    dt = GetUniqueValues(id, vs.Id);
-                                    dataStatisticModel.VariableId = vs.Id;
-                                    dataStatisticModel.uniqueValues = dt;
-                                    dataStatisticModel.minLength = dt.Compute("Min(length)", string.Empty).ToString();
-                                    dataStatisticModel.maxLength = dt.Compute("Max(length)", string.Empty).ToString();
-                                    dataStatisticModel.count = dt.Compute("Sum(count)", string.Empty).ToString();
-                                    dtMissingValues.Clear();
-                                    foreach (var missingValue in vs.MissingValues)
-                                    {
-                                        DataRow workRow = dtMissingValues.NewRow();
-                                        workRow["placeholder"] = missingValue.Placeholder;
-                                        workRow["displayName"] = missingValue.DisplayName;
-                                        dtMissingValues.Rows.Add(workRow);
-                                    }
-                                    dataStatisticModel.min = GetMin(dtMissingValues, dt);
-                                    dataStatisticModel.max = GetMax(dtMissingValues, dt);
-                                    dataStatisticModel.missingValues = dtMissingValues;
-                                    dataStatisticModels.Add(dataStatisticModel);
+                                    varIds.Add("var" + vs.Id);
                                 }
+                                dt = GetDuplicates(id, varIds);
+
                             }
                             else
                             {
-
-                                Variable variable = new Variable();
-
-                                foreach (Variable vs in structuredDataStructure.Variables)
-                                {
-                                    if (vs.Id == variableId)
-                                    {
-                                        variable = vs;
-                                    }
-                                }
-
-                                ApiDataStatisticModel dataStatisticModel = new ApiDataStatisticModel();
-                                dt = GetUniqueValues(id, variableId);
-                                dataStatisticModel.VariableId = variableId;
-                                dataStatisticModel.uniqueValues = dt;
-
-                                dataStatisticModel.minLength = dt.Compute("Min(length)", string.Empty).ToString();
-                                dataStatisticModel.maxLength = dt.Compute("Max(length)", string.Empty).ToString();
-                                dataStatisticModel.count = dt.Compute("Sum(count)", string.Empty).ToString();
-                                foreach (var missingValue in variable.MissingValues)
-                                {
-                                    DataRow workRow = dtMissingValues.NewRow();
-                                    workRow["placeholder"] = missingValue.Placeholder;
-                                    workRow["displayName"] = missingValue.DisplayName;
-                                    dtMissingValues.Rows.Add(workRow);
-                                }
-                                dataStatisticModel.min = GetMin(dtMissingValues, dt);
-                                dataStatisticModel.max = GetMax(dtMissingValues, dt);
-                                dataStatisticModel.missingValues = dtMissingValues;
-                                dataStatisticModels.Add(dataStatisticModel);
+                               
                             }
-                            dt.Strip();
+                            //dt.Strip();
 
 
                             dt.TableName = id + "_data";
@@ -218,7 +156,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             model.DataTable = dt;
 
                             var response = Request.CreateResponse(HttpStatusCode.OK);
-                            string resp = JsonConvert.SerializeObject(dataStatisticModels);
+                            string resp = JsonConvert.SerializeObject(model);
 
                             response.Content = new StringContent(resp, System.Text.Encoding.UTF8, "application/json");
                             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -261,46 +199,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
             }
         }
 
-        private static ProjectionExpression GetProjectionExpression(string projection)
-        {
-            ProjectionExpression pe = new ProjectionExpression();
-
-            string[] columns = projection.Split(',');
-
-            foreach (string c in columns)
-            {
-                if (!string.IsNullOrEmpty(c))
-                {
-                    pe.Items.Add(new ProjectionItemExpression() { FieldName = c });
-                }
-            }
-
-            return pe;
-        }
-
-        private long Count(long datasetId)
+    
+        private DataTable GetDuplicates(long datasetId, List<string> variables)
         {
             StringBuilder mvBuilder = new StringBuilder();
-            mvBuilder.AppendLine(string.Format("SELECT COUNT(id) AS cnt FROM {0};", this.BuildName(datasetId).ToLower()));
-            // execute the statement
-            try
-            {
-                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
-                {
-                    var result = uow.ExecuteScalar(mvBuilder.ToString());
-                    return (long)result;
-                }
-            }
-            catch
-            {
-                return -1;
-            }
-        }
 
-        private DataTable GetUniqueValues(long datasetId, long variableId)
-        {
-            StringBuilder mvBuilder = new StringBuilder();
-            mvBuilder.AppendLine($"SELECT var{variableId} as var, count(id), length(var{variableId}::text) FROM {BuildName(datasetId).ToLower()} group by var{variableId} order by var;");
+            mvBuilder.AppendLine($"SELECT {string.Join(",", variables)} , count(*) FROM {BuildName(datasetId).ToLower()} group by {string.Join(",", variables)} HAVING count(*) > 1;");
             // execute the statement
             try
             {
@@ -319,35 +223,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
         private string BuildName(long datasetId)
         {
             return "mvDataset" + datasetId;
-        }
-
-        private string GetMin(DataTable missingValues, DataTable dt)
-        {
-            for(var i = 0; i < dt.Rows.Count - 1; i++)
-            {
-                DataRow[] found = missingValues.Select("placeholder = '" + dt.Rows[i][0] + "'");
-                if (found.Length == 0)
-                {
-                    return dt.Rows[i][0].ToString();
-                }
-            }
-
-            return dt.Rows[0][0].ToString();
-        }
-
-        private string GetMax(DataTable missingValues, DataTable dt)
-        {
-
-            for(var i = dt.Rows.Count - 1; i > 0; i--)
-            {
-                DataRow[] found = missingValues.Select("placeholder = '" + dt.Rows[i][0] + "'");
-                if (found.Length == 0)
-                {
-                    return dt.Rows[i][0].ToString();
-                }
-            }
-
-            return dt.Rows[dt.Rows.Count-1][0].ToString();
         }
 
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web;
+using BExIS.Dlm.Entities.DataStructure;
 
 namespace BExIS.Modules.Dim.UI.Models.Api
 {
@@ -68,10 +69,7 @@ namespace BExIS.Modules.Dim.UI.Models.Api
         public string min { get; set; }
         public string maxLength { get; set; }
         public string minLength { get; set; }
+        public DataTable missingValues { get; set; }
 
     }
-    public class ApiDataStatisticAllModel
-    {
-        public object variable { get; set; }
-}
 }
