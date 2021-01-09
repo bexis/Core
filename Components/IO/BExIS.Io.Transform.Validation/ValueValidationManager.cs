@@ -190,6 +190,15 @@ namespace BExIS.IO.Transform.Validation
             DataTypeCheck = new DataTypeCheck(name, dataType, decimalCharacter, pattern, cultureInfo);
             MissingValueCheck = new MissingValueCheck(name, dataType, missingValues);
             Constraints = constraints;
+
+            if (Constraints != null)
+            {
+                //load contraints
+                foreach (var c in Constraints)
+                {
+                    c.Materialize();
+                }
+            }
         }
     }
 }
