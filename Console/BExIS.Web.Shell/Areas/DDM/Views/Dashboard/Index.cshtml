@@ -9,10 +9,10 @@
 @section Information
 {
     In this page you can see all datasets, created by you as a current logged on user or owned by you or you sent a request to have access on it. You are also able to manage the requests of other users, who wants to have access to your datasets.
-    
+
     By right clicking on the header, you can manage the visibility of columns. You can also use filtering or grouping to see the more operative informations.
-    
-    To view more details of a dataset, click the View details button available in each row.    
+
+    To view more details of a dataset, click the View details button available in each row.
 }
 
 
@@ -22,13 +22,22 @@
     {
         if (@item.Value == "Dataset") // ToDo: remove this / extend list once we have more use cases. The JavaScript needs also be adapated to allow more types. Currently only "dataset" is handled.
         {
-        <h3>@item.Value</h3>
-        <ul>
+            <h3>@item.Value</h3>
+            <ul>
 
-            <li><a class="@item.Value.ToLower()">My @{@item.Value}s</a></li>
-            <li><a entityid="@item.Key" class="request">My Requests</a></li>
-            <li><a entityid="@item.Key" class="decision">Decisions</a></li>
-        </ul>
+                <li><a class="@item.Value.ToLower()">@{@item.Value}s</a></li>
+                <li><a entityid="@item.Key" class="request">My Requests</a></li>
+                <li><a entityid="@item.Key" class="decision">Decisions</a></li>
+            </ul>
+        }
+        if (@item.Value == "Publication") // ToDo: remove this / extend list once we have more use cases. The JavaScript needs also be adapated to allow more types. Currently only "dataset" is handled.
+        {
+            <h3>@item.Value</h3>
+            <ul>
+
+                <li><a class="@item.Value.ToLower()">@{@item.Value}s</a></li>
+               
+            </ul>
         }
     }
 
@@ -124,11 +133,47 @@
             $("#dashboard_content").preloader("..loading datasets");
 
             $.get("/ddm/dashboard/ShowMyDatasets",
-                {entityname, rightType },
+                { entityname, rightType },
                 function (data, textStatus, jqXHR) {
                     $("#dashboard_content").html(data);
                 }
             );
         });
+
+        $(".publication").click(function () {
+            var entityname = "Publication";
+            var rightType = "edit";
+
+            $(".bold-option").removeClass("bold-option");
+            $(this).addClass("bold-option");
+
+            $("#dashboard_content").preloader("..loading datasets");
+
+            $.get("/ddm/dashboard/ShowMyDatasets",
+                { entityname, rightType },
+                function (data, textStatus, jqXHR) {
+                    $("#dashboard_content").html(data);
+                }
+            );
+        });
+
+        $(".poster").click(function () {
+            var entityname = "Poster";
+            var rightType = "edit";
+
+            $(".bold-option").removeClass("bold-option");
+            $(this).addClass("bold-option");
+
+            $("#dashboard_content").preloader("..loading datasets");
+
+            $.get("/ddm/dashboard/ShowMyDatasets",
+                { entityname, rightType },
+                function (data, textStatus, jqXHR) {
+                    $("#dashboard_content").html(data);
+                }
+            );
+        });
+
+
     </script>
 }
