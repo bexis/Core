@@ -29,7 +29,11 @@
     bool hasComplexMapping = Model.PartyComplexMappingExist;
 
     // Set default values
-    if (idByXpath == "Metadata_general_1__generalType_1_License_1" && Model.Value == null && (int)ViewData["EntityId"] == -1)
+    if (idByXpath == "Metadata_general_1__generalType_1_metadataSchema_1" && Model.Value == null && (int)ViewData["EntityId"] == -1)
+    {
+        Model.Value = "Biodiversity Exploratories Metadata Schema 3.0";
+    }
+    if (idByXpath == "Metadata_general_1__generalType_1_license_1" && Model.Value == null && (int)ViewData["EntityId"] == -1)
     {
         Model.Value = "CC-BY-NC-4.0";
     }
@@ -41,7 +45,7 @@
     {
         Model.Value = "https://ror.org/018mejw64";
     }
-    
+
 
     // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
     displayName = Regex.Replace(Model.DisplayName, "((?<=[a-z])[A-Z])", " $1");
