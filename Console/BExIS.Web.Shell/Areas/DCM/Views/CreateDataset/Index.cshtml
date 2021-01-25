@@ -116,11 +116,16 @@
 
                     @foreach (DataStructureOptions dsoptions in Enum.GetValues(typeof(DataStructureOptions)))
                     {
-                        var id = TagBuilder.CreateSanitizedId(string.Format("{0}_{1}_{2}", "rdbtn", typeof(DataStructureOptions), dsoptions));
+
+                        if (dsoptions == DataStructureOptions.CreateNewFile) { }
+                        else
+                        {
+                            var id = TagBuilder.CreateSanitizedId(string.Format("{0}_{1}_{2}", "rdbtn", typeof(DataStructureOptions), dsoptions));
                         <div>
                             @Html.RadioButtonFor(s => s.DataStructureOptions, dsoptions, dsoptions == option ? new { @checked = "checked" } : null)
                             @Html.Label(dsoptions.GetDisplayName(), new { @for = id })
                         </div>
+                        }
                     }
 
 
