@@ -10,15 +10,11 @@
     <!--<Dependency moduleId="dcm" version="*.*.*" />-->
   </Dependencies>
   <Exports>
-    <Export tag="menubar" id="ManageDataStructures" order="3"
+    <Export tag="settings" id="ManageDataStructures" order="4"
             title="Manage Data Structure" description="Edit, Create or Delet Data Structures" icon=""
             controller="DataStructureSearch" action="" argument=""
-            extends="./menubarRoot/collect"/>
-    
-    <Export tag="menubar" id="ManageUnits" order="2"
-            title="Manage Units" description="Edit, Create or Delet Units" icon=""
-            controller="Unit" action="" argument=""
             extends="./settingsRoot"/>
+
     
     <Export tag="lunchbar" id="helpRpm" order="4"
         title="Data Structure" description="Data Planning Help Manual" icon=""
