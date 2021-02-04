@@ -20,16 +20,19 @@
 {
     @foreach (var item in Model.Entities)
     {
-        if (@item.Value == "Dataset") // ToDo: remove this / extend list once we have more use cases. The JavaScript needs also be adapated to allow more types. Currently only "dataset" is handled.
-        {
+        
             <h3>@item.Value</h3>
             <ul>
 
-                <li><a class="@item.Value.ToLower()">@{@item.Value}s</a></li>
-                <li><a entityid="@item.Key" class="request">My Requests</a></li>
-                <li><a entityid="@item.Key" class="decision">Decisions</a></li>
+                <li><a class="show" entity="@item.Value.ToLower()">My @{@item.Value}s</a></li>
+                @if (@item.Value == "Dataset")
+                {
+                    <li><a entityid="@item.Key" class="request">My Requests</a></li>
+                    <li><a entityid="@item.Key" class="decision">Decisions</a></li>
+                }
             </ul>
-        }
+
+
         if (@item.Value == "Publication") // ToDo: remove this / extend list once we have more use cases. The JavaScript needs also be adapated to allow more types. Currently only "dataset" is handled.
         {
             <h3>@item.Value</h3>
@@ -40,8 +43,7 @@
             </ul>
         }
     }
-
-}
+    }
 
 <div id="dashboard_content">
 
@@ -123,8 +125,8 @@
             );
         });
 
-        $(".dataset").click(function () {
-            var entityname = "Dataset";
+        $(".show").click(function () {
+            var entityname = $(this).attr("entity");;
             var rightType = "edit";
 
             $(".bold-option").removeClass("bold-option");
@@ -139,41 +141,6 @@
                 }
             );
         });
-
-        $(".publication").click(function () {
-            var entityname = "Publication";
-            var rightType = "edit";
-
-            $(".bold-option").removeClass("bold-option");
-            $(this).addClass("bold-option");
-
-            $("#dashboard_content").preloader("..loading datasets");
-
-            $.get("/ddm/dashboard/ShowMyDatasets",
-                { entityname, rightType },
-                function (data, textStatus, jqXHR) {
-                    $("#dashboard_content").html(data);
-                }
-            );
-        });
-
-        $(".poster").click(function () {
-            var entityname = "Poster";
-            var rightType = "edit";
-
-            $(".bold-option").removeClass("bold-option");
-            $(this).addClass("bold-option");
-
-            $("#dashboard_content").preloader("..loading datasets");
-
-            $.get("/ddm/dashboard/ShowMyDatasets",
-                { entityname, rightType },
-                function (data, textStatus, jqXHR) {
-                    $("#dashboard_content").html(data);
-                }
-            );
-        });
-
 
     </script>
 }
