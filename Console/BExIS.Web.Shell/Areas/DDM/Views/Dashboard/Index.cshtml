@@ -20,30 +20,31 @@
 {
     @foreach (var item in Model.Entities)
     {
-        
-            <h3>@item.Value</h3>
-            <ul>
-
-                <li><a class="show" entity="@item.Value.ToLower()">My @{@item.Value}s</a></li>
-                @if (@item.Value == "Dataset")
-                {
-                    <li><a entityid="@item.Key" class="request">My Requests</a></li>
-                    <li><a entityid="@item.Key" class="decision">Decisions</a></li>
-                }
-            </ul>
-
-
-        if (@item.Value == "Publication") // ToDo: remove this / extend list once we have more use cases. The JavaScript needs also be adapated to allow more types. Currently only "dataset" is handled.
+        if (@item.Value == "Dataset")
         {
             <h3>@item.Value</h3>
             <ul>
 
-                <li><a class="@item.Value.ToLower()">@{@item.Value}s</a></li>
-               
+                <li><a class="show" entity="@item.Value.ToLower()">@{@item.Value}s</a></li>
+
+                <li><a entityid="@item.Key" class="request">My Requests</a></li>
+                <li><a entityid="@item.Key" class="decision">Decisions</a></li>
+                
             </ul>
         }
+        
+        if(@item.Value == "Publication")
+        {
+                <h3>@item.Value</h3>
+                <ul>
+
+                    <li><a class="show" entity="@item.Value.ToLower()">@{@item.Value}s</a></li>
+
+                </ul>
+            
+        }
     }
-    }
+}
 
 <div id="dashboard_content">
 
