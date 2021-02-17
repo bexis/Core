@@ -13,6 +13,7 @@ using BExIS.Dim.Entities.Mapping;
 using BExIS.Security.Services.Objects;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Services.Authorization;
+using BExIS.Modules.Bam.UI.Models;
 
 namespace BExIS.Dim.Helpers.Mapping
 {
@@ -669,6 +670,24 @@ namespace BExIS.Dim.Helpers.Mapping
 
                                 mask = setOrReplace(mask, regExResultList, placeHolderName);
                             }
+
+                            if (attrValue.CustomAttribute.DisplayName == "Organization")
+                            {
+                                var temp = new List<PartyRelationshipModel>();
+
+                                var rList = partyManager.PartyRelationshipRepository.Get
+                                   (item => (item.SourceParty.Id == partyid || item.TargetParty.Id == partyid)
+                                   && (item.TargetParty.PartyType.SystemType == false && item.SourceParty.PartyType.SystemType == false) && item.Title == "organizationEmployment" ).ToList();
+
+                                partyManager.PartyRelationshipRepository.LoadIfNot(rList.Select(r => r.TargetParty));
+                                partyManager.PartyRelationshipRepository.LoadIfNot(rList.Select(r => r.TargetParty.PartyType));
+                                if (rList.Count != 0)
+                                {
+                                    mask = rList.FirstOrDefault().TargetParty.Name;
+                                }
+                            }
+
+
                         }
 
                         if (mask.ToLower().Contains(value.ToLower()))
