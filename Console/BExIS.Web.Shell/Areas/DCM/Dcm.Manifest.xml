@@ -42,7 +42,7 @@
             extends="./menubarRoot/collect" />
 
     <Export tag="lunchbar" id="helpDcm" order="3"
-            title=" Metadata and Data" description="Data Collection Help Manual" icon=""
+            title=" How-to Upload" description="Data Collection Help Manual" icon=""
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
 

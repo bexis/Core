@@ -33,7 +33,7 @@
         extends="./menubarRoot" />
 
     <Export tag="lunchbar" id="helpDdm" order="1"
-            title="Search" description="Search Help Manual" icon=""
+            title="How-to Search" description="Search Help Manual" icon=""
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
 

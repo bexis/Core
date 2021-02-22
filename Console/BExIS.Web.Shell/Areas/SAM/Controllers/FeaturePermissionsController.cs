@@ -207,6 +207,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 }
 
+                featurePermissions.OrderBy(x => x.Type);
 
                 return View(new GridModel<FeaturePermissionGridRowModel> { Data = featurePermissions, Total = count });
             }

@@ -16,11 +16,11 @@
             extends="./settingsRoot"/>
 
     
-    <Export tag="lunchbar" id="helpRpm" order="4"
+  <!--  <Export tag="lunchbar" id="helpRpm" order="4"
         title="Data Structure" description="Data Planning Help Manual" icon=""
         controller="Help" action="index"
         extends="./lunchbarRoot/help"
-            />
+            />-->
     
     <Export tag="settings" id="ManageVariableTemplates" order="1"
             title="Manage Variable Templates" description="Edit, Create or Delet Variable Templates" icon=""
