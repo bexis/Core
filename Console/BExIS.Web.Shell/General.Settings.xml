@@ -8,7 +8,7 @@
   -->
   <entry key="landingPage" value=", , " type="String" />
   <!-- user is not logging in -> app goes to-->
-  <entry key="landingPageForUsers" value="ddm, Home, index" type="String" />
+  <entry key="landingPageForUsers" value="rbm, Notification, Blackboard" type="String" />
   <!-- landing page for users , when they logged in successfuly -->
   <entry key="faq" value="https://github.com/BEXIS2/Core/wiki/FAQ" type="string" />
 
