@@ -22,6 +22,11 @@
             controller="Home" action="index"
             extends="./menubarRoot" />
 
+    <Export tag="menubar" id="openDataMenu" order="8"
+       title="Open Data" description="open data desc" icon=""
+       controller="PublicDataLink" action="Index"
+       extends="./menubarRoot" />
+    
     <Export tag="menubar" id="menuSearchPublic" order="7"
             title="Public Data Search" description="Search in public datasets" icon=""
             controller="publicsearch" action="index"
