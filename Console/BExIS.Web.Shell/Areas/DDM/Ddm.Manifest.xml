@@ -22,10 +22,10 @@
             controller="Home" action="index"
             extends="./menubarRoot" />
 
-    <!--<Export tag="menubar" id="menuSearchPublic" order="2"
-            title="Public" description="Search in public datasets" icon=""
-            controller="publicsearch" action="public"
-            extends="./menubarRoot" />-->
+    <Export tag="menubar" id="menuSearchPublic" order="7"
+            title="Public Data Search" description="Search in public datasets" icon=""
+            controller="publicsearch" action="index"
+            extends="./menubarRoot/openDataMenu" />
 
     <Export tag="menubar" id="dashboard" order="1"
         title="My Data" description="Quick Access to User Area" icon=""
