@@ -1,4 +1,4 @@
-# robots.txt for https://www.bexis.uni-jena.de/
+﻿# robots.txt for https://www.bexis.uni-jena.de/
 #
 
 User-agent: *
