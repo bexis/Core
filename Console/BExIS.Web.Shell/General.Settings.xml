@@ -6,9 +6,9 @@
     The designated action must be set to public in the feature permission mgmt, otherwise the request will be redirected to the login page.
     The 'type' attribute must be compatible with the System.TypeCode case-sensitive.
   -->
-  <entry key="landingPage" value=", , " type="String" />
+  <entry key="landingPage" value="shell, home, index" type="String" />
   <!-- user is not logging in -> app goes to-->
-  <entry key="landingPageForUsers" value="rbm, Notification, Blackboard" type="String" />
+  <entry key="landingPageForUsers" value="rbm, NotificationBlackboard, Index" type="String" />
   <!-- user logged in, but do not have permission to view the page; shell, home, nopermission is by default; Alternatives must be in a module NOT shell -->
   <entry key="landingPageForUsersNoPermission" value=" shell, home, nopermission" type="String" />
   <!-- landing page for users , when they logged in successfuly -->
