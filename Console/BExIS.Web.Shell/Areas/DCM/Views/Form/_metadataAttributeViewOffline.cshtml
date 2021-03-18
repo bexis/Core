@@ -3,6 +3,7 @@
 @using BExIS.Utils.WebHelpers
 @using Telerik.Web.Mvc.UI
 @using System.Text.RegularExpressions
+@using System.Web.Mvc
 
 @{
     string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
@@ -22,6 +23,12 @@
     string displayName = "";
 
     string autoCompleteType = "";
+
+    bool userIsLOggedIn = false;
+    if (User.Identity.Name != "")
+    {
+        userIsLOggedIn = true;
+    }
 
     // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
     displayName = Regex.Replace(Model.DisplayName, "((?<=[a-z])[A-Z])", " $1");
@@ -68,41 +75,45 @@
     lockedClass = "bx-disabled";
 }
 
-<div id="@id" class="metadataAttributeContent">
-    <table>
-        <tr>
-            <td class="metadataAttributeLabel">
-                @if (Model.MinCardinality > 0)
-                {
-                    <b title="This field is required" style="color:red">*</b>
-                }
 
-                <b title="@Model.Discription">@displayName</b>
+@if ((displayName != "Phone" || userIsLOggedIn) && (displayName != "Mobile" || userIsLOggedIn))
+{
+    <div id="@id" class="metadataAttributeContent">
+        <table>
+            <tr>
+                <td class="metadataAttributeLabel">
+                    @if (Model.MinCardinality > 0)
+                    {
+                        <b title="This field is required" style="color:red">*</b>
+                    }
 
-            </td>
-            <td class="metadataAttributeInput">
+                    <b title="@Model.Discription">@displayName</b>
 
-                @if (Model.Value != null)
-                {
-                    @Html.DisplayWithLinksFor(m => m.Value)
-                }
+                </td>
+                <td class="metadataAttributeInput">
+
+                    @if (Model.Value != null)
+                    {
+                        @Html.DisplayWithLinksFor(m => m.Value)
+                    }
 
 
-            </td>
-            <td class="metadataAttributeOption">
+                </td>
+                <td class="metadataAttributeOption">
 
-                <table id="attributeOptionTable">
-                    <tr>
-                        <td>
-                            @if (!string.IsNullOrEmpty(Model.Discription))
-                            {
-                                <button type="button" title="@Model.Discription" class="bx-function bx-disabled">?</button>
-                            }
+                    <table id="attributeOptionTable">
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(Model.Discription))
+                                {
+                                    <button type="button" title="@Model.Discription" class="bx-function bx-disabled">?</button>
+                                }
 
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+}
