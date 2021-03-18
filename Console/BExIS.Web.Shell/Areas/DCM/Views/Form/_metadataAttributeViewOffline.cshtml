@@ -24,10 +24,10 @@
 
     string autoCompleteType = "";
 
-    bool userIsLOggedIn = false;
+    bool userIsLoggedIn = false;
     if (User.Identity.Name != "")
     {
-        userIsLOggedIn = true;
+        userIsLoggedIn = true;
     }
 
     // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
@@ -76,7 +76,7 @@
 }
 
 
-@if ((displayName != "Phone" || userIsLOggedIn) && (displayName != "Mobile" || userIsLOggedIn))
+@if ((displayName != "Phone" || userIsLoggedIn) && (displayName != "Mobile" || userIsLoggedIn))
 {
     <div id="@id" class="metadataAttributeContent">
         <table>
