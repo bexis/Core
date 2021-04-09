@@ -2962,7 +2962,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 selectedMetadatAttributeModel.Errors = validateAttribute(selectedMetadatAttributeModel);
 
                 // read temp metadata XML
-                var metadata = getMetadata(); // new getMetadata(TaskManager)
+                var metadata = getMetadata(TaskManager); // new getMetadata(TaskManager)
                 // get xpath for element at position x (number)
                 var xpath = stepModelHelper.GetXPathFromSimpleAttribute(selectedMetadatAttributeModel.Id, number);
                 // get simple element based on xpath
