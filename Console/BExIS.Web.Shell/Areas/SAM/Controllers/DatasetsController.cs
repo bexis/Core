@@ -186,7 +186,9 @@ namespace BExIS.Modules.Sam.UI.Controllers
                             && ds.StateInfo?.Timestamp > DateTime.MinValue
                             && ds.StateInfo?.Timestamp < DateTime.MaxValue)
                         synced = ds.StateInfo?.Timestamp >= ds.LastCheckIOTimestamp;
-                    datasetStat.Add(new DatasetStatModel { Id = ds.Id, Status = ds.Status, NoOfRows = noRows, NoOfCols = noColumns, IsSynced = synced });
+
+                    DatasetVersion datasetversion = dm.GetDatasetLatestVersion(ds.Id);
+                    datasetStat.Add(new DatasetStatModel { Id = ds.Id, Status = ds.Status, NoOfRows = noRows, NoOfCols = noColumns, IsSynced = synced , Title = datasetversion.Title });
                 }
                 ViewData["DatasetIds"] = datasetIds;
                 return View(datasetStat);
@@ -295,7 +297,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
         {
             using (var datasetManager = new DatasetManager())
             {
-                var datasetIds = datasetManager.GetDatasetLatestIds();
+                var datasetIds = datasetManager.GetDatasetIds();
                 try
                 {
                     datasetManager.SyncView(datasetIds, ViewCreationBehavior.Create | ViewCreationBehavior.Refresh);
