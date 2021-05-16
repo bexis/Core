@@ -35,7 +35,14 @@
     {
         partyid = Model.PartyId.ToString();
     }
+    else
+    {
+        if (Model.ParentPartyId != 0)
+        {
+            partyid = Model.ParentPartyId.ToString();
 
+        }
+    }
 
     bool userIsLoggedIn = false;
 
@@ -270,11 +277,12 @@
                                     }
 
                                     // show info text on top (simple is optional / complex mandatory)
-                                    if ((@hasSimpleMapping) && Model.PartyMappingExist)
+                                    if ((@hasSimpleMapping) && Model.PartyMappingExist && Model.MappingSelectionField)
                                     {
                                         <div style="color: gray">If possible, use an entry from autocomplete list.</div>
                                     }
-                                    if ((hasComplexMapping) && Model.PartyMappingExist)
+
+                                    if ((hasComplexMapping) && Model.PartyMappingExist && Model.MappingSelectionField)
                                     {
                                         <div style="color: gray">Use an entry from autocomplete list.</div>
                                     }
@@ -288,13 +296,12 @@
                                     <span id="@linkedID" style="display: none; font-size: 1em; color: green;" title="Entry is linked."><i class="fa fa-check-circle"></i></span>
 
                                     // show not linked, when on any content, but not linked
-                                    if ((@hasSimpleMapping) && Model.PartyMappingExist && partyid == "" && Model.Value != null)
+                                    if ((@hasSimpleMapping || hasComplexMapping) && Model.MappingSelectionField && Model.PartyMappingExist && partyid == "" && Model.Value != null)
                                     {
-
                                         <script type="text/javascript">$("#@notLinkedID").show()</script>
                                     }
                                     // show linked, when a party id is selected
-                                    else if ((@hasSimpleMapping) && Model.PartyMappingExist && partyid != "" && Model.Value != null)
+                                    else if ((@hasSimpleMapping || hasComplexMapping) && Model.MappingSelectionField && Model.PartyMappingExist && partyid != "" && Model.Value != null)
                                     {
                                         <script type="text/javascript">$("#@linkedID").show()</script>
                                     }
