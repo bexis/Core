@@ -94,21 +94,6 @@ namespace BExIS.IO
                 return true;
             }
 
-            //if (DateTime.TryParse(dateAsString, out dateTime))
-            //{
-            //    return true;
-            //}
-
-            if (DateTime.TryParse(dateAsString, new CultureInfo("en-US", false), DateTimeStyles.None, out dateTime))
-            {
-                return true;
-            }
-
-            if (DateTime.TryParse(dateAsString, new CultureInfo("de-DE", false), DateTimeStyles.None, out dateTime))
-            {
-                return true;
-            }
-
             return false;
         }
 
@@ -223,20 +208,6 @@ namespace BExIS.IO
             if (ConvertToDate(dateAsString, pattern, out tmp, cultureInfo))
             {
                 return tmp.ToString(new CultureInfo("en-us"));
-            }
-
-            List<string> testPatternList = File.ReadAllLines(Path.Combine(AppConfiguration.GetModuleWorkspacePath("BMM"), "datePattern.tsv")).ToList();
-
-            if (testPatternList.Count() > 0)
-            {
-                foreach (string patternValue in testPatternList)
-                {
-                    if(DateTime.TryParseExact(dateAsString, patternValue, CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out tmp))
-                    {
-                        return tmp.ToString(new CultureInfo("en-us"));
-
-                    }
-                }
             }
 
             return "";
