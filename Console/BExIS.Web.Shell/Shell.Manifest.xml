@@ -47,10 +47,9 @@
             controller="" action=""
             extends="." />
     
-    <!--FAQ-->
-  <!--  <Export tag="lunchbar" id="helpDdm" order="9"
-            title="FAQ" description="Link to the faq page" icon=""
-            controller="help" action="faq"
-            extends="./lunchbarRoot/help" />-->
+   <Export tag="lunchbar" id="helpHowToCreditData" order="9"
+            title="How-to Credit Data" description="Link to the faq page" icon=""
+            controller="help" action="HowToCreditData"
+            extends="./lunchbarRoot/help" />
   </Exports>
 </Manifest>
