@@ -1821,7 +1821,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     var userRepository = uow.GetReadOnlyRepository<User>();
                     var user = userRepository.Query(s => s.Name.ToUpperInvariant() == HttpContext.User.Identity.Name.ToUpperInvariant()).FirstOrDefault();
 
-                    if (user.Groups.Where(g => g.DisplayName == "guest").ToList().Count() >= 1 || user.Groups.Count() == 0)
+                    if (user.Groups.Where(g => g.DisplayName == "0_guest").ToList().Count() >= 1 || user.Groups.Count() == 0)
                     {
                         return false;
                     }
