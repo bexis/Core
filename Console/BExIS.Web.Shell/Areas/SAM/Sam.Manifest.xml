@@ -60,7 +60,7 @@
       extends="./settingsRoot" />-->
     
     <Export tag="lunchbar" id="helpSam" order="7"
-            title="How-to register" description="How-to register" icon=""
+            title="How-to Register" description="How-to register" icon=""
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
 
