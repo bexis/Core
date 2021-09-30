@@ -23,5 +23,16 @@ namespace BExIS.Web.Shell.Controllers
 
             return Redirect(helpurl);
         }
+
+        public ActionResult HowToCreditData()
+        {
+            string filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
+            XDocument settings = XDocument.Load(filePath);
+            XElement help = XmlUtility.GetXElementByAttribute("entry", "key", "HowToCreditData", settings);
+
+            string helpurl = help.Attribute("value")?.Value;
+
+            return Redirect(helpurl);
+        }
     }
 }
