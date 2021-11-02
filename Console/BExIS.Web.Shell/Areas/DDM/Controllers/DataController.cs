@@ -1755,29 +1755,11 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
             }
             return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
-        } 
+        }
 
         public bool UserExist()
         {
-            if (HttpContext.User != null && HttpContext.User.Identity != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name))
-            {
-                // BE extension to ensure guests and users without a group assigment are not allowed to send permission requests
-                using (var uow = this.GetUnitOfWork())
-                {
-                    var userRepository = uow.GetReadOnlyRepository<User>();
-                    var user = userRepository.Query(s => s.Name.ToUpperInvariant() == HttpContext.User.Identity.Name.ToUpperInvariant()).FirstOrDefault();
-
-                    if (user.Groups.Where(g => g.DisplayName == "0_guest").ToList().Count() >= 1 || user.Groups.Count() == 0)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
-
-                }
-            }
+            if (HttpContext.User != null && HttpContext.User.Identity != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name)) return true;
 
             return false;
         }
