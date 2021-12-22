@@ -683,7 +683,7 @@ namespace BExIS.Dim.Helpers.Mapping
                                 partyManager.PartyRelationshipRepository.LoadIfNot(rList.Select(r => r.TargetParty.PartyType));
                                 if (rList.Count != 0)
                                 {
-                                    mask = rList.FirstOrDefault().TargetParty.Name;
+                                    mask = rList.OrderBy(x => x.EndDate).LastOrDefault().TargetParty.Name;
                                 }
                             }
 
