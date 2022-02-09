@@ -34,11 +34,7 @@ namespace BExIS.Security.Services.Utilities
                 client.ServerCertificateValidationCallback = (s, c, h, e) => { return true; };
 
                 client.Connect(ConfigurationManager.AppSettings["Email_Host_Name"], int.Parse(ConfigurationManager.AppSettings["Email_Host_Port"]), (SecureSocketOptions)int.Parse(ConfigurationManager.AppSettings["Email_Host_SecureSocketOptions"]));
-                
-                if(!bool.Parse(ConfigurationManager.AppSettings["Email_Host_Anonymous"]))
-                {
-                    client.Authenticate(ConfigurationManager.AppSettings["Email_Account_Name"], ConfigurationManager.AppSettings["Email_Account_Password"]);
-                }
+                client.Authenticate(ConfigurationManager.AppSettings["Email_Account_Name"], ConfigurationManager.AppSettings["Email_Account_Password"]);
 
                 client.Send(message);
 

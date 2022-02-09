@@ -5,10 +5,10 @@
   <entry key="key3" value="21" type="Int16"/>
   <missingValues>
     <missingValue>
-      <placeholder>na</placeholder>
+      <placeholder>NA</placeholder>
       <description>not available</description>
     </missingValue>
   </missingValues>
-  <optionalDefault>true</optionalDefault>
-  <showCreateVariableTemplate description="Show -Create Variable Template- on data structure edit">true</showCreateVariableTemplate>
+  <optionalDefault>false</optionalDefault>
+  <showCreateVariableTemplate description="Show -Create Variable Template- on data structure edit">false</showCreateVariableTemplate>
 </settings>

@@ -617,6 +617,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         
                         sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
 
+                        sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
+
                         return PartialView(ShowPrimaryDataModel.Convert(
                             datasetID,
                             versionId,
@@ -1467,8 +1469,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         else
                             dataStructure = uow.GetReadOnlyRepository<UnStructuredDataStructure>().Get(ds.Dataset.DataStructure.Id);
 
-                        if (structured)
-                        {
+                    //    if (structured)
+                    //    {
                             if (entityPermissionManager.HasEffectiveRight(HttpContext.User.Identity.Name, typeof(Dataset), id, RightType.Write))
                             {
                                 Feature feature = operationManager.OperationRepository.Query().Where(o => o.Module.ToLower().Equals("rpm") && o.Controller.ToLower().Equals("datastructureedit")).FirstOrDefault().Feature;
@@ -1476,8 +1478,10 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
                                 if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
                                     DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructure.Id;
+                    //        }
                             }
-                        }
+                        
+
                     }
                     else
                     {
@@ -1850,8 +1854,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
 
             return versionId;
-        }
-
+ 
 
         public bool UserExist()
         {

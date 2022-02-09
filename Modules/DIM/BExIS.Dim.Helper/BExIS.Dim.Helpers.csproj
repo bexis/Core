@@ -126,6 +126,10 @@
       <Project>{252f7872-a69c-43a6-84b4-4d2abdbdd9ab}</Project>
       <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Console\BExIS.Web.Shell\Areas\BAM\BExIS.Modules.Bam.UI.csproj">
+      <Project>{4C00A9C4-5A27-485A-BC14-147567B29332}</Project>
+      <Name>BExIS.Modules.Bam.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Console\BExIS.Web.Shell\Areas\SAM\BExIS.Modules.Sam.UI.csproj">
       <Project>{DEC22F9C-47BE-4146-94BE-1C9AA969AFC3}</Project>
       <Name>BExIS.Modules.Sam.UI</Name>

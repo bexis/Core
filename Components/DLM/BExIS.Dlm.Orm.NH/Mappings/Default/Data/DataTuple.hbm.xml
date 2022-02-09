@@ -57,5 +57,5 @@
     SELECT * FROM DATATUPLES
     <!--SELECT * FROM DATATUPLES Where DatasetVersionRef IN (SELECT ID FROM DATASETVERSIONS Where DatasetRef=3 AND Timestamp <= '2013-01-01 12:00:00')-->
     <!--SELECT * FROM DATASETVERSIONS Where (DatasetRef IN (Select DatasetRef From DATASETVERSIONS Where Id= :datasetVersionId)) AND (Timestamp <= (Select Timestamp From DATASETVERSIONS Where Id= :datasetVersionId))-->
-  </sql-query>
+      </sql-query>
 </hibernate-mapping>

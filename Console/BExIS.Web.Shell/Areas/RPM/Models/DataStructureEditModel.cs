@@ -586,7 +586,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                                         this.inUse = true;
                                         break;
                                     }
-                                    else
+                                    /*else
                                     {
                                         foreach (DatasetVersion dv in d.Versions)
                                         {
@@ -596,7 +596,7 @@ namespace BExIS.Modules.Rpm.UI.Models
                                                 break;
                                             }
                                         }
-                                    }
+                                    }*/
                                 }                             
                             }
                             finally

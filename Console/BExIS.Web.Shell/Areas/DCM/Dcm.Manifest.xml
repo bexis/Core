@@ -20,29 +20,29 @@
             controller="ManageMetadataStructure" action="Index" argument=""
             extends="./settingsRoot" />
 
-    <Export tag="menubar" id="collect" order="1"
-            title="Collect" description="Quick access to Data Collection Area" icon=""
+    <Export tag="menubar" id="collect" order="3"
+            title="Upload" description="Quick access to Data Collection Area" icon=""
             controller="" action=""
             extends="./menubarRoot" />
     <Export tag="menubar" id="createDataset" order="1"
             title="Create Dataset" description="Create new Dataset" icon=""
             controller="CreateDataset" action="index"
             extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="uploaddata" order="2"
-            title="Upload Data" description="Upload data to a dataset" icon=""
+    <Export tag="menubar" id="uploaddata" order="4"
+            title="Update Data" description="Upload data to a dataset" icon=""
             controller="Submit" action="index"
             extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="importdata" order="3"
+   <!-- <Export tag="menubar" id="importdata" order="5"
             title="Import Data" description="Import datastructure and data from an excel file" icon=""
             controller="EasyUpload" action="index"
-            extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="createDataset" order="4"
+            extends="./menubarRoot/collect" />-->
+    <Export tag="menubar" id="createDataset" order="5"
             title="Push Big File" description="Push big file to the server to use it later" icon=""
             controller="Push" action="index"
             extends="./menubarRoot/collect" />
 
     <Export tag="lunchbar" id="helpDcm" order="3"
-            title=" Metadata and Data" description="Data Collection Help Manual" icon=""
+            title=" How-to Upload" description="Data Collection Help Manual" icon=""
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
 
@@ -80,5 +80,6 @@
                 title="Show references of a entity" description="Show references of a entity" icon=""
                 controller="EntityReference" action="Show"
                 extends="" />
+    
   </Exports>
 </Manifest>

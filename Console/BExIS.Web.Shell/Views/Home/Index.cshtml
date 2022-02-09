@@ -3,17 +3,146 @@
 @using BExIS.Utils.WebHelpers
 @using Vaiona.Web.Mvc.Modularity;
 
-@section Information
-{
-    <p>If you have any problems installing or using it please do not hesitate contacting us at: bexis-support@uni-jena.de</p>
-    <p>This is a community driven open source project so we are looking forward to any feedback or inquiry about new features.</p>
-}
 
-<div style="text-align: center;">
-    @Html.Logo(Html.GetTenant().GetResourcePath("BigLogo"))
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<!-- Animate css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.css">
+<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.4.2/css/all.css' integrity='sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns' crossorigin='anonymous'>
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/css/custom.css")" />
+
+<script type="text/javascript">
+    $('.container-fluid#content-container table').css({ 'border': '0px none' });
+    $('.container-fluid#content-container td').css({ 'border-top': '0px none', 'padding': '0px', 'border-right': '0px none' });
+    $('.container-fluid#content-container').css({ 'margin': '0px', 'padding': '0px' });
+</script>
+
+<div class="page clearfix" id="page">
+    <header id="header-main" class="home-main-banner">
+        <div class="header-main-banner">
+            <img src="@Url.Content("~/Content/Images/banner.png")">
+        </div>
+        <div class="header-main-overlay"></div>
+        <!-- BEGIN TOP SECTION -->
+        <div id="home" class="top-main" style="background-color: var(--information-bg-color);">
+            <div class="container" >
+                <div class="row">
+                    <div class="col-xs-12 col-md-7">
+                        <div class="top-main-info">
+                            <div class="wow ">
+                                <h2>Information System of the Biodiversity Exploratories</h2>
+                                <p>
+                                    Non-project persons are welcome to access and download publicly available datasets without registering. Please note the data agreement in the <a href="/TermsAndConditions/Index" title="See Terms and Conditions" style="color:white">terms and conditions</a>.</br></br>
+                                    For project members the registration is required for data upload, to access project internal information and functions, and for dataset search and collaborative data sharing.
+                                </p>
 </div>
-<div style="text-align: center; margin-top: 24pt">
-   
-    @Html.ActionLink("Register", "Register", "Account", new { area = "" }, htmlAttributes: new { @class = "t-button function", id = "registerLink" })
-    @Html.ActionLink("Login", "Login", "Account", new { area = "" }, htmlAttributes: new { @class = "t-button function", id = "loginLink" })
+                            <div class="wow">
+                                @Html.ActionLink("Login", "Login", "Account", new { area = "" }, htmlAttributes: new { @class = "btn btn-lg btn-info", id = "loginLink" })
+                                @Html.ActionLink("Register", "Register", "Account", new { area = "" }, htmlAttributes: new { @class = "btn btn-lg btn-info", id = "registerLink" })
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END TOP SECTION -->
+    </header>
+    <main id="main">
+        <!-- BEGIN ABOUT SECTION -->
+        <div class="container options">
+            <div class="row">
+                <a href="~/ddm/publicsearch/">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" style="text-align: center;">
+                        <div class="about">
+                            <i class="fas fa-lock-open fa-3x"></i>
+                            <h2>Public Data</h2>
+                        </div>
+                    </div>
+                </a>
+                <a href="~/tcd/PublicClimateData/Index">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" style="text-align: center;">
+                        <div class="about">
+                            <i class="fas fa-thermometer-half fa-3x"></i>
+                            <h2>Public Climate Data</h2>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://github.com/bexis/Documents/blob/master/HowTo/HowToRegister.md" target="_blank">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s" style="text-align: center;">
+                        <div class="about">
+                            <i class="fas fa-sign-in-alt fa-3x"></i>
+                            <h2>How-to Register</h2>
+
+                        </div>
+                    </div>
+                </a>
+                <a href="https://github.com/bexis/Documents/blob/master/HowTo/HowToUpload.md" target="_blank">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s" style="text-align: center;">
+                        <div class="about">
+                            <i class="fas fa-file-upload fa-3x"></i>
+                            <h2>How-to Upload</h2>
+
+                        </div>
+                    </div>
+                </a>
+                <a href="https://github.com/bexis/Documents/blob/master/HowTo/HowToSearch.md" target="_blank">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
+                        <div class="about">
+                            <i class="fas fa-search fa-3x"></i>
+                            <h2>How-to Search</h2>
+
+                        </div>
+                    </div>
+                </a>
+                <a href="https://github.com/bexis/Documents/blob/master/HowTo/HowToCreditData.md" target="_blank">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
+                        <div class="about">
+                            <i class="fas fa-quote-left fa-3x"></i>
+                            <h2>How-to Credit Data</h2>
+
+                        </div>
+                    </div>
+                </a>
+                <a href="~/footer/contactus">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
+                        <div class="about">
+                            <i class="far fa-comment-dots fa-3x"></i>
+                            <h2>Contact Us</h2>
+                        </div>
+                    </div>
+                </a>
+                <a href="/TermsAndConditions/Index">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
+                        <div class="about">
+                            <i class="far fa-file-alt fa-3x"></i>
+                            <h2>Terms and Conditions</h2>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+            <div class="container options">
+                
+                <!--   <a style="color:#777; cursor:not-allowed;">
+        <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="1.1s" style="text-align: center;">
+            <div class="about">
+                <b class="fas fa-3x">DOI</b>
+                <h2>Get DOI</h2>
+                <p>(Plaese contact us)</p>
+            </div>
+        </div>
+    </a>-->
+
+            </div>
+            </div>
+        
+        <!-- END ABOUT SECTION -->
+    </main>
 </div>
+
+<div id="modalbox"><div id="modalback"></div><div id="modalcontainer"><div id="modalcontent"></div></div></div>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.js"></script>
+<!-- Custom JavaScript -->
+<!--<script type="text/javascript" src="@Url.Content("~/Scripts/custom.js")"></script>-->

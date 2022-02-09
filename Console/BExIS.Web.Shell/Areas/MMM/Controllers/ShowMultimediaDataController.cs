@@ -39,6 +39,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
         public ActionResult Index(long datasetID, string entityType = "Dataset")
         {
             ViewData["id"] = datasetID;
+            ViewData["entity_tpye"] = entityType;
 
             EntityPermissionManager entityPermissionManager = null;
             try
@@ -72,6 +73,7 @@ namespace IDIV.Modules.Mmm.UI.Controllers
         public ActionResult multimediaData(long datasetID, long versionId = 0, string entityType = "Dataset")
         {
             ViewData["Id"] = datasetID;
+            ViewData["entity_type"] = entityType;
 
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (DatasetManager datasetManager = new DatasetManager())

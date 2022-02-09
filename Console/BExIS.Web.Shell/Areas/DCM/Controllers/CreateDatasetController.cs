@@ -1,5 +1,4 @@
 ﻿using BExIS.Dcm.CreateDatasetWizard;
-using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.Dim.Entities.Mapping;
 using BExIS.Dim.Helpers.Mapping;
@@ -16,7 +15,6 @@ using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Dcm.UI.Helpers;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Modules.Dcm.UI.Models.CreateDataset;
-using BExIS.Modules.Dcm.UI.Models.EntityReference;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
 using BExIS.Security.Entities.Subjects;
@@ -572,7 +570,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             // add security
                             if (GetUsernameOrDefault() != "DEFAULT")
                             {
-                                entityPermissionManager.Create<User>(GetUsernameOrDefault(), entityname, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
+                                entityPermissionManager.Create<User>(GetUsernameOrDefault(), entityname, typeof(Dataset), ds.Id, new List<RightType>() { RightType.Read, RightType.Write, RightType.Delete});
+                                entityPermissionManager.Create<Group>("administrator", entityname, typeof(Dataset), ds.Id, Enum.GetValues(typeof(RightType)).Cast<RightType>().ToList());
                             }
                         }
                         // update existing dataset
@@ -583,14 +582,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                             newDataset = false;
                         }
 
-                        TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
+                    TaskManager = (CreateTaskmanager)Session["CreateDatasetTaskmanager"];
 
-                        if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
-                        {
-                            DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(datasetId);
+                    if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
+                    {
+                        DatasetVersion workingCopy = dm.GetDatasetWorkingCopy(datasetId);
 
                             if (TaskManager.Bus.ContainsKey(CreateTaskmanager.METADATA_XML))
                             {
+
                                 XDocument xMetadata = (XDocument)TaskManager.Bus[CreateTaskmanager.METADATA_XML];
                                 workingCopy.Metadata = Xml.Helpers.XmlWriter.ToXmlDocument(xMetadata);
 

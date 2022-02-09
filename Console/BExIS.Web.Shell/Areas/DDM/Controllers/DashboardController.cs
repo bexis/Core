@@ -29,7 +29,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("My Data", this.Session.GetTenant());
 
             DashboardModel model = GetDefaultDashboardModel();
 

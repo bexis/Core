@@ -22,18 +22,23 @@
             controller="Home" action="index"
             extends="./menubarRoot" />
 
-    <!--<Export tag="menubar" id="menuSearchPublic" order="2"
-            title="Public" description="Search in public datasets" icon=""
-            controller="publicsearch" action="public"
-            extends="./menubarRoot" />-->
+    <Export tag="menubar" id="openDataMenu" order="8"
+       title="Open Data" description="open data desc" icon=""
+       controller="PublicDataLink" action="Index"
+       extends="./menubarRoot" />
+    
+    <Export tag="menubar" id="menuSearchPublic" order="7"
+            title="Public Data Search" description="Search in public datasets" icon=""
+            controller="publicsearch" action="index"
+            extends="./menubarRoot/openDataMenu" />
 
     <Export tag="menubar" id="dashboard" order="1"
-        title="Dashboard" description="Quick Access to User Area" icon=""
+        title="My Data" description="Quick Access to User Area" icon=""
         controller="dashboard" action="index"
         extends="./menubarRoot" />
 
     <Export tag="lunchbar" id="helpDdm" order="1"
-            title="Search" description="Search Help Manual" icon=""
+            title="How-to Search" description="Search Help Manual" icon=""
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
 
@@ -73,6 +78,12 @@
             title="Free Text Search" description="free Text Search" icon="" 
             controller="SearchIndex" action="Get"
             extends="" />
+
+    <Export tag="internalApi" id="showPrimaryData"
+           title="Show Primary data" description="free Text Search" icon=""
+           controller="Data" action="ShowPrimaryData"
+           extends="" />
+    
 
     <!--<Export tag="internalApi" id="showDatasetsInDashboard"
             title="Show one's datasets" description="Shows the datasets of the logged in user" icon=""

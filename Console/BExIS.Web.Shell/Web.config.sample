@@ -39,7 +39,8 @@
     <add key="WorkspacePath" value="{WORKSPACE}" />
     <add key="DataPath" value="{DATA}" />
     <add key="DefaultCulture" value="en-US" />
-    <add key="TenantId" value="bexis" />
+    <add key="TenantId" value="bexis_explo" />
+
     <add key="ThemesPath" value="~/Themes/" />
     <add key="DefaultThemeName" value="default" />
     <add key="ActiveLayoutName" value="_Layout" />
@@ -65,16 +66,16 @@
           if the relationship type has one 'partytypepair' -> load the allowed target of this 'partytypepair'
           if  the relationship type has more than one 'partytypepair' -> load the allowed target of the 'partytypepair' which has "partyrelationshiptypedefault==true" -->
     <add key="AccountPartyTypes" value="personMember:organizationEmployment-projectMember-consortiaMember,personGuest" />
-    <add key="OwnerPartyRelationshipType" value="Owner" />
+    <add key="OwnerPartyRelationshipType" value ="contactPerson"/>
     <!-- Allow to use the user email within the party person; change party email on changed user email -->
-    <add key="usePersonEmailAttributeName" value="false" />
-    <add key="PersonEmailAttributeName" value="Email" />
+    <add key="usePersonEmailAttributeName" value ="true"/>
+    <add key="PersonEmailAttributeName" value ="Email"/>
 
 	<add key="aspnet:MaxJsonDeserializerMembers" value="120000" />
   </appSettings>
   <system.web>
     <globalization uiCulture="en-US" culture="en-US" />
-    <sessionState timeout="120" />
+    <sessionState timeout="60" />
     <!-- 20 minutes session timeout, set the cookie name as a cobination of the appname + version-->
     <compilation targetFramework="4.5.2">
       <assemblies>
