@@ -1789,14 +1789,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             return !string.IsNullOrWhiteSpace(userName) ? userName : "DEFAULT";
         }
 
-        private long getVersionId(long datasetId, int version ,string versionName, List<DatasetVersion> datasetVersions)
+        private long getVersionId(long datasetId, int version, string versionName, List<DatasetVersion> datasetVersions)
         {
             long versionId = 0;
 
 
             using (DatasetManager dm = new DatasetManager())
             {
-            
+
 
                 // User is not logged in
                 if (GetUsernameOrDefault() == "DEFAULT")
@@ -1854,7 +1854,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
 
             return versionId;
- 
+        }
 
         public bool UserExist()
         {
