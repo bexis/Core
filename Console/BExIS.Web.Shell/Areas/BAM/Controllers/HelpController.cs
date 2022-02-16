@@ -10,6 +10,8 @@ using System.Xml.Linq;
 using BExIS.Xml.Helpers;
 using Vaiona.Utils.Cfg;
 using BExIS.Dlm.Services.Data;
+using BExIS.UI.Helpers;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Bam.UI.Controllers
 {
@@ -18,15 +20,9 @@ namespace BExIS.Modules.Bam.UI.Controllers
         // GET: Help
         public ActionResult Index()
         {
-            string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("BAM"), "Bam.Settings.xml");
-            XDocument settings = XDocument.Load(filePath);
-            XElement help = XmlUtility.GetXElementByAttribute("entry", "key", "help", settings);
-
-            string helpurl = help.Attribute("value")?.Value;
-
+            string helpurl = ModuleManager.GetModuleSettings("BAM").GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
-
         }
     }
 }

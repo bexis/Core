@@ -5,6 +5,8 @@ using System.Xml.Linq;
 using System.IO;
 using BExIS.Xml.Helpers;
 using Vaiona.Utils.Cfg;
+using BExIS.UI.Helpers;
+using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Vim.UI.Controllers
 {
@@ -15,15 +17,9 @@ namespace BExIS.Modules.Vim.UI.Controllers
 
         public ActionResult Index()
         {
-            string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("VIM"), "Vim.Settings.xml");
-            XDocument settings = XDocument.Load(filePath);
-            XElement help = XmlUtility.GetXElementByAttribute("entry", "key", "help", settings);
-
-            string helpurl = help.Attribute("value")?.Value;
-
+            string helpurl = ModuleManager.GetModuleSettings("VIM").GetEntryValue("help").ToString();
 
             return Redirect(helpurl);
-
         }
     }
 }

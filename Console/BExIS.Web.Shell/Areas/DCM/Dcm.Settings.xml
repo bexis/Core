@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<settings>
-  <entry key="help" value="https://github.com/bexis/Documents/blob/master/HowTo/HowToUpload.md" type="String"/>
-  <!-- This number determines the selection whether an upload of structured data should be executed directly or async. 
-      - c < direct
-      - c > async 
-      -->
-  <entry key="celllimit" value="100000" type="Int32" description="This number of cells determines the selection whether an upload of structured data should be executed directly or async. " />
-</settings>

@@ -17,6 +17,9 @@ using Vaiona.Utils.Cfg;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Helpers;
+using BExIS.Utils;
+using BExIS.Utils.Config;
 
 namespace BExIS.Web.Shell.Controllers
 {
@@ -36,8 +39,8 @@ namespace BExIS.Web.Shell.Controllers
             if (!string.IsNullOrEmpty(HttpContext.User?.Identity?.Name)) //user
             {
                 // User exist : load ladingpage for users
-                GeneralSettings generalSettings = IoCFactory.Container.Resolve<GeneralSettings>();
-                var landingPageForUsers = generalSettings.GetEntryValue("landingPageForUsers").ToString();
+                
+                var landingPageForUsers = GeneralSettings.LandingPageForUsers;
 
                 if (landingPageForUsers.Split(',').Length == 3)//check wheter 3 values exist for teh action
                 {
@@ -47,11 +50,10 @@ namespace BExIS.Web.Shell.Controllers
                         landingPageForUsers.Split(',')[2].Trim());//action
                 }
 
-
                 //if the landingPage not null and the action is accessable
                 if (landingPage == null || !this.IsAccessible(landingPage.Item1, landingPage.Item2, landingPage.Item3) || !checkPermission(landingPage))
                 {
-                    landingPageForUsers = generalSettings.GetEntryValue("landingPageForUsersNoPermission").ToString();
+                    landingPageForUsers = GeneralSettings.LandingPageForUsersNoPermission;
 
                     if (landingPageForUsers.Split(',').Length == 3)//check wheter 3 values exist for teh action
                     {
@@ -86,16 +88,15 @@ namespace BExIS.Web.Shell.Controllers
                 return View(); // open shell/home/index
 
             // return result of defined landing page
-            var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);  
+            var result = this.Render(landingPage.Item1, landingPage.Item2, landingPage.Item3);
             return Content(result.ToHtmlString(), "text/html");
         }
-        
-        [DoesNotNeedDataAccess]
-        public ActionResult Nopermission() {
 
+        [DoesNotNeedDataAccess]
+        public ActionResult Nopermission()
+        {
             return View("NoPermission");
         }
-
 
         [DoesNotNeedDataAccess]
         public ActionResult SessionTimeout()
@@ -116,12 +117,9 @@ namespace BExIS.Web.Shell.Controllers
             {
                 var database = versionManager.GetLatestVersion().Value;
 
-                // Workspace
-                string filePath = Path.Combine(AppConfiguration.WorkspaceGeneralRoot, "General.Settings.xml");
-                XDocument settings = XDocument.Load(filePath);
-                XElement entry = XmlUtility.GetXElementByAttribute("entry", "key", "version", settings);
-                var workspace = entry.Attribute("value")?.Value;
-
+                // load version from workspace in settings file of general
+                
+                string workspace = GeneralSettings.ApplicationVersion;
 
                 var model = new VersionModel()
                 {
@@ -144,7 +142,6 @@ namespace BExIS.Web.Shell.Controllers
 
             try
             {
-
                 var areaName = LandingPage.Item1;
                 if (areaName == "")
                 {
@@ -155,19 +152,19 @@ namespace BExIS.Web.Shell.Controllers
 
                 var userName = HttpContext.User?.Identity?.Name;
                 var operation = operationManager.Find(areaName, controllerName, "*");
-                
+
                 var feature = operation.Feature;
                 if (feature == null) return true;
 
                 var result = userManager.FindByNameAsync(userName);
 
-
                 if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id))
                 {
                     return true;
                 }
-                else { 
-                    return false; 
+                else
+                {
+                    return false;
                 }
             }
             finally

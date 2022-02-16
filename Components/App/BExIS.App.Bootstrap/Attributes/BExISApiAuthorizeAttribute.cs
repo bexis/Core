@@ -6,6 +6,8 @@ using System.Linq;
 using BExIS.Security.Services.Subjects;
 using System;
 using System.Net.Http;
+using BExIS.App.Bootstrap.Helpers;
+using BExIS.Security.Entities.Subjects;
 
 namespace BExIS.App.Bootstrap.Attributes
 {
@@ -13,12 +15,11 @@ namespace BExIS.App.Bootstrap.Attributes
     {
         public override void OnAuthorization(HttpActionContext actionContext)
         {
-            var featurePermissionManager = new FeaturePermissionManager();
-            var operationManager = new OperationManager();
-            var userManager = new UserManager();
-
-            try
+            using (var featurePermissionManager = new FeaturePermissionManager())
+            using (var operationManager = new OperationManager())
+            using (var userManager = new UserManager())
             {
+                
                 // Check for HTTPS
                 //if (actionContext.Request.RequestUri.Scheme != Uri.UriSchemeHttps)
                 //{
@@ -39,37 +40,13 @@ namespace BExIS.App.Bootstrap.Attributes
                 var feature = operation.Feature;
                 if (feature != null && !featurePermissionManager.Exists(null, feature.Id))
                 {
-                    if (actionContext.Request.Headers.Authorization == null)
-                    {
-                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                        return;
-                    }
+                    User user = null;
+                    string auth = actionContext.Request.Headers.Authorization?.ToString();
+                    actionContext.Response = BExISAuthorizeHelper.HttpRequestAuthorization(auth, feature.Id, out user);
+                    actionContext.ControllerContext.RouteData.Values.Add("user", user);
 
-                    var token = actionContext.Request.Headers.Authorization?.ToString().Substring("Bearer ".Length).Trim();
-                    // resolve the token to the corresponding user
-                    var users = userManager.Users.Where(u => u.Token == token);
-
-                    if (users == null || users.Count() != 1)
-                    {
-                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                        actionContext.Response.Content = new StringContent("Bearer token not exist.");
-                        return;
-                    }
-
-                    if (!featurePermissionManager.HasAccess(users.Single().Id, feature.Id))
-                    {
-                        actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-                        actionContext.Response.Content = new StringContent("Token is not valid.");
-
-                        return;
-                    }
+                    return;
                 }
-            }
-            finally
-            {
-                featurePermissionManager.Dispose();
-                operationManager.Dispose();
-                userManager.Dispose();
             }
         }
     }
