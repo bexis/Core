@@ -1933,7 +1933,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             using (var featurePermissionManager = new FeaturePermissionManager())
             using (var operationManager = new OperationManager())
             {
-                var operation = operationManager.Find("DDM", "Requests", "*");
+                var operation = operationManager.Find("DDM", "RequestsSend", "*");
                 if (operation != null)
                 {
                     var feature = operation.Feature;
