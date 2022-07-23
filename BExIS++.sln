@@ -152,7 +152,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BExIS.Dim.Helpers.UnitTests", "Modules\DIM\BExIS.Dim.Helpers.UnitTests\BExIS.Dim.Helpers.UnitTests.csproj", "{945A3D6D-9E77-4E77-8EDE-62F621FAB978}"
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Modules.BMM.UI", "Console\BExIS.Web.Shell\Areas\BMM\BExIS.Modules.BMM.UI.csproj", "{59D17A80-2D4A-438A-8EDD-CCE4DE2A26AD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ALM", "ALM", "{5FA19057-FAE7-4125-8DD5-4567C5EA61D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Modules.Dim.UI.Tests", "Modules\DIM\BExIS.Modules.Dim.UI.Tests\BExIS.Modules.Dim.UI.Tests\BExIS.Modules.Dim.UI.Tests.csproj", "{7B1A67C9-42E4-4995-A6B2-790B13F10471}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dim.Helpers.Tests", "Modules\DIM\BExIS.Dim.Helpers.Tests\BExIS.Dim.Helpers.Tests.csproj", "{A1354F07-B8CE-4632-B1A1-1D5BD18E7F0E}"
+EndProject
+
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BEXIS.ALM.Entities", "Console\BExIS.Web.Shell\Areas\ALM\BEXIS.ALM.Entities\BEXIS.ALM.Entities.csproj", "{96E90AC9-918E-4D2E-A9B7-1A4654884DE3}"
 EndProject
@@ -1804,8 +1808,8 @@ Global
 		{028FF94A-D430-4AA3-88B7-9538900328FB} = {CBCBF5EA-7920-4059-BE6B-F928CC2BEA70}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

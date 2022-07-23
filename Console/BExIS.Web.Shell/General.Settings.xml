@@ -15,6 +15,6 @@
   <entry key="faq" value="https://github.com/BEXIS2/Core/wiki/FAQ" type="string" />
   <entry key="HowToCreditData" value="https://github.com/bexis/Documents/blob/master/HowTo/HowToCreditData.md" type="string" />
 
-  <entry key="version" value="2.14.4" type="string" />
+  <entry key="version" value="2.14.6" type="string" />
 
 </settings>

@@ -30,6 +30,8 @@
     bool hasSimpleMapping = Model.PartySimpleMappingExist;
     bool hasComplexMapping = Model.PartyComplexMappingExist;
 
+    bool isMappingSelection = Model.MappingSelectionField;
+
     string partyid = "";
     if (Model.PartyId != 0)
     {
@@ -130,7 +132,7 @@
     displayName = String.Join(" ", wordList);
 
     // Make first char uppercase
-    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1);
+    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1).Replace("_", " ");
 
     if (Model.EntityMappingExist)
     {
@@ -300,22 +302,8 @@
 
                                 <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping.ToString()" id="@idInput" idbyxpath="@idByXpath" onKeyUp="OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping.ToString()" partyid="@partyid" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath">
 
-                                // add icons to show linked / not linked party entries; hide both by default
-                                var notLinkedID = @idInput + "_notLinked";
-                                var linkedID = @idInput + "_linked";
-                                <span id="@notLinkedID" style="display: none; font-size: 1em; color: Tomato;" title="Entry is not linked! Please type and use an entry from the list if available."><i class="fa fa-times-circle"></i></span>
-                                <span id="@linkedID" style="display: none; font-size: 1em; color: green;" title="Entry is linked."><i class="fa fa-check-circle"></i></span>
+                                    <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping.ToString()" id="@idInput" idbyxpath="@idByXpath" onKeyUp="OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping.ToString()" partyid="@partyid" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath" isMappingSelection="@isMappingSelection">
 
-                                // show not linked, when on any content, but not linked
-                                if ((@hasSimpleMapping || hasComplexMapping) && Model.MappingSelectionField && Model.PartyMappingExist && partyid == "" && Model.Value != null)
-                                {
-                                    <script type="text/javascript">$("#@notLinkedID").show()</script>
-                                }
-                                // show linked, when a party id is selected
-                                else if ((@hasSimpleMapping || hasComplexMapping) && Model.MappingSelectionField && Model.PartyMappingExist && partyid != "" && Model.Value != null)
-                                {
-                                    <script type="text/javascript">$("#@linkedID").show()</script>
-                                }
 
                                 <style>
                                     .ui-autocomplete-loading {
@@ -396,7 +384,20 @@
                                 {
                                     if (Model.EntityMappingExist && !string.IsNullOrEmpty(Model.EntityUrl))
                                     {
-                                        <a href="@Model.EntityUrl" target="_blank">@Model.Value</a>
+                                        if (Model.EntityMappingExist && !string.IsNullOrEmpty(Model.EntityUrl))
+                                        {
+                                            <a href="@Model.EntityUrl" target="_blank">@Model.Value</a> 
+                                        }
+                                        else if (displayName == "Email")
+                                        {
+                                            string value = Model.Value.ToString();
+                                            string[] email_parts = value.Split('@');
+                                            value = String.Join("<span>werwe</span>", email_parts);
+                                            @email_parts[0]<span>&#x40;</span><!--<span>werwe</span>-->@email_parts[1] }
+                                        else
+                                        {
+                                            @Html.DisplayWithLinksFor(m => m.Value)
+                                        }
                                     }
                                     else if (displayName == "Email")
                                     {
