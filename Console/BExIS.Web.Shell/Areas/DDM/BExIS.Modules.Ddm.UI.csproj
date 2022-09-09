@@ -147,6 +147,7 @@
   <ItemGroup>
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
+    <Compile Include="Controllers\PublicDataController.cs" />
     <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -378,6 +379,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\ddm.css" />
+    <Content Include="Content\Images\ui-anim_basic_16x16.gif" />
     <Content Include="Ddm.Manifest.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -465,7 +467,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\Images\" />
     <Folder Include="Views\Export\" />
     <Folder Include="Views\Home\" />
     <Folder Include="Views\PublicSearch\" />
