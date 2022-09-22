@@ -486,21 +486,6 @@
 				This class is designed as a Web API to access data sets externally.
 				The provided HTTPGET functions provide an overview of all data records and basic information about a selected data record.
 
-<<<<<<< Updated upstream
-				The information about a dataset shows the title, description, data structure, and metadata structure.
-			</remarks>
-		</member>
-		<member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get">
-			<summary>
-				This function displays a list of all datasets Id´s in the system.
-			</summary>
-			<returns>IEnumerable with ApiSimpleDatasetModel</returns>
-		</member>
-		<member name="M:BExIS.Modules.Dim.UI.Controllers.API.DatasetOutController.Get(System.Int64)">
-			<summary>
-				This function returns basic information from the latest version of a data set. An identifier is required.
-			</summary>
-=======
         The information about a dataset shows the title, description, data structure, and metadata structure.
       </remarks>
     </member>
@@ -520,7 +505,7 @@
       <summary>
         This function returns basic information from the latest version of a data set. An identifier is required.
       </summary>
->>>>>>> Stashed changes
+
 
 			<param name="id">Identifier of a dataset</param>
 			<returns>
