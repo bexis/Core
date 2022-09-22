@@ -309,8 +309,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UploadLocalization.zh-CN.resx</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\DQController.cs" />
-    <Compile Include="Controllers\DQModel.cs" />
     <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\VisualizationController.cs" />
     <Compile Include="Helper\VIMSeedDataGenerator.cs" />
@@ -580,8 +578,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Visualization\Index.cshtml" />
-    <Content Include="Views\ShowDatasetList.cshtml" />
-    <Content Include="Views\ShowDQ.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -618,8 +614,6 @@
       <Project>{252F7872-A69C-43A6-84B4-4D2ABDBDD9AB}</Project>
       <Name>BExIS.Xml.Helpers</Name>
     </ProjectReference>
-<<<<<<< Updated upstream
-=======
     <ProjectReference Include="..\..\..\..\Components\XML\BExIS.Xml.Models\BExIS.Xml.Models.csproj">
       <Project>{C0C9F0F2-9E65-448D-8000-D311DB326460}</Project>
       <Name>BExIS.Xml.Models</Name>
@@ -640,7 +634,6 @@
       <Project>{58f2040a-eeb5-4175-a439-b6dbce50be01}</Project>
       <Name>IDIV.Modules.Mmm.UI</Name>
     </ProjectReference>
->>>>>>> Stashed changes
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_GlobalResources\UploadLocalization.zh-CN.resx">
