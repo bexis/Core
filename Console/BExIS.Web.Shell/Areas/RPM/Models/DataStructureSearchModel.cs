@@ -7,6 +7,10 @@ using System.Xml;
 using BExIS.Xml.Helpers;
 using System.Xml.Linq;
 using BExIS.Modules.Rpm.UI.Classes;
+using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Entities.Data;
+using Vaiona.Persistence.Api;
+
 
 namespace BExIS.Modules.Rpm.UI.Models
 {
@@ -49,35 +53,37 @@ namespace BExIS.Modules.Rpm.UI.Models
 
         public StructuredDataStructurePreviewModel fill(long dataStructureId)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            StructuredDataStructure datastructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
-            VariablePreview variablePreview = new VariablePreview();
-
-            if (datastructure != null)
+            using (DataStructureManager dataStructureManager = new DataStructureManager())
             {
-                foreach (Variable v in DataStructureIO.getOrderedVariables(datastructure))
+                StructuredDataStructure datastructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+                VariablePreview variablePreview = new VariablePreview();
+
+                if (datastructure != null)
                 {
-                    v.Unit = v.Unit ?? new Unit();
-                    v.DataAttribute = v.DataAttribute ?? new DataAttribute();
-                    v.DataAttribute.DataType = v.DataAttribute.DataType ?? new DataType();
+                    foreach (Variable v in DataStructureIO.getOrderedVariables(datastructure))
+                    {
+                        v.Unit = v.Unit ?? new Unit();
+                        v.DataAttribute = v.DataAttribute ?? new DataAttribute();
+                        v.DataAttribute.DataType = v.DataAttribute.DataType ?? new DataType();
 
-                    variablePreview = new VariablePreview();
-                    variablePreview.Id = v.Id;
-                    variablePreview.Label = v.Label;
-                    variablePreview.Description = v.Description;
-                    variablePreview.isOptional = v.IsValueOptional;
-                    variablePreview.Unit = v.Unit.Name;
-                    variablePreview.DataType = v.DataAttribute.DataType.Name;
-                    variablePreview.SystemType = v.DataAttribute.DataType.SystemType;
+                        variablePreview = new VariablePreview();
+                        variablePreview.Id = v.Id;
+                        variablePreview.Label = v.Label;
+                        variablePreview.Description = v.Description;
+                        variablePreview.isOptional = v.IsValueOptional;
+                        variablePreview.Unit = v.Unit.Name;
+                        variablePreview.DataType = v.DataAttribute.DataType.Name;
+                        variablePreview.SystemType = v.DataAttribute.DataType.SystemType;
 
-                    this.VariablePreviews.Add(variablePreview);
+                        this.VariablePreviews.Add(variablePreview);
+                    }
+                    return this;
                 }
-                return this;
+                else
+                {
+                    return new StructuredDataStructurePreviewModel();
+                }
             }
-            else
-            {
-                return new StructuredDataStructurePreviewModel();
-            } 
         }
     }
 
@@ -89,6 +95,7 @@ namespace BExIS.Modules.Rpm.UI.Models
         public bool inUse { get; set; }
         public bool Structured { get; set; }
         public bool Preview { get; set; }
+        public List<string> LinkedToDatasets { get; set; }
 
         public DataStructureResultStruct()
         {
@@ -98,46 +105,74 @@ namespace BExIS.Modules.Rpm.UI.Models
             this.inUse = false;
             this.Structured = false;
             this.Preview = false;
+
         }
 
         public DataStructureResultStruct(long dataStructureId)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-            StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
-            if (structuredDataStructure != null)
+            using (DataStructureManager dataStructureManager = new DataStructureManager())
             {
-                this.Id = structuredDataStructure.Id;
-                this.Title = structuredDataStructure.Name;
-                this.Description = structuredDataStructure.Description;
-
-                if (structuredDataStructure.Datasets != null && structuredDataStructure.Datasets.Count > 0)
-                    this.inUse = true;
-                else
+                StructuredDataStructure structuredDataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+                if (structuredDataStructure != null)
+                {
+                    this.Id = structuredDataStructure.Id;
+                    this.Title = structuredDataStructure.Name;
+                    this.Description = structuredDataStructure.Description;
                     this.inUse = false;
 
-                this.Structured = true;
-                this.Preview = false;
-            }
-            else 
-            {
-                UnStructuredDataStructure unStructuredDataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(dataStructureId);
-                if (unStructuredDataStructure != null)
-                {
-                    this.Id = unStructuredDataStructure.Id;
-                    this.Title = unStructuredDataStructure.Name;
-                    this.Description = unStructuredDataStructure.Description;
+                    DatasetManager datasetManager = null;
+                    try
+                    {
+                        datasetManager = new DatasetManager();
+                        foreach (Dataset d in structuredDataStructure.Datasets)
+                        {
+                            if (datasetManager.RowAny(d.Id))
+                            {
+                                this.inUse = true;
+                                break;
+                            }
+                            else
+                            {
+                                foreach (DatasetVersion dv in d.Versions)
+                                {
+                                    if (datasetManager.GetDatasetVersionEffectiveTuples(dv).Any())
+                                    {
+                                        this.inUse = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        datasetManager.Dispose();
+                    }
 
-                    if (unStructuredDataStructure.Datasets != null && unStructuredDataStructure.Datasets.Count > 0)
-                        this.inUse = true;
-                    else
-                        this.inUse = false;
-
-                    this.Structured = false;
+                    this.Structured = true;
                     this.Preview = false;
                 }
                 else
                 {
-                    new DataStructureResultStruct();
+                    UnStructuredDataStructure unStructuredDataStructure = dataStructureManager.UnStructuredDataStructureRepo.Get(dataStructureId);
+                    if (unStructuredDataStructure != null)
+                    {
+                        this.Id = unStructuredDataStructure.Id;
+                        this.Title = unStructuredDataStructure.Name;
+                        this.Description = unStructuredDataStructure.Description;
+
+                        if (unStructuredDataStructure.Datasets != null && unStructuredDataStructure.Datasets.Any())
+                            this.inUse = true;
+                        else
+                            this.inUse = false;
+
+                        this.Structured = false;
+                        this.Preview = false;
+                    }
+                    else
+                    {
+                        new DataStructureResultStruct();
+                    }
                 }
             }
         }
@@ -162,6 +197,12 @@ namespace BExIS.Modules.Rpm.UI.Models
         {
             dataStructureResults = new List<DataStructureResultStruct>();
             this.fill(previewIds, saerchTerms);
+        }
+
+        public DataStructureResultsModel(long[] previewIds, string saerchTerms, bool structured, bool unstructured)
+        {
+            dataStructureResults = new List<DataStructureResultStruct>();
+            this.fill(previewIds, saerchTerms, structured, unstructured);
         }
 
         private List<DataStructure> getStucturedDataStructures(string searchTerms, DataStructureManager dataStructureManager)
@@ -206,52 +247,93 @@ namespace BExIS.Modules.Rpm.UI.Models
             return (results);
         }
 
-        public DataStructureResultsModel fill(long[] previewIds, string saerchTerms)
+        public DataStructureResultsModel fill(long[] previewIds, string saerchTerms, bool structured = true, bool unstructured = true)
         {
             DataStructureResultStruct dataStructureResult = new DataStructureResultStruct();
 
-        DataStructureManager dataStructureManager = null;
-            try
+            DataStructureManager dataStructureManager = null;
+            DatasetManager datasetManager = null;
+
+                try
             {
                 dataStructureManager = new DataStructureManager();
-                foreach (DataStructure ds in getStucturedDataStructures(saerchTerms, dataStructureManager))
+                datasetManager = new DatasetManager();
+
+                using (IUnitOfWork uow = this.GetBulkUnitOfWork())
                 {
-                    dataStructureResult = new DataStructureResultStruct();
-                    dataStructureResult.Id = ds.Id;
-                    dataStructureResult.Title = ds.Name;
-                    dataStructureResult.Description = ds.Description;
+                    if (structured)
+                    {
+                        foreach (DataStructure ds in getStucturedDataStructures(saerchTerms, dataStructureManager))
+                        {
+                            dataStructureResult = new DataStructureResultStruct();
+                            dataStructureResult.Id = ds.Id;
+                            dataStructureResult.Title = ds.Name;
+                            dataStructureResult.Description = ds.Description;
+                            dataStructureResult.LinkedToDatasets = new List<string>();
+                            foreach (Dataset d in ds.Datasets)
+                            {
 
-                    if (ds.Datasets.Count > 0)
-                        dataStructureResult.inUse = true;
+                                dataStructureResult.LinkedToDatasets.Add(d.Id.ToString());
+                                if (datasetManager.RowAny(d.Id, uow))
+                                {
+                                    dataStructureResult.inUse = true;
+                                    //break;
+                                }
 
-                    dataStructureResult.Structured = true;
+                                // currently not working
+                                /* else
+                                {
+                                    foreach (DatasetVersion dv in d.Versions)
+                                    {
+                                        if (datasetManager.GetDatasetVersionEffectiveTuples(dv).Any())
+                                        {
+                                            dataStructureResult.inUse = true;
+                                            break;
+                                        }
+                                    }
+                                }*/
+                            }
 
-                    if (previewIds != null && previewIds.Contains(ds.Id))
-                        dataStructureResult.Preview = true;
+                            dataStructureResult.Structured = true;
 
-                    this.dataStructureResults.Add(dataStructureResult);
+                            if (previewIds != null && previewIds.Contains(ds.Id))
+                                dataStructureResult.Preview = true;
+
+                            this.dataStructureResults.Add(dataStructureResult);
+                        }
+                    }
                 }
-
-                foreach (DataStructure ds in getUnStucturedDataStructures(saerchTerms, dataStructureManager))
+                if (unstructured)
                 {
-                    dataStructureResult = new DataStructureResultStruct();
-                    dataStructureResult.Id = ds.Id;
-                    dataStructureResult.Title = ds.Name;
-                    dataStructureResult.Description = ds.Description;
+                    foreach (DataStructure ds in getUnStucturedDataStructures(saerchTerms, dataStructureManager))
+                    {
+                        dataStructureResult = new DataStructureResultStruct();
+                        dataStructureResult.Id = ds.Id;
+                        dataStructureResult.Title = ds.Name;
+                        dataStructureResult.Description = ds.Description;
+                        dataStructureResult.LinkedToDatasets = new List<string>();
+                        
+                        foreach (Dataset d in ds.Datasets)
+                        {
+                            dataStructureResult.LinkedToDatasets.Add(d.Id.ToString());
+                        }
 
-                    if (ds.Datasets.Count > 0)
-                        dataStructureResult.inUse = true;
 
-                    if (previewIds != null && previewIds.Contains(ds.Id))
-                        dataStructureResult.Preview = true;
+                            if (ds.Datasets.Count > 1) // Allow to edit, if only one file is linked to it
+                            dataStructureResult.inUse = true;
 
-                    this.dataStructureResults.Add(dataStructureResult);
+                        if (previewIds != null && previewIds.Contains(ds.Id))
+                            dataStructureResult.Preview = true;
+
+                        this.dataStructureResults.Add(dataStructureResult);
+                    }
                 }
                 return this;
             }
             finally
             {
                 dataStructureManager.Dispose();
+                datasetManager.Dispose();
             }
         }
 

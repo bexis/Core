@@ -93,7 +93,7 @@
                      "</div>"
                     )
                     .Groupable(false)
-                    .Sortable(true)
+                    .Sortable(false)
                     .Filterable(false);
                 }
 
@@ -111,11 +111,11 @@
                         )
             .Pageable(paging =>
                 paging
-                        .Style(pagerStyles)
-                        .PageSize(PageSize)
+                    .Style(pagerStyles)
+                    .PageSize(20, new[] { 10, 20, 50, 100 })
                     .Position(GridPagerPosition.Both)
-                        .PageTo(CurrentPage)
-                    )
+                    .PageTo(CurrentPage)
+            )
 
             .Sortable()
             .Filterable()
@@ -180,7 +180,7 @@
 			},
 			success: function (result) {
 				if (result) {
-					window.top.location = "/ddm/Data/ShowData/" + id;
+					window.open("/ddm/Data/Show/" + id, "_blank");
 				} else {
 					
 					alert("Dataset is locked. Please try again later.");

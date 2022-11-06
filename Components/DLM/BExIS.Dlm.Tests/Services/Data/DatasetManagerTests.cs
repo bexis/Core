@@ -8,18 +8,16 @@ using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Dlm.Tests.Helpers;
 using BExIS.Utils.Config;
 using BExIS.Utils.Data.Helpers;
-using BExIS.Web.Shell;
-using BExIS.Web.Shell.Helpers;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BExIS.Dlm.Orm.NH.Qurying;
 using BExIS.Dlm.Entities.Administration;
+using BExIS.Utils.NH.Querying;
 
 namespace BExIS.Dlm.Tests.Services.Data
-{    
+{
     public class DatasetManagerTests
     {
         private TestSetupHelper helper = null;
@@ -71,6 +69,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
 
                 dm.PurgeDataset(dataset.Id);
+                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -108,6 +107,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dataset.Status.Should().Be(DatasetStatus.Deleted, "Dataset must be in Deleted status.");
 
                 dm.PurgeDataset(dataset.Id);
+                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -116,7 +116,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 mdm.Dispose();
             }
         }
-
 
         [Test()]
         public void CreateDatasetVersionTest()
@@ -139,7 +138,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples);
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples,"Javad");
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
                 dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
@@ -157,6 +156,8 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
                 dm.PurgeDataset(dataset.Id, true);
+
+                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -180,7 +181,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 .And(
                     new FilterNumberItemExpression()
                     {
-                        Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.Ineteger, Name = var1Name }
+                        Field = new Field() { DataType = Utils.NH.Querying.DataType.Ineteger, Name = var1Name }
                         ,
                         Operator = NumberOperator.Operation.GreaterThan
                         ,
@@ -189,7 +190,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                     ,
                     new FilterStringItemExpression()
                     {
-                        Field = new Field() { DataType = BExIS.Dlm.Orm.NH.Qurying.DataType.String, Name =  var2Name}
+                        Field = new Field() { DataType = Utils.NH.Querying.DataType.String, Name = var2Name }
                             ,
                         Operator = StringOperator.Operation.EndsWith
                             ,
@@ -197,13 +198,13 @@ namespace BExIS.Dlm.Tests.Services.Data
                     }
                 );
 
-            fex.ToSQL().Should().Be($"(({var1Name}) > (12)) AND (({var2Name}) LIKE ('%Test'))");
+            fex.ToSQL().Should().Be($"(({var1Name}) > (12)) AND (({var2Name}) ILIKE ('%Test'))");
 
             // this is to show how to apply a NOT operator on any other expression.
             // It can be applied on Numeric, String, Date, and any other type of expression
             FilterExpression notFex = UnaryFilterExpression.Not(fex);
-            notFex.ToSQL().Should().Be($"NOT ((({var1Name}) > (12)) AND (({var2Name}) LIKE ('%Test')))");
-            notFex.ToSQL().Should().Be($"NOT ({fex.ToSQL()})"); 
+            notFex.ToSQL().Should().Be($"NOT ((({var1Name}) > (12)) AND (({var2Name}) ILIKE ('%Test')))");
+            notFex.ToSQL().Should().Be($"NOT ({fex.ToSQL()})");
 
             OrderByExpression orderByExpr = new OrderByExpression(
                                                     new List<OrderItemExpression>() {
@@ -229,7 +230,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples);
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples, "Javad");
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
                 dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
@@ -250,6 +251,8 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
                 dm.PurgeDataset(dataset.Id, true);
+
+                dsHelper.PurgeAllDataStructures();
             }
             finally
             {
@@ -257,7 +260,6 @@ namespace BExIS.Dlm.Tests.Services.Data
                 rsm.Dispose();
                 mdm.Dispose();
             }
-
         }
 
         [Test()]
@@ -276,7 +278,6 @@ namespace BExIS.Dlm.Tests.Services.Data
             projectionExpression.Items.Add(new ProjectionItemExpression() { FieldName = var1Name });
             projectionExpression.Items.Add(new ProjectionItemExpression() { FieldName = var3Name });
 
-
             // create a dataset and test the filter, sorting, and projectgion
             long numberOfTuples = 10;
             var dm = new DatasetManager();
@@ -294,7 +295,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
 
                 Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
-                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples);
+                dataset = dsHelper.GenerateTuplesForDataset(dataset, dataStructure, numberOfTuples,"Javad");
                 dataset.Should().NotBeNull("The dataset tuple generation has failed!");
 
                 dm.CheckInDataset(dataset.Id, "for testing purposes 2", "Javad", ViewCreationBehavior.None);
@@ -316,6 +317,7 @@ namespace BExIS.Dlm.Tests.Services.Data
                 dm.DataTupleRepo.Evict();
                 dm.DatasetRepo.Evict();
                 dm.PurgeDataset(dataset.Id, true);
+                dsHelper.PurgeAllDataStructures();
             }
             catch (Exception ex)
             {
@@ -327,8 +329,146 @@ namespace BExIS.Dlm.Tests.Services.Data
                 rsm.Dispose();
                 mdm.Dispose();
             }
+        }
 
+        [Test()]
+        public void CheckedIn_NoErrors_StatusShouldCheckInAfterUpdate()
+        {
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
+            {
+                //Arrange
+                var dsHelper = new DatasetHelper();
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = dsHelper.CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+
+                // Act
+                if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                {
+                    var workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+                    dm.EditDatasetVersion(workingCopy, null, null, null);
+
+                    dm.CheckInDataset(dataset.Id, "no update on data tuples", "David", ViewCreationBehavior.None);
+                }
+
+                
+
+                // Assert
+                dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
+
+                dm.PurgeDataset(dataset.Id);
+                dsHelper.PurgeAllDataStructures();
+            }
+        }
+
+        [Test()]
+        public void CheckedOut_NoErrors_StatusShouldCheckOutAfterUpdate()
+        {
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
+            {
+                //Arrange
+                var dsHelper = new DatasetHelper();
+                StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                var rp = dsHelper.CreateResearchPlan();
+                rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                var mds = mdm.Repo.Query().First();
+                mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+
+                // Act
+                if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                {
+                    // Assert
+                    dataset.Status.Should().Be(DatasetStatus.CheckedOut, "Dataset must be in CheckedOut status.");
+                }
+
+
+
+               
+
+                dm.PurgeDataset(dataset.Id);
+                dsHelper.PurgeAllDataStructures();
+            }
+        }
+
+        [Test()]
+        public void UndoCheckout_NoErrors_StatusShouldCheckIn()
+        {
+            using (var dm = new DatasetManager())
+            using (var rsm = new ResearchPlanManager())
+            using (var mdm = new MetadataStructureManager())
+            {
+                try
+                {
+
+                    //Arrange
+                    var dsHelper = new DatasetHelper();
+                    StructuredDataStructure dataStructure = dsHelper.CreateADataStructure();
+                    dataStructure.Should().NotBeNull("Failed to meet a precondition: a data strcuture is required.");
+
+                    var rp = dsHelper.CreateResearchPlan();
+                    rp.Should().NotBeNull("Failed to meet a precondition: a research plan is required.");
+
+                    var mds = mdm.Repo.Query().First();
+                    mds.Should().NotBeNull("Failed to meet a precondition: a metadata strcuture is required.");
+
+                    Dataset dataset = dm.CreateEmptyDataset(dataStructure, rp, mds);
+
+                
+                    // Act
+                    if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                    {
+                        var workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+                        dm.EditDatasetVersion(workingCopy, null, null, null);
+
+                        dm.CheckInDataset(dataset.Id, "no update on data tuples", "David", ViewCreationBehavior.None);
+                    }
+
+                    long count = dm.GetDatasetVersionCount(dataset.Id);
+
+                    // Act
+                    if (dm.IsDatasetCheckedOutFor(dataset.Id, "David") || dm.CheckOutDataset(dataset.Id, "David"))
+                    {
+                        var workingCopy = dm.GetDatasetWorkingCopy(dataset.Id);
+                        dm.EditDatasetVersion(workingCopy, null, null, null);
+                        //dm.CheckInDataset(dataset.Id, "no update on data tuples", "David", ViewCreationBehavior.None);
+
+                        dm.UndoCheckoutDataset(dataset.Id, "David", ViewCreationBehavior.None);
+                    }
+
+                    long countAfterUndo = dm.GetDatasetVersionCount(dataset.Id);
+                    var lastestVersion = dm.GetDatasetLatestVersion(dataset.Id);
+
+                    // Assert
+                    dataset.Status.Should().Be(DatasetStatus.CheckedIn, "Dataset must be in CheckedIn status.");
+                    lastestVersion.Status.Should().Be(DatasetVersionStatus.CheckedIn, "Dataset version must be in CheckedIn status.");
+                    Assert.That(count, Is.EqualTo(countAfterUndo));
+
+                    dm.PurgeDataset(dataset.Id);
+                    dsHelper.PurgeAllDataStructures();
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+            }
         }
     }
-
 }

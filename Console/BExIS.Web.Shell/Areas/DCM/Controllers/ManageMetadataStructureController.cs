@@ -1,4 +1,5 @@
 ﻿using BExIS.Dlm.Entities.MetadataStructure;
+using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.IO.Transform.Output;
 using BExIS.Modules.Dcm.UI.Models;
@@ -28,7 +29,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
-
             try
             {
                 MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
@@ -36,12 +36,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 if (XmlSchemaManager.Delete(metadataStructure))
                 {
                     metadataStructureManager.Delete(metadataStructure);
+
+                    return Json(true);
                 }
 
-                if (metadataStructureManager.Repo.Get(id) == null) return Json(true);
-
                 return Json(false);
-
             }
             catch (Exception ex)
             {
@@ -56,16 +55,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult DownloadSchema(long id)
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            ZipFile zip = new ZipFile();
 
             try
             {
-
                 MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(id);
                 string name = metadataStructure.Name;
 
                 string path = OutputMetadataManager.GetSchemaDirectoryPathFromMetadataStructure(id, metadataStructureManager);
 
-                ZipFile zip = new ZipFile();
+               
                 if (Directory.Exists(path))
                     zip.AddDirectory(path);
 
@@ -80,6 +79,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             finally
             {
                 metadataStructureManager.Dispose();
+                zip.Dispose();
             }
         }
 
@@ -99,7 +99,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             {
                 metadataStructureManager.Dispose();
             }
-
         }
 
         // GET: DCM/ManageMetadataStructure
@@ -113,18 +112,47 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         public ActionResult Save(MetadataStructureModel metadataStructureModel)
         {
             MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+            DatasetManager datasetManager = new DatasetManager();
 
             try
             {
                 if (ModelState.IsValid)
                 {
 
-
-
                     MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(metadataStructureModel.Id);
+
                     metadataStructure = updateMetadataStructure(metadataStructure, metadataStructureModel);
                     metadataStructureManager.Update(metadataStructure);
 
+                    //update dsv title and description if there is a change
+                    //ToDo check if there is a change in the xpaths
+                    // update datasetversion
+
+                    // get all datasetIds which using the metadata structure
+                    var datasetIds = datasetManager.DatasetRepo.Query().Where(d => d.MetadataStructure.Id.Equals(metadataStructure.Id)).Select(d=>d.Id);
+
+                    if (datasetIds.Any())
+                    {
+                        //get all datasetversions of the dataset ids 
+                        var datasetVersionIds = datasetManager.DatasetVersionRepo.Query().Where(dsv => datasetIds.Contains(dsv.Dataset.Id)).Select(dsv => dsv.Id).ToList();
+
+                        //load all titles & descriptions from versions
+                        var allTitles = xmlDatasetHelper.GetInformationFromVersions(datasetVersionIds, metadataStructure.Id, NameAttributeValues.title);
+                        var allDescriptions = xmlDatasetHelper.GetInformationFromVersions(datasetVersionIds, metadataStructure.Id, NameAttributeValues.description);
+
+
+                        // update each datasetversion
+                        foreach (var datasetVersionId in datasetVersionIds)
+                        {
+                            // load dataset version
+                            var datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+
+                            datasetVersion.Title = allTitles.ContainsKey(datasetVersion.Id) ? allTitles[datasetVersion.Id] : string.Empty;
+                            datasetVersion.Description = allDescriptions.ContainsKey(datasetVersion.Id) ? allDescriptions[datasetVersion.Id] : string.Empty;
+
+                            datasetManager.UpdateDatasetVersion(datasetVersion);
+                        }
+                    }
 
                     return Json(true);
                 }
@@ -138,8 +166,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             finally
             {
                 metadataStructureManager.Dispose();
+                datasetManager.Dispose();
             }
-
         }
 
         private MetadataStructureManagerModel GetDefaultModel()
@@ -148,7 +176,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
             try
             {
-
                 MetadataStructureManagerModel tmp = new MetadataStructureManagerModel();
 
                 //load all metadatastructure
@@ -244,18 +271,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return xmlMetadataHelper.GetAllXPathsOfSimpleAttributes(metadatastructureId);
         }
 
-        // Improvement: [Sven] Vereinfachung der Abfrage, ggfs. muss alte Version wiederhergestellt werden, falls es nicht korrekt funktioniert.  
+        // Improvement: [Sven] Vereinfachung der Abfrage, ggfs. muss alte Version wiederhergestellt werden, falls es nicht korrekt funktioniert.
         private List<EntityModel> GetEntityModelList()
         {
-            EntityManager entityManager = new EntityManager();
-
-            return entityManager.Entities.Where(e => e.UseMetadata).ToList().Select(e =>
-                      new EntityModel()
-                      {
-                          Name = e.Name,
-                          ClassPath = e.EntityType.FullName
-                      }
-                  ).ToList();
+            using (EntityManager entityManager = new EntityManager())
+            {
+                return entityManager.Entities.Where(e => e.UseMetadata).ToList().Select(e =>
+                          new EntityModel()
+                          {
+                              Name = e.Name,
+                              ClassPath = e.EntityType.FullName
+                          }
+                      ).ToList();
+            }
         }
 
         private MetadataStructure updateMetadataStructure(MetadataStructure metadataStructure,
@@ -267,7 +295,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 XmlDocument xmlDocument = new XmlDocument();
                 if (metadataStructure.Extra != null)
                 {
-
                     if (metadataStructure.Extra as XmlDocument != null)
                         xmlDocument = metadataStructure.Extra as XmlDocument;
                     else
@@ -348,7 +375,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
 
                 metadataStructure.Extra = xmlDocument;
-
             }
             return metadataStructure;
         }

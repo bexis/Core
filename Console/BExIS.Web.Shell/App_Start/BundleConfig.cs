@@ -8,8 +8,8 @@ namespace BExIS.Web.Shell
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                "~/Scripts/jquery-2.1.4.min.js",
-                "~/Scripts/jquery-migrate-1.2.1.min.js",
+                "~/Scripts/jquery-2.2.4.min.js",
+                "~/Scripts/jquery-migrate-1.4.1.min.js",
                 "~/Scripts/jQueryUI/1.10.3/js/jquery-ui-1.10.3.custom.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -46,6 +46,9 @@ namespace BExIS.Web.Shell
             bundles.Add(new ScriptBundle("~/bundles/switchery").Include(
                 "~/Scripts/switchery/switchery.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/datatables").Include(
+                "~/Scripts/DataTables/media/js/jquery.dataTables.js"));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                 //$"~/{Themes.GetResourcePath("Styles")}/bexis-jquery-ui.css",
                 //$"~/{Themes.GetResourcePath("Styles")}/bexis-font-awesome-extension.css",
@@ -58,7 +61,18 @@ namespace BExIS.Web.Shell
                 "~/Content/bootstrap-slider.min.css",
                 "~/Scripts/minimap/minimap.min.css",
                 "~/Content/handsontable/handsontable.full.css",
+                "~/Content/DataTables/media/css/jquery.dataTables.css",
                 "~/Content/Site.css"));
+
+            bundles.Add(new StyleBundle("~/bundles/general_bexis").Include(
+
+                 "~/Themes/Default/Styles/bexis-custom-style.css",
+                 "~/Themes/Default/Styles/bexis-jquery-ui.css",
+                 "~/Themes/Default/Styles/bexis-font-awesome-extension.css",
+                 "~/Themes/Default/Styles/bexis-elements.css",
+                 "~/Themes/Default/Styles/bexis-datatables-net.css",
+                 "~/Themes/Default/Styles/bexis-telerik.css"
+                ));
 
             BundleTable.EnableOptimizations = true;
         }

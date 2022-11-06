@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
-  <entry key="key1" value="value1" type="String"/>
-  <entry key="key2" value="value2" type="String"/>
-  <entry key="key3" value="21" type="Int16"/>
+  <entry key="help" value="https://github.com/bexis/Documents/blob/master/HowTo/HowToSearch.md" type="String"/>
+
+  <entry key="show_primary_data_tab" value="true" type="String"/>
+  <entry key="show_data_structure_tab" value="true" type="String"/>  
+  <entry key="show_link_tab" value="true" type="String"/>
+  <entry key="show_permission_tab" value="false" type="String"/>
+  <entry key="show_publish_tab" value="false" type="String"/>
+  <entry key="show_attachments_tab" value="true" type="String"/>
+  
+  <entry key="show_tabs_deactivated" value="false" type="String"/>
+
+  <entry key="check_public_metadata" value="true" type="String" description="Set true to enable to only show metadata for not-logged in users, if public."/>
+
+	<entry key="reduce_versions_select_logged_in" value="true" type="Boolean"/>
+	<entry key="restrict_latest_version_logged_in" value="false" type="Boolean"/>
 </settings>

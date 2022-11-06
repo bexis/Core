@@ -2,6 +2,9 @@
 @using BExIS.Modules.Dcm.UI.Models
 @using BExIS.Utils.WebHelpers
 @using Telerik.Web.Mvc.UI
+@using System.Text.RegularExpressions
+@using System.Web.Mvc
+
 @{
     string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
     string idInput = id + "_Input";
@@ -18,30 +21,43 @@
     bool showOptional = false;
 
     string displayName = "";
-    char tmp = ' ';
 
-    foreach (char letter in Model.DisplayName)
+    string autoCompleteType = "";
+
+    bool userIsLoggedIn = false;
+    if (User.Identity.Name != "")
     {
-        if (Model.DisplayName.First() == letter)
-        {
-            tmp = letter;
-            displayName += letter;
-        }
-        else
-        {
-            if (Char.IsUpper(letter) && Char.IsLower(tmp))
-            {
-                displayName += " " + letter;
-            }
-            else
-            {
-                displayName += letter;
-            }
+        userIsLoggedIn = true;
+    }
 
-            tmp = letter;
+    // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
+    displayName = Regex.Replace(Model.DisplayName, "((?<=[a-z])[A-Z])", " $1");
+
+    // split at " "
+    string[] wordList = displayName.Split(new char[0]);
+
+    // lowercase all words, except of uppercase abbreviations (e.g. URL)
+    for (int i = 0; i < wordList.Length; i++)
+    {
+        if (wordList[i].ToUpper() != wordList[i])
+        {
+            wordList[i] = wordList[i].ToLower();
         }
     }
 
+    displayName = String.Join(" ", wordList);
+
+    // Make first char uppercase
+    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1);
+
+    if (Model.EntityMappingExist)
+    {
+        autoCompleteType = "Entity";
+    }
+    else if (Model.PartyMappingExist)
+    {
+        autoCompleteType = "PartyCustomType";
+    }
 }
 
 @if (Model.Number > 1)
@@ -59,12 +75,15 @@
     lockedClass = "bx-disabled";
 }
 
-<div id="@id" class="metadataAttributeContent">
+
+@if ((displayName != "Phone" || userIsLoggedIn) && (displayName != "Mobile" || userIsLoggedIn))
+{
+    <div id="@id" class="metadataAttributeContent">
         <table>
             <tr>
                 <td class="metadataAttributeLabel">
                     @if (Model.MinCardinality > 0)
-{
+                    {
                         <b title="This field is required" style="color:red">*</b>
                     }
 
@@ -78,7 +97,7 @@
                         @Html.DisplayWithLinksFor(m => m.Value)
                     }
 
-                    
+
                 </td>
                 <td class="metadataAttributeOption">
 
@@ -96,4 +115,5 @@
                 </td>
             </tr>
         </table>
-</div>
+    </div>
+}

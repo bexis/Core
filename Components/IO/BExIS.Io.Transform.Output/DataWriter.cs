@@ -11,7 +11,6 @@ using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -21,32 +20,33 @@ using Path = System.IO.Path;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.IO.Transform.Output
 {
     /// <summary>
     /// DataWriter is an abstract class that has basic functions for storing file.
-    /// 
+    ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public abstract class DataWriter
     {
         #region public
+
         /// <summary>
         /// if a few errors occur, they are stored here
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref="Error"/>    
+        /// <seealso cref="Error"/>
         public List<Error> ErrorMessages { get; set; }
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         public String[] VisibleColumns { get; set; }
 
-        #endregion
+        #endregion public
 
         #region protected
 
@@ -54,36 +54,35 @@ namespace BExIS.IO.Transform.Output
         /// File to be read as stream
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref="Stream"/>  
+        /// <seealso cref="Stream"/>
         protected Stream FileStream { get; set; }
 
         /// <summary>
-        /// List of VariableIdentifiers 
+        /// List of VariableIdentifiers
         /// with VariableName and VariableID
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         protected List<VariableIdentifier> VariableIdentifiers = new List<VariableIdentifier>();
 
         /// <summary>
         ///
         /// </summary>
         /// <remarks></remarks>
-        /// <seealso cref=""/>        
+        /// <seealso cref=""/>
         protected List<List<string>> VariableIdentifierRows = new List<List<string>>();
 
         protected StructuredDataStructure dataStructure = null;
 
         // line number
         protected int rowIndex;
-        #endregion
+
+        #endregion protected
 
         //managers
-        protected DatasetManager DatasetManager = new DatasetManager();
-
+        protected DatasetManager DatasetManager;
 
         protected IOUtility IOUtility;
-
 
         //Constructor
 
@@ -92,21 +91,17 @@ namespace BExIS.IO.Transform.Output
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param>NA</param>       
-        public DataWriter():this(new IOUtility(), new DatasetManager())
+        /// <param>NA</param>
+        public DataWriter() : this(new IOUtility(), new DatasetManager())
         {
-
         }
 
-        public DataWriter(IOUtility iOUtility):this(iOUtility,new DatasetManager())
+        public DataWriter(IOUtility iOUtility) : this(iOUtility, new DatasetManager())
         {
-
-
         }
 
         public DataWriter(DatasetManager datasetManager) : this(new IOUtility(), datasetManager)
         {
-
         }
 
         public DataWriter(IOUtility iOUtility, DatasetManager datasetManager)
@@ -120,7 +115,7 @@ namespace BExIS.IO.Transform.Output
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref="File"/>
-        /// <param ="fileName">Full path of the file</param>   
+        /// <param ="fileName">Full path of the file</param>
         public static FileStream Open(string fileName)
         {
             FileStream stream;
@@ -133,39 +128,15 @@ namespace BExIS.IO.Transform.Output
                 }
                 catch (Exception ex)
                 {
-
                     return null;
                 }
 
-
                 return stream;
-
             }
             else
                 return null;
         }
 
-
-        //public string CreateFile(string filepath)
-        //{
-        //    string dicrectoryPath = Path.GetDirectoryName(filepath);
-        //    createDirectoriesIfNotExist(dicrectoryPath);
-
-        //    try
-        //    {
-        //        if (!File.Exists(filepath))
-        //        {
-        //            File.Create(filepath).Close();
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string message = ex.Message.ToString();
-        //    }
-
-        //    return filepath;
-        //}
 
         public string CreateFile(string path, string filename)
         {
@@ -179,7 +150,6 @@ namespace BExIS.IO.Transform.Output
                 {
                     File.Create(dataPath).Close();
                 }
-
             }
             catch (Exception ex)
             {
@@ -204,7 +174,7 @@ namespace BExIS.IO.Transform.Output
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref="AppConfiguration"/>
-        /// <param></param>       
+        /// <param></param>
         public string GetFullStorePath(long datasetId, long datasetVersionOrderNr, string title, string extension)
         {
             string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
@@ -274,7 +244,7 @@ namespace BExIS.IO.Transform.Output
         }
 
         /// <summary>
-        /// Returns a Title based on incoming 
+        /// Returns a Title based on incoming
         /// parameters
         /// </summary>
         /// <param name="datasetId"></param>
@@ -356,38 +326,39 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         public string GetDataStructureTemplatePath(long dataStructureId, string extension)
         {
-            DataStructureManager dataStructureManager = new DataStructureManager();
-
-            StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
-            string dataStructureTitle = dataStructure.Name;
-            // load datastructure from db an get the filepath from this object
-
-            ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsm");
-            string path = "";
-
-            if (dataStructure.TemplatePaths != null)
+            using (DataStructureManager dataStructureManager = new DataStructureManager())
             {
-                XmlNode resources = dataStructure.TemplatePaths.FirstChild;
+                StructuredDataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+                string dataStructureTitle = dataStructure.Name;
+                // load datastructure from db an get the filepath from this object
 
-                XmlNodeList resource = resources.ChildNodes;
+                ExcelTemplateProvider provider = new ExcelTemplateProvider("BExISppTemplate_Clean.xlsm");
+                string path = "";
 
-                foreach (XmlNode x in resource)
+                if (dataStructure.TemplatePaths != null)
                 {
-                    if (x.Attributes.GetNamedItem("Type").Value == "Excel")
-                        if (File.Exists(x.Attributes.GetNamedItem("Path").Value))
-                        {
-                            path = x.Attributes.GetNamedItem("Path").Value;
-                        }
-                        else
-                        {
-                            path = provider.CreateTemplate(dataStructure);
-                        }
+                    XmlNode resources = dataStructure.TemplatePaths.FirstChild;
+
+                    XmlNodeList resource = resources.ChildNodes;
+
+                    foreach (XmlNode x in resource)
+                    {
+                        if (x.Attributes.GetNamedItem("Type").Value == "Excel")
+                            if (File.Exists(x.Attributes.GetNamedItem("Path").Value))
+                            {
+                                path = x.Attributes.GetNamedItem("Path").Value;
+                            }
+                            else
+                            {
+                                path = provider.CreateTemplate(dataStructure);
+                            }
+                    }
+                    //string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+                    return Path.Combine(AppConfiguration.DataPath, path);
                 }
-                //string dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+                path = provider.CreateTemplate(dataStructure);
                 return Path.Combine(AppConfiguration.DataPath, path);
             }
-            path = provider.CreateTemplate(dataStructure);
-            return Path.Combine(AppConfiguration.DataPath, path);
         }
 
         /// <summary>
@@ -395,14 +366,27 @@ namespace BExIS.IO.Transform.Output
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
-        /// <param name="id"></param>       
+        /// <param name="id"></param>
         /// <returns></returns>
         protected StructuredDataStructure GetDataStructure(long id)
         {
             if (dataStructure == null)
             {
-                DataStructureManager dataStructureManager = new DataStructureManager();
-                dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
+                using (DataStructureManager dataStructureManager = new DataStructureManager())
+                {
+                    dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(id);
+                    dataStructure.Variables = dataStructure.Variables.OrderBy(v => v.OrderNo).ToList();
+
+                    dataStructureManager.StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables.Select(v => v.DataAttribute));
+                    dataStructureManager.StructuredDataStructureRepo.LoadIfNot(dataStructure.Variables.Select(v => v.MissingValues));
+
+                    foreach (var v in dataStructure.Variables)
+                    {
+                        var d = v.DataAttribute.DataType.Description;
+                        var m = v.MissingValues.ToList().Select(mis => mis.Id);
+                    }
+
+                }
             }
 
             return dataStructure;
@@ -424,10 +408,9 @@ namespace BExIS.IO.Transform.Output
         {
             if (DatasetManager.IsDatasetCheckedIn(id))
             {
-
                 DatasetVersion datasetVersion = DatasetManager.GetDatasetLatestVersion(id);
 
-                // get MetadataStructure 
+                // get MetadataStructure
                 MetadataStructure metadataStructure = datasetVersion.Dataset.MetadataStructure;
                 XDocument xDoc = XmlUtility.ToXDocument((XmlDocument)datasetVersion.Dataset.MetadataStructure.Extra);
                 XElement temp = XmlUtility.GetXElementByAttribute("nodeRef", "name", "title", xDoc);
@@ -468,7 +451,6 @@ namespace BExIS.IO.Transform.Output
         {
             return source.Where(p => selected.Contains(p.Label.ToString())).ToList().Select(v => v.Id).ToList();
         }
-
 
         /// <summary>
         /// select a subset of the variables from a datastructure
@@ -531,7 +513,6 @@ namespace BExIS.IO.Transform.Output
                             DateTime dateTime;
 
                             return IOUtility.ExportDateTimeString(value.ToString(), format, out dateTime);
-                            
                         }
                     default: return tmp;
                 }
@@ -544,17 +525,29 @@ namespace BExIS.IO.Transform.Output
 
         // startup / close actions
         protected abstract void Init(string filepath, long dataStructureId);
+
         protected abstract void Close();
 
         // add table header
         protected abstract bool AddHeader(StructuredDataStructure header);
+
         protected abstract bool AddHeader(DataColumnCollection header);
+
+        protected abstract bool AddHeader(string[] header);
+
+        //Add Units
+        protected abstract bool AddUnits(StructuredDataStructure structure);
+
+        protected abstract bool AddUnits(string[] units);
 
         // add a single row to the output file
         protected abstract bool AddRow(AbstractTuple tuple, long rowIndex);
+
         protected abstract bool AddRow(DataRow row, long rowIndex);
 
-        #endregion
+        protected abstract bool AddRow(string[] row, long rowIndex);
+
+        #endregion abstract definitions
 
         #region add data to files
 
@@ -571,28 +564,31 @@ namespace BExIS.IO.Transform.Output
         {
             if (File.Exists(filePath))
             {
-
-                // setup file
-                Init(filePath, dataStructureId);
-
-                // add header
-                StructuredDataStructure sds = GetDataStructure(dataStructureId);
-                AddHeader(sds);
-
-                // iterate over all input rows
-                DataTupleIterator tupleIterator = new DataTupleIterator(dataTuplesIds, datasetManager);
-                foreach (var tuple in tupleIterator)
+                using (DataStructureManager dataStructureManager = new DataStructureManager())
                 {
-                    // add row and increment current index
-                    if (AddRow(tuple, rowIndex) && !tuple.Id.Equals(dataTuplesIds.Last()))
+                    dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+
+                    // setup file
+                    Init(filePath, dataStructureId);
+
+                    // add header
+                    StructuredDataStructure sds = GetDataStructure(dataStructureId);
+                    AddHeader(sds);
+
+                    // iterate over all input rows
+                    DataTupleIterator tupleIterator = new DataTupleIterator(dataTuplesIds, datasetManager);
+                    foreach (var tuple in tupleIterator)
                     {
-                        rowIndex += 1;
+                        // add row and increment current index
+                        if (AddRow(tuple, rowIndex) && !tuple.Id.Equals(dataTuplesIds.Last()))
+                        {
+                            rowIndex += 1;
+                        }
                     }
+
+                    // close the excel file
+                    Close();
                 }
-
-                // close the excel file
-                Close();
-
             }
 
             return ErrorMessages;
@@ -611,7 +607,6 @@ namespace BExIS.IO.Transform.Output
         //{
         //    if (File.Exists(filePath))
         //    {
-
         //        // setup file
         //        Init(filePath, dataStructureId);
 
@@ -638,39 +633,87 @@ namespace BExIS.IO.Transform.Output
         //}
 
         /// <summary>
+        /// add all rows of the given array to a file using the given datastructure
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="filePath"></param>
+        /// <param name="dataStructureId"></param>
+        /// <returns></returns>
+        public List<Error> AddData(string[][] data, string[] columns, string filePath, long dataStructureId, string[] units = null)
+        {
+            if (File.Exists(filePath))
+            {
+                using (DataStructureManager dataStructureManager = new DataStructureManager())
+                {
+                    dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+
+                    if (rowIndex == 0) rowIndex = 1;
+
+                    // setup excel file
+                    Init(filePath, dataStructureId);
+
+                    // add header
+                    AddHeader(columns);
+
+                    // add unit
+                    if (units != null) AddUnits(units);
+
+                    // iterate over all input rows
+                    foreach (string[] row in data)
+                    {
+                        // add row and increment current index
+                        if (AddRow(row, rowIndex))
+                        {
+                            rowIndex += 1;
+                        }
+                    }
+
+                    // close the excel file
+                    Close();
+                }
+            }
+
+            return ErrorMessages;
+        }
+
+        /// <summary>
         /// add all rows of the given datatable to a file using the given datastructure
         /// </summary>
         /// <param name="table"></param>
         /// <param name="filePath"></param>
         /// <param name="dataStructureId"></param>
         /// <returns></returns>
-        public List<Error> AddData(DataTable table, string filePath, long dataStructureId)
+        public List<Error> AddData(DataTable table, string filePath, long dataStructureId, string[] units = null)
         {
-
             if (File.Exists(filePath))
             {
-
-                if (rowIndex == 0) rowIndex = 1;
-
-                // setup excel file
-                Init(filePath, dataStructureId);
-
-                // add header
-                AddHeader(table.Columns);
-
-                // iterate over all input rows
-                foreach (DataRow row in table.Rows)
+                using (DataStructureManager dataStructureManager = new DataStructureManager())
                 {
-                    // add row and increment current index
-                    if (AddRow(row, rowIndex))
+                    dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+                    if (rowIndex == 0) rowIndex = 1;
+
+                    // setup excel file
+                    Init(filePath, dataStructureId);
+
+                    // add header
+                    AddHeader(table.Columns);
+
+                    // Add Units
+                    if (units != null) AddUnits(units);
+
+                    // iterate over all input rows
+                    foreach (DataRow row in table.Rows)
                     {
-                        rowIndex += 1;
+                        // add row and increment current index
+                        if (AddRow(row, rowIndex))
+                        {
+                            rowIndex += 1;
+                        }
                     }
+
+                    // close the excel file
+                    Close();
                 }
-
-                // close the excel file
-                Close();
-
             }
 
             return ErrorMessages;
@@ -685,36 +728,39 @@ namespace BExIS.IO.Transform.Output
         /// <returns></returns>
         public List<Error> AddData(DataRowCollection rows, string filePath, long dataStructureId)
         {
-
             if (File.Exists(filePath))
             {
-
-                if (rowIndex == 0) rowIndex = 1;
-
-                // setup excel file
-                Init(filePath, dataStructureId);
-
-                // iterate over all input rows
-                foreach (DataRow row in rows)
+                using (DataStructureManager dataStructureManager = new DataStructureManager())
                 {
-                    // add row and increment current index
-                    if (AddRow(row, rowIndex))
+                    dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+
+                    if (rowIndex == 0) rowIndex = 1;
+
+                    // setup excel file
+                    Init(filePath, dataStructureId);
+
+                    // iterate over all input rows
+                    foreach (DataRow row in rows)
                     {
-                        rowIndex += 1;
+                        // add row and increment current index
+                        if (AddRow(row, rowIndex))
+                        {
+                            rowIndex += 1;
+                        }
                     }
+
+                    // close the excel file
+                    Close();
                 }
-
-                // close the excel file
-                Close();
-
             }
 
             return ErrorMessages;
         }
 
-        #endregion
+        #endregion add data to files
 
         #region add data to files (compatibility aliases)
+
         //public List<Error> AddDataTuplesToTemplate(DatasetManager datasetManager, List<long> dataTuplesIds, string filePath, long dataStructureId)
         //{
         //    return AddDataTuples(datasetManager, dataTuplesIds, filePath, dataStructureId);
@@ -725,10 +771,11 @@ namespace BExIS.IO.Transform.Output
         //    return AddDataTuples(dataTuples, filePath, dataStructureId);
         //}
 
-        public List<Error> AddDataTuplesToFile(DataTable table, string filePath, long dataStructureId)
+        public List<Error> AddDataTuplesToFile(DataTable table, string filePath, long dataStructureId, string[] units)
         {
-            return AddData(table, filePath, dataStructureId);
+            return AddData(table, filePath, dataStructureId, units);
         }
-        #endregion
+
+        #endregion add data to files (compatibility aliases)
     }
 }

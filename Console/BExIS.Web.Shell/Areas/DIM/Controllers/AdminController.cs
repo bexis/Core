@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Xml;
+using Telerik.Web.Mvc;
 using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
@@ -78,9 +79,10 @@ namespace BExIS.Modules.Dim.UI.Controllers
         public ActionResult ConvertSelectedDatasetVersion(string Id, string SelectedDatasetIds)
         {
 
-            #region load Model
+                #region load Model
 
             DatasetManager datasetManager = new DatasetManager();
+
             try
             {
                 datasetVersionIds = datasetManager.GetDatasetVersionLatestIds();
@@ -187,7 +189,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             {
                                 DatasetVersionId = datasetVersion.Id,
                                 DatasetId = datasetVersion.Dataset.Id,
-                                Title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title),
+                                Title = datasetVersion.Title,
                                 MetadataDownloadPath = OutputMetadataManager.GetMetadataPath(datasetVersion.ContentDescriptors)
                             });
                         }

@@ -32,7 +32,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 TaskManager.RemoveExecutedStep(TaskManager.Current());
             }
 
-
             //Use the given file and the given sheet format to create a json-table
             string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
             FileStream fis = null;
@@ -162,6 +161,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
 
                     #region Generate sheet-list and table for active sheet
+
                     //Grab the sheet format from the bus
                     string sheetFormatString = Convert.ToString(TaskManager.Bus[EasyUploadTaskManager.SHEET_FORMAT]);
                     SheetFormat CurrentSheetFormat = 0;
@@ -171,37 +171,39 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
                     FileStream fis = null;
                     string jsonTable = "{}";
-                    fis = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-
-                    //Generate the Sheet-List and grab the active worksheet
-                    JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
-                    //If the active worksheet was never changed, we default to the first one
-                    string activeWorksheet;
-                    if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI))
+                    using (fis = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
-                        activeWorksheet = EUEReader.GetFirstWorksheetUri().ToString();
-                        TaskManager.AddToBus(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI, activeWorksheet);
+                        //Generate the Sheet-List and grab the active worksheet
+                        JsonTableGenerator EUEReader = new JsonTableGenerator(fis);
+                        //If the active worksheet was never changed, we default to the first one
+                        string activeWorksheet;
+                        if (!TaskManager.Bus.ContainsKey(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI))
+                        {
+                            activeWorksheet = EUEReader.GetFirstWorksheetUri().ToString();
+                            TaskManager.AddToBus(EasyUploadTaskManager.ACTIVE_WOKSHEET_URI, activeWorksheet);
+                        }
+                        else
+                        {
+                            activeWorksheet = TaskManager.Bus[EasyUploadTaskManager.ACTIVE_WOKSHEET_URI].ToString();
+                        }
+                        //Generate the table for the active worksheet
+                        jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat, activeWorksheet);
+
+                        //Save the worksheet uris to the model
+                        model.SheetUriDictionary = EUEReader.GetWorksheetUris();
+
+                        if (!String.IsNullOrEmpty(jsonTable))
+                        {
+                            TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
+                        }
+
+                        //Add uri of the active sheet to the model to be able to preselect the correct option in the dropdown
+                        model.activeSheetUri = activeWorksheet;
+
+                        #endregion Generate sheet-list and table for active sheet
+
+                        model.StepInfo = TaskManager.Current();
                     }
-                    else
-                    {
-                        activeWorksheet = TaskManager.Bus[EasyUploadTaskManager.ACTIVE_WOKSHEET_URI].ToString();
-                    }
-                    //Generate the table for the active worksheet
-                    jsonTable = EUEReader.GenerateJsonTable(CurrentSheetFormat, activeWorksheet);
-
-                    //Save the worksheet uris to the model
-                    model.SheetUriDictionary = EUEReader.GetWorksheetUris();
-
-                    if (!String.IsNullOrEmpty(jsonTable))
-                    {
-                        TaskManager.AddToBus(EasyUploadTaskManager.SHEET_JSON_DATA, jsonTable);
-                    }
-
-                    //Add uri of the active sheet to the model to be able to preselect the correct option in the dropdown
-                    model.activeSheetUri = activeWorksheet;
-                    #endregion
-
-                    model.StepInfo = TaskManager.Current();
                 }
             }
 
@@ -214,14 +216,17 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             TaskManager = (EasyUploadTaskManager)Session["TaskManager"];
 
             #region Reset selected units, datatypes and suggestions
+
             TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_AVAILABLEUNITS);
             TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_HEADERFIELDS);
             TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_MAPPEDHEADERUNITS);
             TaskManager.Bus.Remove(EasyUploadTaskManager.VERIFICATION_ATTRIBUTESUGGESTIONS);
             TaskManager.Bus.Remove(EasyUploadTaskManager.ROWS);
-            #endregion
+
+            #endregion Reset selected units, datatypes and suggestions
 
             #region Generate table for selected sheet
+
             string filePath = TaskManager.Bus[EasyUploadTaskManager.FILEPATH].ToString();
             FileStream fis = null;
             string jsonTable = "[]";
@@ -258,7 +263,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     fis.Close();
                 }
             }
-            #endregion
+
+            #endregion Generate table for selected sheet
+
             //Send back the table-data
             return Content(jsonTable, "application/json");
         }
@@ -266,6 +273,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /*
          * Save the selected area either as data area or as header area
          * */
+
         [HttpPost]
         public ActionResult SelectedAreaToBus()
         {
@@ -333,7 +341,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     }
                 }
 
-
                 TaskManager.AddToBus(EasyUploadTaskManager.SHEET_DATA_AREA, model.DataArea);
             }
 
@@ -368,15 +375,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
 
-
             Session["TaskManager"] = TaskManager;
 
             model.StepInfo = TaskManager.Current();
 
             return PartialView("SelectAreas", model);
-
         }
     }
-
-
 }

@@ -6,7 +6,6 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
-using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -27,7 +26,7 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
-            var ldapAuthenticationManager = new LdapAuthenticationManager(ConfigurationManager.AppSettings["Ldap_ConnectionString"]);
+            var ldapAuthenticationManager = new LdapAuthenticationManager();
             var userManager = new UserManager();
             var signInManager = new SignInManager(AuthenticationManager);
             var identityUserService = new IdentityUserService();
@@ -40,7 +39,7 @@ namespace BExIS.Web.Shell.Controllers
                 {
                     if (user.Logins.Any(l => l.LoginProvider == "Ldap"))
                     {
-                        if(string.IsNullOrEmpty(user.Email))
+                        if (string.IsNullOrEmpty(user.Email))
                         {
                             ViewBag.ReturnUrl = returnUrl;
                             return View("Confirm", LoginConfirmModel.Convert(user));
@@ -95,6 +94,7 @@ namespace BExIS.Web.Shell.Controllers
                 ldapAuthenticationManager.Dispose();
                 userManager.Dispose();
                 signInManager.Dispose();
+                identityUserService.Dispose();
             }
         }
 
@@ -117,14 +117,14 @@ namespace BExIS.Web.Shell.Controllers
                 {
                     if (user.Logins.Any(l => l.LoginProvider == "Ldap"))
                     {
-                        user.HasPrivacyPolicyAccepted = model.PrivacyPolicy;
+                        //user.HasPrivacyPolicyAccepted = model.PrivacyPolicy;
                         user.HasTermsAndConditionsAccepted = model.TermsAndConditions;
                         user.Email = model.Email;
 
                         await userManager.UpdateAsync(user);
 
                         var code = await identityUserService.GenerateEmailConfirmationTokenAsync(user.Id);
-                        await SendEmailConfirmationTokenAsync(user.Id, "BEXIS Account registration - Verify your email address");
+                        await SendEmailConfirmationTokenAsync(user.Id, "Account registration - Verify your email address");
 
                         ViewBag.Message = "Before you can log in to complete your registration please check your email and verify your email address.";
 
@@ -142,6 +142,7 @@ namespace BExIS.Web.Shell.Controllers
             finally
             {
                 userManager.Dispose();
+                identityUserService.Dispose();
             }
         }
 

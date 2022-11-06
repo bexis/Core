@@ -1,4 +1,5 @@
 ﻿using BExIS.Security.Entities.Subjects;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
@@ -48,7 +49,10 @@ namespace BExIS.Modules.Sam.UI.Models
     {
         public string Email { get; set; }
         public long Id { get; set; }
-        public string UserName { get; set; }
+        public string Name { get; set; }
+        public string DisplayName { get; set; }
+        public string IsEmailConfirmed { get; set; }
+        public DateTime RegistrationDate { get; set; }
 
         public static UserGridRowModel Convert(User user)
         {
@@ -56,7 +60,10 @@ namespace BExIS.Modules.Sam.UI.Models
             {
                 Email = user.Email,
                 Id = user.Id,
-                UserName = user.Name
+                Name = user.Name,
+                DisplayName = user.DisplayName,
+                IsEmailConfirmed = user.IsEmailConfirmed.ToString(),
+                RegistrationDate = user.RegistrationDate
             };
         }
     }

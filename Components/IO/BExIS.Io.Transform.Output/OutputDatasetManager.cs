@@ -3,7 +3,6 @@ using BExIS.Dlm.Entities.MetadataStructure;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Xml.Helpers;
-using Ionic.Zip;
 using System;
 using System.Collections.Generic;
 using System.Xml;
@@ -14,10 +13,9 @@ namespace BExIS.IO.Transform.Output
     {
         public static GFBIODataCenterFormularObject GetGFBIODataCenterFormularObject(long datasetId)
         {
-            DatasetManager datasetManager = new DatasetManager();
-            try
+            using (DatasetManager datasetManager = new DatasetManager())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
-
                 Dataset dataset = datasetManager.GetDataset(datasetId);
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
@@ -38,16 +36,14 @@ namespace BExIS.IO.Transform.Output
                 gfbioDataCenterFormularObject.DatasetId = datasetId;
                 gfbioDataCenterFormularObject.DatasetVersion = datasetVersion.Id;
                 gfbioDataCenterFormularObject.License = "";
-                gfbioDataCenterFormularObject.DatasetTitle = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-                gfbioDataCenterFormularObject.DatasetLabel = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-                gfbioDataCenterFormularObject.DatasetDescription = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.description);
+                gfbioDataCenterFormularObject.DatasetTitle = datasetVersion.Title;
+                gfbioDataCenterFormularObject.DatasetLabel = datasetVersion.Title;
+                gfbioDataCenterFormularObject.DatasetDescription = datasetVersion.Description;
                 //gfbioDataCenterFormularObject.DatasetAuthors = new List<string>();
-
-
 
                 gfbioDataCenterFormularObject.DatasetCollectionTime = datasetVersion.Dataset.LastCheckIOTimestamp;
 
-                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+
                 MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(dataset.MetadataStructure.Id);
 
                 gfbioDataCenterFormularObject.MetadataSchemaName = metadataStructure.Name;
@@ -55,37 +51,30 @@ namespace BExIS.IO.Transform.Output
 
                 return gfbioDataCenterFormularObject;
             }
-            finally
-            {
-                datasetManager.Dispose();
-            }
         }
 
         public static GFBIOPangaeaFormularObject GetGFBIOPangaeaFormularObject(long datasetId)
         {
-            DatasetManager datasetManager = new DatasetManager();
-
-            try
+            using (DatasetManager datasetManager = new DatasetManager())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
+
+
                 Dataset dataset = datasetManager.GetDataset(datasetId);
                 DatasetVersion datasetVersion = datasetManager.GetDatasetLatestVersion(datasetId);
 
-                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
                 MetadataStructure metadataStructure = metadataStructureManager.Repo.Get(dataset.MetadataStructure.Id);
 
                 GFBIOPangaeaFormularObject gfbioPangaeaFormularObject = new GFBIOPangaeaFormularObject();
 
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
-                string title = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.title);
-                string description = xmlDatasetHelper.GetInformation(datasetId, NameAttributeValues.description);
+                string title = datasetVersion.Title;
+                string description = datasetVersion.Description;
 
                 return gfbioPangaeaFormularObject;
             }
-            finally
-            {
-                datasetManager.Dispose();
-            }
+
         }
 
         public static string GetDynamicDatasetStorePath(long datasetId, long datasetVersionOrderNr, string title, string extention)

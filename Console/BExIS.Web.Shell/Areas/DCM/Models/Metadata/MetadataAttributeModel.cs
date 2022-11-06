@@ -13,10 +13,12 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public long Number { get; set; }
         public long ParentModelNumber { get; set; }
         public long ParentStepId { get; set; }
+        public long ParentPartyId { get; set; }
         public long MetadataStructureId { get; set; }
         public BaseUsage Source { get; set; }
         public BaseUsage Parent { get; set; }
         public long MetadataAttributeId { get; set; }
+        public string MetadataAttributeName { get; set; }
         public String DisplayName { get; set; }
         public String Discription { get; set; }
         public int MinCardinality { get; set; }
@@ -28,6 +30,27 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
         public List<object> DomainList { get; set; }
         public List<Error> Errors { get; set; }
         public bool Locked { get; set; }
+        
+        public double LowerBoundary { get; set; }
+        public double UpperBoundary { get; set; }
+
+        #region Mapping Variables
+
+        public bool MappingSelectionField { get; set; }
+        public bool PartyMappingExist { get; set; }
+
+        public bool PartyComplexMappingExist { get; set; }
+
+        public bool PartySimpleMappingExist { get; set; }
+
+        public bool EntityMappingExist { get; set; }
+
+        //url to the show view of the entity
+        public string EntityUrl { get; set; }
+
+        public long PartyId { get; set; }
+
+        #endregion Mapping Variables
 
         public string ConstraintDescription { get; set; }
 
@@ -53,7 +76,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
             return this.GetUnitOfWork().GetReadOnlyRepository<MetadataAttribute>().Get(MetadataAttributeId);
         }
 
-        public MetadataAttributeModel Kopie(long number, int numberOfSourceInPackage)
+        public MetadataAttributeModel Copy(long number, int numberOfSourceInPackage)
         {
             return new MetadataAttributeModel
             {
@@ -62,6 +85,7 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 ParentModelNumber = this.ParentModelNumber,
                 MetadataStructureId = this.MetadataStructureId,
                 Parent = this.Parent,
+                ParentPartyId = 0,
                 Source = this.Source,
                 DisplayName = this.DisplayName,
                 Discription = this.Discription,
@@ -77,9 +101,17 @@ namespace BExIS.Modules.Dcm.UI.Models.Metadata
                 MetadataAttributeId = this.MetadataAttributeId,
                 ParentStepId = this.ParentStepId,
                 Errors = null,
-                Locked = false
+                Locked = false,
+                EntityMappingExist = this.EntityMappingExist,
+                PartyMappingExist = this.PartyMappingExist,
+                PartySimpleMappingExist = this.PartySimpleMappingExist,
+                PartyComplexMappingExist = this.PartyComplexMappingExist,
+                EntityUrl = "",
+                UpperBoundary = this.UpperBoundary,
+                LowerBoundary = this.LowerBoundary,
+                PartyId = 0,
+                MappingSelectionField = false
             };
         }
-
     }
 }

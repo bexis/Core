@@ -191,6 +191,31 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
+        public Dictionary<long, int> GetPermissionType(IEnumerable<long> subjectIds, long featureId)
+        {
+            Dictionary<long, int> tmp = new Dictionary<long, int>();
+
+            using (var uow = this.GetUnitOfWork())
+            {
+                foreach (var subjectId in subjectIds)
+                {
+                    var featurePermissionRepository = uow.GetReadOnlyRepository<FeaturePermission>();
+                    var featurePermission = subjectId == null ? featurePermissionRepository.Query(f => f.Subject == null && f.Feature.Id == featureId).FirstOrDefault() : featurePermissionRepository.Query(f => f.Feature.Id == featureId && f.Subject.Id == subjectId).FirstOrDefault();
+
+                    if (featurePermission != null)
+                    {
+                        tmp.Add(subjectId, (int)featurePermission.PermissionType);
+                    }
+                    else
+                    {
+                        tmp.Add(subjectId, 2);
+                    }
+                }
+            }
+
+            return tmp;
+        }
+
         public bool HasAccess(long? subjectId, long featureId)
         {
             using (var uow = this.GetUnitOfWork())
@@ -250,61 +275,18 @@ namespace BExIS.Security.Services.Authorization
             }
         }
 
-        //public bool HasAccess(Subject subject, Feature feature)
-        //{
-        //    using (var uow = this.GetUnitOfWork())
-        //    {
-        //        var featureRepository = uow.GetReadOnlyRepository<Feature>();
-        //        var subjectRepository = uow.GetReadOnlyRepository<Subject>();
+        public Dictionary<long, bool> HasAccess(IEnumerable<Subject> subjects, long featureId)
+        {
+            Dictionary<long, bool> accessDictionary = new Dictionary<long, bool>();
 
-        //        // Anonymous
-        //        if (subject == null)
-        //        {
-        //            while (feature != null)
-        //            {
-        //                if (Exists(null, feature.Id, PermissionType.Grant))
-        //                    return true;
+            foreach (var subject in subjects)
+            {
+                if (subject != null)
+                    accessDictionary.Add(subject.Id, HasAccess(subject.Id, featureId));
+            }
 
-        //                feature = feature.Parent;
-        //            }
-
-        //            return false;
-        //        }
-
-        //        // Non-Anonymous
-        //        while (feature != null)
-        //        {
-        //            if (Exists(null, feature.Id, PermissionType.Grant))
-        //                return true;
-
-        //            if (Exists(subject.Id, feature.Id, PermissionType.Deny))
-        //                return false;
-
-        //            if (Exists(subject.Id, feature.Id, PermissionType.Grant))
-        //                return true;
-
-        //            if (subject is User)
-        //            {
-        //                var user = subject as User;
-        //                var groupIds = user.Groups.Select(g => g.Id).ToList();
-
-        //                if (Exists(groupIds, new[] { feature.Id }, PermissionType.Deny))
-        //                {
-        //                    return false;
-        //                }
-
-        //                if (Exists(groupIds, new[] { feature.Id }, PermissionType.Grant))
-        //                {
-        //                    return true;
-        //                }
-        //            }
-
-        //            feature = feature.Parent;
-        //        }
-
-        //        return false;
-        //    }
-        //}
+            return accessDictionary;
+        }
 
         public bool HasAccess<T>(string subjectName, string module, string controller, string action) where T : Subject
         {
@@ -314,10 +296,23 @@ namespace BExIS.Security.Services.Authorization
                 var SubjectRepository = uow.GetReadOnlyRepository<Subject>();
 
                 var operation = operationRepository.Query(x => x.Module.ToUpperInvariant() == module.ToUpperInvariant() && x.Controller.ToUpperInvariant() == controller.ToUpperInvariant() && x.Action.ToUpperInvariant() == action.ToUpperInvariant()).FirstOrDefault();
+                if (operation == null) return false;
+
                 var feature = operation?.Feature;
                 var subject = SubjectRepository.Query(s => s.Name.ToUpperInvariant() == subjectName.ToUpperInvariant() && s is T).FirstOrDefault();
-                if (feature != null && subject != null)
-                    return HasAccess(subject.Id, feature.Id);
+
+                //both exits
+                if (feature != null)
+                    return HasAccess(subject?.Id, feature.Id);
+
+                // operation exist but feature not exist -  operatioen is public
+                if (feature == null && subject != null)
+                    return true;
+
+                // operation exist but the features is null -> operation is public
+                // subject = null if no user is logged in
+                if (feature == null && subject == null)
+                    return true;
 
                 return false;
             }

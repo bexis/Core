@@ -22,12 +22,12 @@ namespace BExIS.Modules.Dim.UI.Models
             DownloadRights = false;
             MetadataIsValid = false;
         }
-
     }
 
     public class PublicationModel
     {
         public long DatasetVersionId { get; set; }
+        public int DatasetVersionNr { get; set; }
 
         public BrokerModel Broker { get; set; }
         public string DataRepo { get; set; }
@@ -36,6 +36,8 @@ namespace BExIS.Modules.Dim.UI.Models
         public string Status { get; set; }
         public List<string> DataRepos { get; set; }
         public DateTime CreationDate { get; set; }
+
+        public long DatasetId { get; set; }
     }
 
     public class BrokerModel

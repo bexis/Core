@@ -29,10 +29,10 @@ namespace BExIS.Dlm.Entities.Data
     {
         #region Attributes
 
-        /// Mapping metadata and extended properties as component, makes them fields of Dataset table! this is good for performance (no need for joins) and 
-        /// also helps to reduce the complexity of content versioning, as there are less associations.
-        //public virtual string Title { get; set; }
-        //public virtual string Description { get; set; } // Description of the dataset not the changes made in this version.
+        // Mapping metadata and extended properties as component, makes them fields of Dataset table! this is good for performance (no need for joins) and 
+        // also helps to reduce the complexity of content versioning, as there are less associations.
+        public virtual string Title { get; set; }
+        public virtual string Description { get; set; } // Description of the dataset not the changes made in this version.
 
         /// <summary>
         ///
@@ -69,6 +69,40 @@ namespace BExIS.Dlm.Entities.Data
         /// <seealso cref=""/>        
         public virtual DatasetVersionStatus Status { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual string VersionType { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual string VersionName { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual string VersionDescription { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual bool PublicAccess { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>        
+        public virtual DateTime PublicAccessDate { get; set; }
         #endregion
 
         #region Associations

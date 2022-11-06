@@ -29,190 +29,192 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         public string GenerateJsonTable(String worksheetUri)
         {
             // open excel file
-            SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false);
-
-            // get workbookpart
-            WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-            _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
-            _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
-
-            WorksheetPart worksheetPart = null;
-            foreach (Sheet worksheet in workbookPart.Workbook.Descendants<Sheet>())
+            using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false))
             {
-                //Get the current worksheetpart and see if it is the correct one
-                WorksheetPart tmp = (WorksheetPart)workbookPart.GetPartById(worksheet.Id);
-                if (tmp.Uri.ToString() == worksheetUri)
-                {
-                    //Found the correct WorksheetPart
-                    worksheetPart = tmp;
-                }
-            }
 
-            OpenXmlReader reader = OpenXmlReader.Create(worksheetPart);
+                // get workbookpart
+                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+                _sharedStrings = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ToArray();
+                _stylesheet = workbookPart.WorkbookStylesPart.Stylesheet;
 
-            int expectedRowIndex = 1;
-            while (reader.Read())
-            {
-                if (reader.ElementType == typeof(DocumentFormat.OpenXml.Spreadsheet.Row))
+                WorksheetPart worksheetPart = null;
+                foreach (Sheet worksheet in workbookPart.Workbook.Descendants<Sheet>())
                 {
-                    do
+                    //Get the current worksheetpart and see if it is the correct one
+                    WorksheetPart tmp = (WorksheetPart)workbookPart.GetPartById(worksheet.Id);
+                    if (tmp.Uri.ToString() == worksheetUri)
                     {
+                        //Found the correct WorksheetPart
+                        worksheetPart = tmp;
+                    }
+                }
 
-                        DocumentFormat.OpenXml.Spreadsheet.Row row = (DocumentFormat.OpenXml.Spreadsheet.Row)reader.LoadCurrentElement();
+                using (OpenXmlReader reader = OpenXmlReader.Create(worksheetPart))
+                {
 
-                        List<String> rowAsStringList = new List<string>();
-
-                        //Since this library will ignore empty rows, check if we skipped some and add empty rows if necessary
-                        //This will still ignore empty rows at the end of the file but those wouldn't have any influence on the indices of data & header anyway
-                        while (row.RowIndex > expectedRowIndex)
+                    int expectedRowIndex = 1;
+                    while (reader.Read())
+                    {
+                        if (reader.ElementType == typeof(DocumentFormat.OpenXml.Spreadsheet.Row))
                         {
-                            List<String> dummyRow = new List<string>();
-                            dummyRow.Add("");
-                            table.Add(dummyRow);
-                            expectedRowIndex++;
-                        }
-
-                        // create a new cell
-                        Cell c = new Cell();
-
-                        int expectedIndex = 0; //To check whether we skipped cells because they were empty
-                        for (int i = 0; i < row.ChildElements.Count(); i++)
-                        {
-                            // get current cell at i
-                            c = row.Elements<Cell>().ElementAt(i);
-
-                            string value = "";
-
-                            if (c != null)
+                            do
                             {
-                                //See if cells have been skipped (empty cells are not contained in the xml and therefore not contained in row.ChildElements)
-                                //See: https://stackoverflow.com/a/3981249
+                                DocumentFormat.OpenXml.Spreadsheet.Row row = (DocumentFormat.OpenXml.Spreadsheet.Row)reader.LoadCurrentElement();
 
-                                // Gets the column index of the cell with data
-                                int cellColumnIndex = (int)GetColumnIndexFromName(GetColumnName(c.CellReference));
-                                if (expectedIndex < cellColumnIndex)
+                                List<String> rowAsStringList = new List<string>();
+
+                                //Since this library will ignore empty rows, check if we skipped some and add empty rows if necessary
+                                //This will still ignore empty rows at the end of the file but those wouldn't have any influence on the indices of data & header anyway
+                                while (row.RowIndex > expectedRowIndex)
                                 {
-                                    //We skipped one or more cells so add some blank data
-                                    do
-                                    {
-                                        rowAsStringList.Add(""); //Insert blank data
-                                        expectedIndex++;
-                                    }
-                                    while (expectedIndex < cellColumnIndex);
+                                    List<String> dummyRow = new List<string>();
+                                    dummyRow.Add("");
+                                    table.Add(dummyRow);
+                                    expectedRowIndex++;
                                 }
 
-                                //We now have the correct index and can grab the value of the cell
-                                if (c.CellValue != null && !string.IsNullOrEmpty(c.CellValue.Text))
+                                // create a new cell
+                                Cell c = new Cell();
+
+                                int expectedIndex = 0; //To check whether we skipped cells because they were empty
+                                for (int i = 0; i < row.ChildElements.Count(); i++)
                                 {
-                                    // if Value a text
-                                    if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
-                                    {
-                                        int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
-                                        SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
-                                        value = sharedStringItem.InnerText;
-                                    }
-                                    //If cell contains boolean (doesn't always work for files saved with libre office)
-                                    else if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.Boolean)
-                                    {
-                                        if (c.InnerText == "1")
-                                        {
-                                            value = "true";
-                                        }
-                                        else
-                                        {
-                                            value = "false";
-                                        }
-                                    }
-                                    // not a text
-                                    else if (c.StyleIndex != null && c.StyleIndex.HasValue)
-                                    {
-                                        uint styleIndex = c.StyleIndex.Value;
-                                        CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
-                                        if (cellFormat != null && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
-                                        {
-                                            uint numberFormatId = cellFormat.NumberFormatId.Value;
+                                    // get current cell at i
+                                    c = row.Elements<Cell>().ElementAt(i);
 
-                                            if (_stylesheet.NumberingFormats != null)
+                                    string value = "";
+
+                                    if (c != null)
+                                    {
+                                        //See if cells have been skipped (empty cells are not contained in the xml and therefore not contained in row.ChildElements)
+                                        //See: https://stackoverflow.com/a/3981249
+
+                                        // Gets the column index of the cell with data
+                                        int cellColumnIndex = (int)GetColumnIndexFromName(GetColumnName(c.CellReference));
+                                        if (expectedIndex < cellColumnIndex)
+                                        {
+                                            //We skipped one or more cells so add some blank data
+                                            do
                                             {
+                                                rowAsStringList.Add(""); //Insert blank data
+                                                expectedIndex++;
+                                            }
+                                            while (expectedIndex < cellColumnIndex);
+                                        }
 
-                                                NumberingFormat numberFormat = _stylesheet.NumberingFormats.FirstOrDefault(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
-
-                                                //
-                                                if (numberFormat != null)
+                                        //We now have the correct index and can grab the value of the cell
+                                        if (c.CellValue != null && !string.IsNullOrEmpty(c.CellValue.Text))
+                                        {
+                                            // if Value a text
+                                            if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.SharedString)
+                                            {
+                                                int sharedStringIndex = int.Parse(c.CellValue.Text, CultureInfo.InvariantCulture);
+                                                SharedStringItem sharedStringItem = _sharedStrings[sharedStringIndex];
+                                                value = sharedStringItem.InnerText;
+                                            }
+                                            //If cell contains boolean (doesn't always work for files saved with libre office)
+                                            else if (c.DataType != null && c.DataType.HasValue && c.DataType.Value == CellValues.Boolean)
+                                            {
+                                                if (c.InnerText == "1")
                                                 {
-                                                    if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
-                                                    {
-                                                        string formatCode = numberFormat.FormatCode.Value;
-                                                        if ((formatCode.ToLower().Contains("d") && formatCode.ToLower().Contains("m")) ||
-                                                            (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("y")) ||
-                                                            (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("d")) ||
-                                                            (formatCode.ToLower().Contains("h") && formatCode.ToLower().Contains("m")) ||
-                                                            (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("s"))
-                                                            )
-                                                        {
-                                                            DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
-                                                            //value = dateTime.ToString(new CultureInfo("en-us"));
-                                                            //get c# display pattern
-
-                                                            DataTypeDisplayPattern dataTypeDisplayPattern = DataTypeDisplayPattern.GetByExcelPattern(formatCode);
-                                                            value = dataTypeDisplayPattern != null ? dateTime.ToString(dataTypeDisplayPattern.StringPattern) : dateTime.ToString(new CultureInfo("en-us"));
-
-                                                            //Debug.WriteLine("----");
-                                                            //Debug.WriteLine(formatCode);
-                                                        }
-                                                    }
+                                                    value = "true";
+                                                }
+                                                else
+                                                {
+                                                    value = "false";
                                                 }
                                             }
+                                            // not a text
+                                            else if (c.StyleIndex != null && c.StyleIndex.HasValue)
+                                            {
+                                                uint styleIndex = c.StyleIndex.Value;
+                                                CellFormat cellFormat = _stylesheet.CellFormats.ChildElements[(int)styleIndex] as CellFormat;
+                                                if (cellFormat != null && cellFormat.NumberFormatId != null && cellFormat.NumberFormatId.HasValue)
+                                                {
+                                                    uint numberFormatId = cellFormat.NumberFormatId.Value;
+
+                                                    if (_stylesheet.NumberingFormats != null)
+                                                    {
+                                                        NumberingFormat numberFormat = _stylesheet.NumberingFormats.FirstOrDefault(numFormat => ((NumberingFormat)numFormat).NumberFormatId.Value == numberFormatId) as NumberingFormat;
+
+                                                        //
+                                                        if (numberFormat != null)
+                                                        {
+                                                            if (numberFormat != null && numberFormat.FormatCode != null && numberFormat.FormatCode.HasValue)
+                                                            {
+                                                                string formatCode = numberFormat.FormatCode.Value;
+                                                                if ((formatCode.ToLower().Contains("d") && formatCode.ToLower().Contains("m")) ||
+                                                                    (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("y")) ||
+                                                                    (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("d")) ||
+                                                                    (formatCode.ToLower().Contains("h") && formatCode.ToLower().Contains("m")) ||
+                                                                    (formatCode.ToLower().Contains("m") && formatCode.ToLower().Contains("s"))
+                                                                    )
+                                                                {
+                                                                    DateTime dateTime = DateTime.FromOADate(double.Parse(c.CellValue.Text, CultureInfo.InvariantCulture));
+                                                                    //value = dateTime.ToString(new CultureInfo("en-us"));
+                                                                    //get c# display pattern
+
+                                                                    DataTypeDisplayPattern dataTypeDisplayPattern = DataTypeDisplayPattern.GetByExcelPattern(formatCode);
+                                                                    value = dataTypeDisplayPattern != null ? dateTime.ToString(dataTypeDisplayPattern.StringPattern) : dateTime.ToString(new CultureInfo("en-us"));
+
+                                                                    //Debug.WriteLine("----");
+                                                                    //Debug.WriteLine(formatCode);
+                                                                }
+                                                            }
+                                                        }
+                                                    }// check numberformat not null
+                                                }// check cell format
+
+                                                //It may happen that values are in a cell, but the associated information such as numberformat or style are missing.
+                                                // In this case, we decide to display the values, even if they are incorrect.
+                                                if (string.IsNullOrEmpty(value) && (!string.IsNullOrEmpty(c?.CellValue?.Text))) value = c.CellValue.Text;
+                                            }
+                                            else { value = c.CellValue.Text; }
+
+                                            rowAsStringList.Add(value);
+                                        }//end if cell value null
+                                        else
+                                        {
+                                            rowAsStringList.Add("");
                                         }
+                                    }//end if cell null
 
-                                    }
-                                    else { value = c.CellValue.Text; }
+                                    expectedIndex++;
+                                }//for children of row
 
+                                //Check if there's a new max length for the length of a row
+                                maxCellCount = Math.Max(maxCellCount, rowAsStringList.Count);
 
-                                    rowAsStringList.Add(value);
+                                //Just read a row, so increase the expected index for the next one
+                                expectedRowIndex++;
 
-                                }//end if cell value null
-                                else
-                                {
-                                    rowAsStringList.Add("");
-                                }
-                            }//end if cell null
+                                table.Add(rowAsStringList);
+                            } while (reader.ReadNextSibling()); // Skip to the next row
 
-                            expectedIndex++;
-                        }//for children of row
+                            break;
+                        }
+                    }
 
-                        //Check if there's a new max length for the length of a row
-                        maxCellCount = Math.Max(maxCellCount, rowAsStringList.Count);
+                    //Make sure each row has the same number of values in it
+                    foreach (List<String> row in table)
+                    {
+                        while (row.Count < maxCellCount)
+                        {
+                            row.Add("");
+                        }
+                    }
 
-                        //Just read a row, so increase the expected index for the next one
-                        expectedRowIndex++;
+                    //Convert the Lists to Arrays
+                    List<String>[] rowArray = table.ToArray(); //The elements of the Array are the rows in form of String-lists
+                    String[][] tableArray = new String[rowArray.Length][];
+                    for (int i = 0; i < rowArray.Length; i++)
+                    {
+                        tableArray[i] = rowArray[i].ToArray();
+                    }
 
-                        table.Add(rowAsStringList);
-                    } while (reader.ReadNextSibling()); // Skip to the next row
-
-                    break;
+                    return JsonConvert.SerializeObject(tableArray);
                 }
-
             }
-
-            //Make sure each row has the same number of values in it
-            foreach (List<String> row in table)
-            {
-                while (row.Count < maxCellCount)
-                {
-                    row.Add("");
-                }
-            }
-
-            //Convert the Lists to Arrays
-            List<String>[] rowArray = table.ToArray(); //The elements of the Array are the rows in form of String-lists
-            String[][] tableArray = new String[rowArray.Length][];
-            for (int i = 0; i < rowArray.Length; i++)
-            {
-                tableArray[i] = rowArray[i].ToArray();
-            }
-
-            return JsonConvert.SerializeObject(tableArray);
         }
 
         //Solution from https://stackoverflow.com/a/3981249
@@ -233,7 +235,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         //Solution from https://stackoverflow.com/a/3981249
         /// <summary>
         /// Given just the column name (no row index), it will return the zero based column index.
-        /// Note: This method will only handle columns with a length of up to two (ie. A to Z and AA to ZZ). 
+        /// Note: This method will only handle columns with a length of up to two (ie. A to Z and AA to ZZ).
         /// A length of three can be implemented when needed.
         /// </summary>
         /// <param name="columnName">Column Name (ie. A or AB)</param>
@@ -276,6 +278,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         /*
          * Returns a dictionary, containing the Uris of all worksheets as keys and their names (displaynames) as values
          * */
+
         public Dictionary<Uri, String> GetWorksheetUris()
         {
             if (this.fileStream != null)
@@ -283,19 +286,20 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 Dictionary<Uri, String> output = new Dictionary<Uri, String>();
 
                 // open excel file
-                SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false);
-
-                // get workbookpart
-                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-
-                //get worksheet part
-                //Save uris and names of all worksheets
-                foreach (Sheet worksheet in workbookPart.Workbook.Descendants<Sheet>())
+                using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false))
                 {
-                    WorksheetPart tmp = (WorksheetPart)workbookPart.GetPartById(worksheet.Id);
-                    output.Add(tmp.Uri, worksheet.Name);
+                    // get workbookpart
+                    WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+
+                    //get worksheet part
+                    //Save uris and names of all worksheets
+                    foreach (Sheet worksheet in workbookPart.Workbook.Descendants<Sheet>())
+                    {
+                        WorksheetPart tmp = (WorksheetPart)workbookPart.GetPartById(worksheet.Id);
+                        output.Add(tmp.Uri, worksheet.Name);
+                    }
+                    return output;
                 }
-                return output;
             }
             return null;
         }
@@ -304,14 +308,15 @@ namespace BExIS.Modules.Dcm.UI.Helpers
         public Uri GetFirstWorksheetUri()
         {
             // open excel file
-            SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false);
+            using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(this.fileStream, false))
+            {
+                // get workbookpart
+                WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
 
-            // get workbookpart
-            WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-
-            //get first uri
-            string id = workbookPart.Workbook.Descendants<Sheet>().First().Id;
-            return workbookPart.GetPartById(id).Uri;
+                //get first uri
+                string id = workbookPart.Workbook.Descendants<Sheet>().First().Id;
+                return workbookPart.GetPartById(id).Uri;
+            }
         }
     }
 }

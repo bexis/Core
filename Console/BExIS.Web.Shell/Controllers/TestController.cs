@@ -22,6 +22,7 @@ using Vaiona.Web.Mvc.Models;
 
 namespace BExIS.Web.Shell.Controllers
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
     public class TestController : BaseController
     {
         public ActionResult About()
@@ -222,7 +223,6 @@ namespace BExIS.Web.Shell.Controllers
         }
 
         [DoesNotNeedDataAccess]
-        // tells the persistence manager to not create an ambient session context for this action, which saves a considerable resources and reduces the execution time
         public ActionResult Index2()
         {
             testNHibernateSession();
@@ -271,52 +271,52 @@ namespace BExIS.Web.Shell.Controllers
             return View("Index");
         }
 
-        public ActionResult XmlEdit()
-        {
-            string url = Url.Action("XmlEditResult", "Test", new { Area = string.Empty });
-            XsltViewModel model = new XsltViewModel()
-            {
-                XmlPath = Server.MapPath("~/App_Data/data2.xml"),
-                XsltPath = Server.MapPath("~/App_Data/edit.xsl"),
-                Params = new Dictionary<string, object>()
-                {
-                    {"postBackUrl", url},
-                }
-            };
+        //public ActionResult XmlEdit()
+        //{
+        //    string url = Url.Action("XmlEditResult", "Test", new { Area = string.Empty });
+        //    XsltViewModel model = new XsltViewModel()
+        //    {
+        //        XmlPath = Server.MapPath("~/App_Data/data2.xml"),
+        //        XsltPath = Server.MapPath("~/App_Data/edit.xsl"),
+        //        Params = new Dictionary<string, object>()
+        //        {
+        //            {"postBackUrl", url},
+        //        }
+        //    };
 
-            return View(model);
-        }
+        //    return View(model);
+        //}
 
-        [HttpPost]
-        public ActionResult XmlEditResult()
-        {
-            // here the user has access to the Request.Form object, which contains all the attributes defined in the xsl FileStream and the associated values
-            // I'd prefer to have an xml doc like the original one with new values. It is possible to find relevant fields in the xml based on the Form.Key and update its value
-            // something like XmlDocument doc = createUpdatedDoc(originalfile, Request.Form);
-            string url = Url.Action("Index", "Home", new { Area = string.Empty });
-            XsltViewModel model = new XsltViewModel()
-            {
-                XmlPath = Server.MapPath("~/App_Data/data2.xml"),
-                XsltPath = Server.MapPath("~/App_Data/edit.xsl"),
-                Params = new Dictionary<string, object>()
-                {
-                    {"postBackUrl", url},
-                }
-            };
-            //send the Request.Form object to the view too, so that it can overrides them to show the updated version
-            return View("XmlEdit", model);
-        }
+        //[HttpPost]
+        //public ActionResult XmlEditResult()
+        //{
+        //    // here the user has access to the Request.Form object, which contains all the attributes defined in the xsl FileStream and the associated values
+        //    // I'd prefer to have an xml doc like the original one with new values. It is possible to find relevant fields in the xml based on the Form.Key and update its value
+        //    // something like XmlDocument doc = createUpdatedDoc(originalfile, Request.Form);
+        //    string url = Url.Action("Index", "Home", new { Area = string.Empty });
+        //    XsltViewModel model = new XsltViewModel()
+        //    {
+        //        XmlPath = Server.MapPath("~/App_Data/data2.xml"),
+        //        XsltPath = Server.MapPath("~/App_Data/edit.xsl"),
+        //        Params = new Dictionary<string, object>()
+        //        {
+        //            {"postBackUrl", url},
+        //        }
+        //    };
+        //    //send the Request.Form object to the view too, so that it can overrides them to show the updated version
+        //    return View("XmlEdit", model);
+        //}
 
-        public ActionResult XmlShow()
-        {
-            XsltViewModel model = new XsltViewModel()
-            {
-                XmlPath = Server.MapPath("~/App_Data/data.xml"),
-                XsltPath = Server.MapPath("~/App_Data/view.xsl")
-            };
+        //public ActionResult XmlShow()
+        //{
+        //    XsltViewModel model = new XsltViewModel()
+        //    {
+        //        XmlPath = Server.MapPath("~/App_Data/data.xml"),
+        //        XsltPath = Server.MapPath("~/App_Data/view.xsl")
+        //    };
 
-            return View(model);
-        }
+        //    return View(model);
+        //}
 
         protected override void Dispose(bool disposing)
         {

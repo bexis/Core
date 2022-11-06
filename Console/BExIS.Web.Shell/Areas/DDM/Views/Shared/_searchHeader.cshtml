@@ -44,10 +44,11 @@
 
                                 .Filterable(filtering =>
                                 {
+
                                     filtering.FilterMode(AutoCompleteFilterMode.Contains);
                                     filtering.MinimumChars(3);
 
-                                })
+                                })                                
                        )
                 </td>
                <td>
@@ -64,7 +65,7 @@
            {
            <tr>
                <td>
-            @*       @Html.CheckBox("OnlyPublic", @onlyPublic, new { onclick = "onShowOnlyPublicChanged(this)" }) <b style="vertical-align:top">public only</b>                    @*       @Html.CheckBox("OnlyPublic", @onlyPublic, new { onclick = "onShowOnlyPublicChanged(this)" }) <b style="vertical-align:top">public only</b> *@
+                @*   @Html.CheckBox("OnlyPublic", @onlyPublic, new { onclick = "onShowOnlyPublicChanged(this)" }) <b style="vertical-align:top">public only</b> *@
                </td>
            </tr>
            }

@@ -1,6 +1,7 @@
 ﻿using BExIS.Dcm.UploadWizard;
 using BExIS.Dcm.Wizard;
 using BExIS.IO.Transform.Validation.Exceptions;
+using BExIS.Utils.Data.Upload;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,7 @@ namespace BExIS.Modules.Dcm.UI.Models
         public String SelectedServerFileName = "";
         public Stream fileStream;
         public DataStructureType DataStructureType;
+        public int MaxFileLength = 256;
 
         public List<string> SupportedFileExtentions = new List<string>();
 

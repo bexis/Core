@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Linq.Dynamic;
 using System.Xml;
 using System.Xml.Schema;
 using Vaiona.Utils.Cfg;
@@ -32,16 +31,10 @@ namespace BExIS.Xml.Helpers.Mapping
 
         //Contraits of system
         public List<MetadataAttribute> MetadataAttributes { get; set; }
+
         public Dictionary<string, List<Constraint>> ConvertedSimpleTypes { get; set; }
 
         private List<string> additionalFiles { get; set; }
-        //private DataContainerManager dataContainerManager = new DataContainerManager();
-        //private MetadataPackageManager metadataPackageManager = new MetadataPackageManager();
-        //private MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
-        //private DataTypeManager dataTypeManager = new DataTypeManager();
-        //private UnitManager unitManager = new UnitManager();
-
-
 
         private string SchemaName = "";
         private string xsdFilePath = "";
@@ -62,7 +55,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
         public XmlNamespaceManager XmlNamespaceManager;
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
-
 
         public XmlSchemaManager()
         {
@@ -123,9 +115,6 @@ namespace BExIS.Xml.Helpers.Mapping
             XmlReader xsd_file = XmlReader.Create(path, settings2);
             Schema = XmlSchema.Read(xsd_file, verifyErrors);
 
-
-
-
             countedSchemas = Schema.Includes.Count + 1;
 
             XmlSchema selectedSchema;
@@ -144,12 +133,9 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
             }
 
-
-
             foreach (XmlSchema currentSchema in schemaSet.Schemas())
             {
-
-                //add all additional schemas 
+                //add all additional schemas
                 additionalFiles.Add(Path.GetFileName(currentSchema.SourceUri.ToString()));
 
                 selectedSchema = currentSchema;
@@ -178,8 +164,10 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     string dataPath = Path.Combine(AppConfiguration.DataPath, "Temp", userName, include.SchemaLocation.Split('/').Last());
 
-                    XmlReader test = XmlReader.Create(dataPath, settings);
-                    include.Schema = XmlSchema.Read(test, verifyErrors);
+                    using (XmlReader test = XmlReader.Create(dataPath, settings))
+                    {
+                        include.Schema = XmlSchema.Read(test, verifyErrors);
+                    }
                 }
 
                 xmlSchemaSet.Add(include.Schema);
@@ -205,7 +193,6 @@ namespace BExIS.Xml.Helpers.Mapping
             // create default metadataStructure
             try
             {
-
                 MetadataStructure test = mdsManager.Repo.Get(p => p.Name == SchemaName).FirstOrDefault();
                 if (test != null) mdsManager.Delete(test);
             }
@@ -266,7 +253,6 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
             }
 
-
             return true;
         }
 
@@ -310,7 +296,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
             foreach (XmlSchemaElement element in Elements)
             {
-
                 if (XmlSchemaUtility.IsSimpleType(element))
                 {
                     elementsWithSimpleType.Add(element);
@@ -424,7 +409,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 if (type != null)
                 {
-                    // If the complex type has any attributes, get an enumerator 
+                    // If the complex type has any attributes, get an enumerator
                     // and write each attribute name to the Debug.
                     if (type.AttributeUses.Count > 0)
                     {
@@ -451,7 +436,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 XmlSchemaComplexType type = element.ElementSchemaType as XmlSchemaComplexType;
                 if (type != null)
                 {
-                    // If the complex type has any attributes, get an enumerator 
+                    // If the complex type has any attributes, get an enumerator
                     // and write each attribute name to the Debug.
                     if (type.AttributeUses.Count > 0)
                     {
@@ -459,7 +444,6 @@ namespace BExIS.Xml.Helpers.Mapping
                         {
                             XmlSchemaAttribute attr = (XmlSchemaAttribute)obj;
                             listOfAttributes.Add(attr);
-
                         }
                     }
                 }
@@ -491,7 +475,6 @@ namespace BExIS.Xml.Helpers.Mapping
                 return 0;
             }
 
-
             return -1;
         }
 
@@ -502,25 +485,23 @@ namespace BExIS.Xml.Helpers.Mapping
             {
                 //Debug.Writeline(args.Message);
             }
-
         }
 
-        #endregion 
+        #endregion load schema
+
+
 
         #region import To MetadatStructure
 
         public Dictionary<string, List<Constraint>> ConvertSimpleTypes()
         {
-            MetadataAttributeManager mam = new MetadataAttributeManager();
+            //MetadataAttributeManager mam = new MetadataAttributeManager();
             //List<XmlSchemaElement> elementsWithSimpleType = this.GetAllElementsTypeIsSimpleType();
-
 
             //foreach(XmlSchemaElement element in elementsWithSimpleType)
             //{
-
-            //    //ConvertedSimplesTypes.Add(type.Name, ConvertToConstraints(type));   
+            //    //ConvertedSimplesTypes.Add(type.Name, ConvertToConstraints(type));
             //}
-
 
             return ConvertedSimpleTypes;
         }
@@ -529,14 +510,10 @@ namespace BExIS.Xml.Helpers.Mapping
 
         public long GenerateMetadataStructure(string nameOfStartNode, string schemaName)
         {
-            MetadataStructureManager mdsManager = new MetadataStructureManager();
-            MetadataPackageManager mdpManager = new MetadataPackageManager();
-            MetadataAttributeManager mamManager = new MetadataAttributeManager();
-
-            try
+            using (MetadataStructureManager mdsManager = new MetadataStructureManager())
+            using (MetadataPackageManager mdpManager = new MetadataPackageManager())
+            using (MetadataAttributeManager mamManager = new MetadataAttributeManager())
             {
-
-
                 if (!String.IsNullOrEmpty(schemaName))
                     SchemaName = schemaName;
 
@@ -547,57 +524,46 @@ namespace BExIS.Xml.Helpers.Mapping
                 #region prepare mappingFiles
 
                 #region intern to extern
+
                 // add schema to mappingfile
                 mappingFileInternalToExternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
-                #endregion
+
+                #endregion intern to extern
 
                 #region extern to intern
+
                 mappingFileExternalToInternal.Header.AddToDestination("Metadata");
                 mappingFileExternalToInternal.Header.AddToSchemas(schemaName, "Metadata/" + schemaName + "/" + FileName);
 
                 //ToDo id and name of metadatastructure fehlt
 
-                #endregion
+                #endregion extern to intern
 
-                #endregion
+                #endregion prepare mappingFiles
 
                 //List<MetadataAttribute> metadataAttributes = new List<MetadataAttribute>();
                 //metadataAttributes = GenerateAllMetadataAttributes();
                 List<XmlSchemaElement> elementsWithSimpleType = GetAllElementsTypeIsSimpleType();
                 List<XmlSchemaComplexType> complexTypesWithSimpleTypesAsChildrensOnly = GetAllComplextTypesWithSimpleTypesAsChildrens();
 
-
-
                 // create default metadataStructure
                 MetadataStructure test = null; //mdsManager.Repo.Get(p => p.Name == SchemaName).FirstOrDefault();
                 if (test == null) test = mdsManager.Create(SchemaName, SchemaName, "", "", null);
 
-
                 XmlSchemaObject root = new XmlSchemaElement();
                 string xpathFromRoot = "";
 
-
                 int count = 0;
-                //foreach (XmlSchemaObject obj in Schema.Items)
-                //{
-                //    if (obj is XmlSchemaElement)
-                //    {
-                //        count++;
-                //        if (count > 1)
-                //        {
-                //            throw new Exception("Root node is not able to declare");
-                //        }
-                //    }
-                //}
 
                 foreach (XmlSchemaObject obj in Schema.Items)
                 {
                     if (obj is XmlSchemaElement)
+                    {
                         root = (XmlSchemaElement)obj;
-                    //HACK find first xsd element
-                    break;
+                        //HACK find first xsd element
+                        break;
+                    }
                 }
-
 
                 if (String.IsNullOrEmpty(nameOfStartNode))
                 {
@@ -626,9 +592,6 @@ namespace BExIS.Xml.Helpers.Mapping
                     }
                 }
 
-
-
-
                 List<XmlSchemaElement> childrenOfRoot = XmlSchemaUtility.GetAllElements(root, false, Elements);
                 List<XmlSchemaElement> packages = new List<XmlSchemaElement>();
 
@@ -636,19 +599,34 @@ namespace BExIS.Xml.Helpers.Mapping
                 {
                     #region root with only simple type childrens
 
-                    XmlSchemaGroup rootAsGroup = (XmlSchemaGroup)root;
+                    XmlSchemaAnnotation annotation = null;
+                    string name = "";
 
-                    MetadataPackage package = getExistingMetadataPackage(rootAsGroup.Name);
+                    if (root is XmlSchemaElement)
+                    {
+                        XmlSchemaElement rootAsElement = (XmlSchemaElement)root;
+                        name = rootAsElement.Name;
+                        annotation = rootAsElement.Annotation;
+                    }
+                    else
+                    if (root is XmlSchemaGroup)
+                    {
+                        XmlSchemaGroup rootAsGroup = (XmlSchemaGroup)root;
+                        name = rootAsGroup.Name;
+                        annotation = rootAsGroup.Annotation;
+                    }
+
+                    MetadataPackage package = getExistingMetadataPackage(name);
 
                     if (package == null)
                     {
-                        package = mdpManager.Create(rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), true);
+                        package = mdpManager.Create(name, GetDescription(annotation), true);
                         createdPackagesDic.Add(package.Id, package.Name);
                     }
 
                     if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
                     {
-                        string xpath = "Metadata/" + rootAsGroup.Name;
+                        string xpath = "Metadata/" + name;
 
                         foreach (XmlSchemaElement child in childrenOfRoot)
                         {
@@ -657,29 +635,24 @@ namespace BExIS.Xml.Helpers.Mapping
 
                             if (XmlSchemaUtility.IsSimpleType(child))
                             {
-                                addMetadataAttributeToMetadataPackageUsage(package, child, xpath, rootAsGroup.Name);
+                                addMetadataAttributeToMetadataPackageUsage(package, child, xpath, name);
                             }
                             else
                             {
                                 List<string> parents = new List<string>();
-                                parents.Add(rootAsGroup.Name);
+                                parents.Add(name);
 
-
-
-                                MetadataCompoundAttribute compoundAttribute = get(child, parents, xpath, rootAsGroup.Name, mamManager);
+                                MetadataCompoundAttribute compoundAttribute = get(child, parents, xpath, name, mamManager);
 
                                 // add compound to package
                                 addUsageFromMetadataCompoundAttributeToPackage(package, compoundAttribute, child);
-
                             }
-
                         }
 
-
-                        mdsManager.AddMetadataPackageUsage(test, package, rootAsGroup.Name, GetDescription(rootAsGroup.Annotation), 1, 1);
+                        mdsManager.AddMetadataPackageUsage(test, package, name, GetDescription(annotation), 1, 1);
                     }
 
-                    #endregion
+                    #endregion root with only simple type childrens
                 }
                 else
                 {
@@ -689,14 +662,13 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     #region create a basic package of SimpleAttributes from Root Node
 
-                    // get all simpleTypes 
+                    // get all simpleTypes
                     // for the main package
                     List<XmlSchemaElement> simpleElements = XmlSchemaUtility.GetAllSimpleElements(packages);
                     string rootNodePackageUsage = "Basic";
                     string rootNodePackage = "BasicType";
 
                     string rootNodePackageDescription = "Attributes from the root node";
-
 
                     if (simpleElements.Count > 0)
                     {
@@ -709,7 +681,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
                         if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
                         {
-
                             foreach (XmlSchemaElement child in simpleElements)
                             {
                                 if (XmlSchemaUtility.IsSimpleType(child))
@@ -720,12 +691,12 @@ namespace BExIS.Xml.Helpers.Mapping
 
                             mdsManager.AddMetadataPackageUsage(test, package, rootNodePackageUsage, rootNodePackageDescription, 1, 1);
                         }
-
                     }
 
-                    #endregion
+                    #endregion create a basic package of SimpleAttributes from Root Node
 
                     #region create Packages
+
                     List<XmlSchemaElement> otherElements = XmlSchemaUtility.GetAllComplexElements(packages);
 
                     foreach (XmlSchemaElement element in otherElements)
@@ -742,6 +713,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         if (!XmlSchemaUtility.IsSimpleType(element))
                         {
                             #region complexType
+
                             MetadataPackage package = getExistingMetadataPackage(element.Name);
                             //Debug.WriteLine("-->" + element.Name);
                             if (package == null)
@@ -752,7 +724,6 @@ namespace BExIS.Xml.Helpers.Mapping
                             // add package to structure
                             if (test.MetadataPackageUsages != null && test.MetadataPackageUsages.Where(p => p.Label.Equals(element.Name)).Count() > 0)
                             {
-
                                 if (test.MetadataPackageUsages.Where(p => p.MetadataPackage == package).Count() <= 0)
                                 {
                                     List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
@@ -771,15 +742,11 @@ namespace BExIS.Xml.Helpers.Mapping
                                             List<string> parents = new List<string>();
                                             parents.Add(element.Name);
 
-
-
                                             MetadataCompoundAttribute compoundAttribute = get(child, parents, xpathInternal, xpathExternal, mamManager);
 
                                             // add compound to package
                                             addUsageFromMetadataCompoundAttributeToPackage(package, compoundAttribute, child);
-
                                         }
-
                                     }
 
                                     int min = 0;
@@ -804,7 +771,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
                                 foreach (XmlSchemaElement child in childrens)
                                 {
-
                                     if (XmlSchemaUtility.IsSimpleType(child))
                                     {
                                         addMetadataAttributeToMetadataPackageUsage(package, child, xpathInternal, xpathExternal);
@@ -819,9 +785,7 @@ namespace BExIS.Xml.Helpers.Mapping
 
                                         // add compound to package
                                         addUsageFromMetadataCompoundAttributeToPackage(package, compoundAttribute, child);
-
                                     }
-
                                 }
 
                                 int min = 0;
@@ -840,7 +804,6 @@ namespace BExIS.Xml.Helpers.Mapping
                                 //check if element is a choice
                                 if (!XmlSchemaUtility.IsChoiceType(element))
                                 {
-
                                     MetadataPackageUsage mpu = mdsManager.AddMetadataPackageUsage(test, package,
                                         element.Name, GetDescription(element.Annotation), min, max);
                                 }
@@ -853,6 +816,7 @@ namespace BExIS.Xml.Helpers.Mapping
                                     if (ct != null)
                                     {
                                         #region choice
+
                                         // check if it is e choice
                                         XmlSchemaChoice choice = ct.ContentTypeParticle as XmlSchemaChoice;
                                         if (choice != null)
@@ -863,25 +827,24 @@ namespace BExIS.Xml.Helpers.Mapping
                                             else
                                                 additionalAttributes.Add("max", choice.MaxOccurs.ToString());
                                         }
-                                        #endregion
-                                    }
 
+                                        #endregion choice
+                                    }
 
                                     // if mpu is a choice, add a info to extra
                                     MetadataPackageUsage mpu = mdsManager.AddMetadataPackageUsage(test, package,
                                             element.Name, GetDescription(element.Annotation), min, max,
                                             xmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type", additionalAttributes));
                                 }
-
                             }
-                            #endregion
+
+                            #endregion complexType
                         }
-
                     }
-                    #endregion
 
-                    #endregion
+                    #endregion create Packages
 
+                    #endregion packages with complext types
                 }
 
                 if (!File.Exists(newXsdFilePath))
@@ -890,7 +853,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     MoveFile(xsdFilePath, newXsdFilePath);
                 }
 
-                #region store additionaly xsds 
+                #region store additionaly xsds
 
                 string tmpDestinationPath = Path.GetDirectoryName(newXsdFilePath);
                 string tmpSourcePath = Path.GetDirectoryName(xsdFilePath);
@@ -903,7 +866,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     }
                 }
 
-                #endregion
+                #endregion store additionaly xsds
 
                 #region Generate Mapping File
 
@@ -914,17 +877,11 @@ namespace BExIS.Xml.Helpers.Mapping
                 generateXmlMappingFile(mappingFileInternalToExternal, internalMetadataStructrueName, FileName);
                 generateXmlMappingFile(mappingFileExternalToInternal, FileName, internalMetadataStructrueName, 1);
 
-                #endregion
+                #endregion Generate Mapping File
 
                 return test.Id;
             }
-            finally
-            {
 
-                mdsManager.Dispose();
-                mdpManager.Dispose();
-
-            }
         }
 
         private string findPathFromRoot(XmlSchemaElement element, string name, string path)
@@ -953,7 +910,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private MetadataCompoundAttribute get(XmlSchemaElement element, List<string> parents, string internalXPath, string externalXPath, MetadataAttributeManager metadataAttributeManager)
         {
-
             //Debug.Writeline("element :" + element.Name);
 
             XmlSchemaComplexType ct = XmlSchemaUtility.GetComplextType(element);
@@ -968,7 +924,6 @@ namespace BExIS.Xml.Helpers.Mapping
             string currentInternalXPath = internalXPath + "/" + element.Name + "/" + nameOfType;
             string currentExternalXPath = externalXPath + "/" + element.Name;
 
-
             // create and map
             if (metadataCompountAttr == null)
             {
@@ -978,7 +933,6 @@ namespace BExIS.Xml.Helpers.Mapping
                 if (ct.Name != null)
                 {
                     metadataCompountAttr = createMetadataCompoundAttribute(ct);
-
                 }
                 else
                 {
@@ -1043,7 +997,6 @@ namespace BExIS.Xml.Helpers.Mapping
                             }
                         }
                     }
-
                 }
 
                 #endregion childrens
@@ -1056,15 +1009,14 @@ namespace BExIS.Xml.Helpers.Mapping
                     //Debug.WriteLine(metadataCompountAttr.Name);
 
                     metadataAttributeManager.Update(metadataCompountAttr);
-
                 }
                 else
                 {
                     //Debug.WriteLine(metadataCompountAttr.Name);
+
                     metadataCompountAttr = metadataAttributeManager.Create(metadataCompountAttr);
                     createdCompoundsDic.Add(metadataCompountAttr.Id, metadataCompountAttr.Name);
                 }
-
             }
             //only map
             else
@@ -1073,7 +1025,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
                 // if its there need to map
                 List<XmlSchemaElement> childrens = XmlSchemaUtility.GetAllElements(element, false, Elements);
-
 
                 parents.Add(element.Name);
 
@@ -1091,14 +1042,12 @@ namespace BExIS.Xml.Helpers.Mapping
                     }
                     else
                     {
-
                         //break if infinity loop
                         if (parents.Contains(child.Name))
                         {
                             //MetadataCompoundAttribute compoundAttributeChild =
                             //    getExistingMetadataCompoundAttribute(child.Name);
                             Debug.WriteLine("save for infinit loop");
-
                         }
                         else
                         {
@@ -1106,7 +1055,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
                             if (ct.Name == null || complexTypeOfChild.Name == null)
                             {
-
                                 MetadataCompoundAttribute compoundAttributeChild = get(child, parents,
                                     currentInternalXPath, currentExternalXPath, metadataAttributeManager);
                             }
@@ -1124,16 +1072,11 @@ namespace BExIS.Xml.Helpers.Mapping
                         }
                     }
 
-
-
-                    #endregion
-
+                    #endregion children
                 }
-
             }
 
             return metadataCompountAttr;
-
         }
 
         private void addMetadataAttributesToMetadataPackageUsage(MetadataPackage packageUsage, List<XmlSchemaElement> elements, string internalXPath, string externalXPath)
@@ -1170,14 +1113,12 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (packageUsage.MetadataAttributeUsages.Where(p => p.MetadataAttribute == attribute).Count() <= 0)
                         metadataPackageManager.AddMetadataAtributeUsage(packageUsage, attribute, element.Name, attribute.Description, min, max);
 
-
                     #region generate  MappingRoute
 
                     addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, max, element.Name, attribute.Name);
                     addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, max, element.Name, attribute.Name);
 
-
-                    #endregion
+                    #endregion generate  MappingRoute
                 }
             }
             finally
@@ -1192,7 +1133,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
             try
             {
-
                 if (package.MetadataAttributeUsages.Where(p => p.Label == element.Name).Count() <= 0)
                 {
                     int min = 0;
@@ -1215,7 +1155,7 @@ namespace BExIS.Xml.Helpers.Mapping
                      * but the choice itself say at least one element should be selected
                      * and this means all childrens need to be optional
                      * and one must be selected
-                     * 
+                     *
                      */
 
                     if (XmlSchemaUtility.IsChoiceType(element))
@@ -1234,7 +1174,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
         private MetadataCompoundAttribute addUsageFromMetadataCompoundAttributeToMetadataCompoundAttribute(MetadataCompoundAttribute parent, MetadataCompoundAttribute compoundAttribute, XmlSchemaElement element)
         {
-
             if (parent.MetadataNestedAttributeUsages.Where(p => p.Label == element.Name).Count() <= 0)
             {
                 //get max
@@ -1245,11 +1184,8 @@ namespace BExIS.Xml.Helpers.Mapping
                     max = Convert.ToInt32(element.MaxOccurs);
                 }
 
-
-
-
-
                 #region choice
+
                 //ToDo Choice in XSD required Element
 
                 /*
@@ -1257,7 +1193,7 @@ namespace BExIS.Xml.Helpers.Mapping
                  * but the choice itself say at least one element should be selected
                  * and this means all childrens need to be optional
                  * and one must be selected
-                 *                  * 
+                 *                  *
                  */
 
                 //if element is a choise
@@ -1273,6 +1209,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     if (ct != null)
                     {
                         #region choice
+
                         // check if it is e choice
                         XmlSchemaChoice choice = ct.ContentTypeParticle as XmlSchemaChoice;
                         if (choice != null)
@@ -1283,7 +1220,8 @@ namespace BExIS.Xml.Helpers.Mapping
                             else
                                 additionalAttributes.Add("max", choice.MaxOccurs.ToString());
                         }
-                        #endregion
+
+                        #endregion choice
                     }
 
                     extra = xmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type", additionalAttributes);
@@ -1297,16 +1235,13 @@ namespace BExIS.Xml.Helpers.Mapping
                     MaxCardinality = max,
                     Master = parent,
                     Member = compoundAttribute,
-
                 };
 
                 if (extra.DocumentElement != null) usage.Extra = extra;
-                #endregion
 
-
+                #endregion choice
 
                 parent.MetadataNestedAttributeUsages.Add(usage);
-
             }
 
             return parent;
@@ -1328,13 +1263,12 @@ namespace BExIS.Xml.Helpers.Mapping
 
             try
             {
-
                 MetadataAttribute attribute;
 
                 if (metadataAttributeManager.MetadataAttributeRepo != null &&
                     getExistingMetadataAttribute(GetTypeOfName(element.Name)) != null)
                 {
-                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
+                    attribute = metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
                 }
                 else
                 {
@@ -1355,6 +1289,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         max = int.MaxValue;
 
                     #region choice
+
                     //if element is a choise
                     XmlDocument extra = new XmlDocument();
                     //check if element is a choice
@@ -1365,7 +1300,7 @@ namespace BExIS.Xml.Helpers.Mapping
                      * but the choice itself say at least one element should be selected
                      * and this means all childrens need to be optional
                      * and one must be selected
-                     *                  * 
+                     *                  *
                      */
 
                     if (XmlSchemaUtility.IsChoiceType(element))
@@ -1379,6 +1314,7 @@ namespace BExIS.Xml.Helpers.Mapping
                         if (ct != null)
                         {
                             #region choice
+
                             // check if it is e choice
                             XmlSchemaChoice choice = ct.ContentTypeParticle as XmlSchemaChoice;
                             if (choice != null)
@@ -1389,12 +1325,14 @@ namespace BExIS.Xml.Helpers.Mapping
                                 else
                                     additionalAttributes.Add("max", choice.MaxOccurs.ToString());
                             }
-                            #endregion
+
+                            #endregion choice
                         }
 
                         extra = xmlDatasetHelper.AddReferenceToXml(new XmlDocument(), "choice", "true", "elementType", @"extra/type", additionalAttributes);
                     }
-                    #endregion
+
+                    #endregion choice
 
                     MetadataNestedAttributeUsage u1 = new MetadataNestedAttributeUsage()
                     {
@@ -1413,14 +1351,11 @@ namespace BExIS.Xml.Helpers.Mapping
                     addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, element.Name, attribute.Name);
                     addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, element.Name, attribute.Name);
 
-
-                    #endregion
+                    #endregion generate  MappingRoute
 
                     if (compoundAttribute.MetadataNestedAttributeUsages.Where(n => n.Label.Equals(attribute.Name)).Count() == 0)
                         compoundAttribute.MetadataNestedAttributeUsages.Add(u1);
                 }
-
-
 
                 return compoundAttribute;
             }
@@ -1430,8 +1365,6 @@ namespace BExIS.Xml.Helpers.Mapping
             }
         }
 
-
-
         private MetadataAttribute createMetadataAttribute(XmlSchemaElement element)
         {
             UnitManager unitManager = new UnitManager();
@@ -1439,8 +1372,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
             try
             {
-
-
                 MetadataAttribute temp = null;
 
                 if (element.ElementSchemaType is XmlSchemaSimpleType)
@@ -1460,7 +1391,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     DataType dataType = GetDataType(datatype, typeCodename);
 
                     //unit
-                    Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.ToLower().Equals("none")).FirstOrDefault();
+                    Unit noneunit = unitManager.Repo.Query().Where(u => u.Name.ToLower().Equals("none")).FirstOrDefault();
                     if (noneunit == null)
                     {
                         Dimension dimension = null;
@@ -1471,13 +1402,13 @@ namespace BExIS.Xml.Helpers.Mapping
                         }
                         else
                         {
-                            dimension = unitManager.DimensionRepo.Get().Where(d => d.Name.Equals("none")).FirstOrDefault();
+                            dimension = unitManager.DimensionRepo.Query().Where(d => d.Name.Equals("none")).FirstOrDefault();
                         }
 
                         unitManager.Create("none", "none", "If no unit is used.", dimension, MeasurementSystem.Unknown);
                         // the null dimension should be replaced bz a proper valid one. Javad 11.06
                     }
-                    temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
+                    temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
                     if (temp == null)
                     {
@@ -1501,7 +1432,6 @@ namespace BExIS.Xml.Helpers.Mapping
                     //Debug.Writeline(temp.Name);
 
                     return temp;
-
                 }
 
                 if (element.ElementSchemaType is XmlSchemaComplexType)
@@ -1509,7 +1439,6 @@ namespace BExIS.Xml.Helpers.Mapping
                     XmlSchemaComplexType type = (XmlSchemaComplexType)element.ElementSchemaType;
                     if (type.ContentModel is XmlSchemaSimpleContent)
                     {
-
                         string name = GetTypeOfName(element.Name);
                         string description = "";
 
@@ -1524,11 +1453,11 @@ namespace BExIS.Xml.Helpers.Mapping
 
                         //unit
                         // it is the second time I am seeing this cose segment, would be good to factor it out to a function
-                        Unit noneunit = unitManager.Repo.Get().Where(u => u.Name.Equals("none")).FirstOrDefault();
+                        Unit noneunit = unitManager.Repo.Query().Where(u => u.Name.Equals("none")).FirstOrDefault();
                         if (noneunit == null)
                             unitManager.Create("none", "none", "If no unit is used.", null, MeasurementSystem.Unknown); // null diemsion to be replaced
 
-                        temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(name)).FirstOrDefault();
+                        temp = getExistingMetadataAttribute(name);// = metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(name)).FirstOrDefault();
 
                         if (temp == null)
                         {
@@ -1639,7 +1568,7 @@ namespace BExIS.Xml.Helpers.Mapping
             }
         }
 
-        #endregion
+        #endregion metadata structure
 
         #region mapping file
 
@@ -1657,7 +1586,6 @@ namespace BExIS.Xml.Helpers.Mapping
             XmlNode header = XmlUtility.CreateNode("header", mappingFile);
             XmlMappingHeader xmlMapperheader = mapperInfos.Header;
 
-
             // create destination
 
             XmlNode destination = XmlUtility.CreateNode("destination", mappingFile);
@@ -1670,7 +1598,6 @@ namespace BExIS.Xml.Helpers.Mapping
                 destination = XmlUtility.AddAttribute(destination, "xPath", xmlMapperheader.Destination.XPath, mappingFile);
             }
             header.AppendChild(destination);
-
 
             // create attributes
             XmlNode attributes = XmlUtility.CreateNode("attributes", mappingFile);
@@ -1705,7 +1632,7 @@ namespace BExIS.Xml.Helpers.Mapping
             }
             header.AppendChild(packages);
 
-            // create schema 
+            // create schema
 
             if (mapperInfos.Header.Schemas.Count > 0)
             {
@@ -1760,26 +1687,21 @@ namespace BExIS.Xml.Helpers.Mapping
                 mappingFile.Save(Path.Combine(AppConfiguration.GetModuleWorkspacePath("DIM"), mappingFileNameImport));
             }
 
-
-
             return mappingFile;
         }
 
         private void addMetadataAttributeToMappingFile(MetadataCompoundAttribute compoundAttribute, XmlSchemaElement element, string internalXPath, string externalXPath)
         {
-
             MetadataAttributeManager metadataAttributeManager = new MetadataAttributeManager();
 
             try
             {
-
-
                 MetadataAttribute attribute;
 
                 if (metadataAttributeManager.MetadataAttributeRepo != null &&
-                        metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).Count() > 0)
+                        metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).Count() > 0)
                 {
-                    attribute = metadataAttributeManager.MetadataAttributeRepo.Get().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
+                    attribute = metadataAttributeManager.MetadataAttributeRepo.Query().Where(m => m.Name.Equals(GetTypeOfName(element.Name))).First();
                 }
                 else
                 {
@@ -1791,7 +1713,7 @@ namespace BExIS.Xml.Helpers.Mapping
                 addToExportMappingFile(mappingFileInternalToExternal, internalXPath, externalXPath, element.MaxOccurs, element.Name, attribute.Name);
                 addToImportMappingFile(mappingFileExternalToInternal, externalXPath, internalXPath, element.MaxOccurs, element.Name, attribute.Name);
 
-                #endregion
+                #endregion generate  MappingRoute
 
                 //Debug.WriteLine("SimpleAttribute :");
                 //Debug.WriteLine("--- internal :" + childInternalXPath);
@@ -1850,7 +1772,7 @@ namespace BExIS.Xml.Helpers.Mapping
             return mapper;
         }
 
-        #endregion
+        #endregion mapping file
 
         #region helper functions
 
@@ -1860,13 +1782,10 @@ namespace BExIS.Xml.Helpers.Mapping
 
             try
             {
-
-
                 if (createdAttributesDic.ContainsValue(name))
                 {
                     long id = createdAttributesDic.Where(k => k.Value.Equals(name)).FirstOrDefault().Key;
                     return metadataAttributeManager.MetadataSimpleAttributeRepo.Get(id);
-
                 }
 
                 return null;
@@ -1883,8 +1802,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
             try
             {
-
-
                 if (createdCompoundsDic.ContainsValue(name))
                 {
                     long id = createdCompoundsDic.Where(k => k.Value.Equals(name)).FirstOrDefault().Key;
@@ -1904,8 +1821,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
             try
             {
-
-
                 if (createdPackagesDic.ContainsValue(name))
                 {
                     long id = createdPackagesDic.Where(k => k.Value.Equals(name)).FirstOrDefault().Key;
@@ -1925,7 +1840,6 @@ namespace BExIS.Xml.Helpers.Mapping
             DataTypeManager dataTypeManager = new DataTypeManager();
             try
             {
-
                 if (!dataTypeAsString.ToLower().Equals("Object"))
                 {
                     TypeCode typeCode = ConvertStringToSystemType(dataTypeAsString);
@@ -1945,8 +1859,6 @@ namespace BExIS.Xml.Helpers.Mapping
                                     d.Name.ToLower().Equals(name.ToLower())
                                     )
                                 .FirstOrDefault();
-
-
                     }
                     else
                         dataType =
@@ -2006,10 +1918,10 @@ namespace BExIS.Xml.Helpers.Mapping
                     }
                 }
 
-                if (description.Length > 250)
-                {
-                    description = description.Substring(0, 250);
-                }
+                // if (description.Length > 250)
+                // {
+                //     description = description.Substring(0, 250);
+                // }
             }
 
             return description;
@@ -2030,7 +1942,7 @@ namespace BExIS.Xml.Helpers.Mapping
             return name + "Type";
         }
 
-        #endregion
+        #endregion helper functions
 
         private List<Constraint> ConvertToConstraints(XmlSchemaObject restriction, MetadataAttribute attr)
         {
@@ -2086,7 +1998,6 @@ namespace BExIS.Xml.Helpers.Mapping
                 }
             }
 
-
             return constraints;
         }
 
@@ -2115,7 +2026,7 @@ namespace BExIS.Xml.Helpers.Mapping
                     return GetPatternConstraint(defFacet.Value, GetDescription(defFacet.Annotation), false, attr);
                 }
 
-                #endregion
+                #endregion pattern constraints
 
                 #region range constraints
 
@@ -2125,7 +2036,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
                     if (!IsRangeExist(constraints))
                     {
-
                         return GetRangeConstraint(Convert.ToDouble(defFacet.Value), Convert.ToDouble(defFacet.Value), GetDescription(defFacet.Annotation), false, true, true, attr);
                     }
                     else
@@ -2145,7 +2055,6 @@ namespace BExIS.Xml.Helpers.Mapping
                         constraints.Remove(rc);
 
                         return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
-
                     }
                 }
 
@@ -2173,7 +2082,6 @@ namespace BExIS.Xml.Helpers.Mapping
 
                         return GetRangeConstraint(rc.Lowerbound, rc.Upperbound, GetDescription(defFacet.Annotation), false, rc.LowerboundIncluded, rc.UpperboundIncluded, attr);
                     }
-
                 }
 
                 if (facet is XmlSchemaMaxLengthFacet)
@@ -2275,7 +2183,6 @@ namespace BExIS.Xml.Helpers.Mapping
                     }
                 }
 
-
                 if (facet is XmlSchemaMinExclusiveFacet)
                 {
                     XmlSchemaMinExclusiveFacet defFacet = (XmlSchemaMinExclusiveFacet)facet;
@@ -2299,20 +2206,17 @@ namespace BExIS.Xml.Helpers.Mapping
                     }
                 }
 
-                #endregion
-
+                #endregion range constraints
 
                 if (facet is XmlSchemaTotalDigitsFacet)
                 {
-
                 }
 
                 if (facet is XmlSchemaFractionDigitsFacet)
                 {
-
                 }
 
-                /* special case 
+                /* special case
                 if (facet is XmlSchemaEnumerationFacet)
                 {
                     return GetDomainConstraint((XmlSchemaEnumerationFacet)facet);
@@ -2368,8 +2272,6 @@ namespace BExIS.Xml.Helpers.Mapping
             DataContainerManager dataContainerManager = new DataContainerManager();
             try
             {
-
-
                 RangeConstraint constraint = new RangeConstraint(ConstraintProviderSource.Internal, "", "en-US", description, negated, null, null, null, min, lowerBoundIncluded, max, upperBoundIncluded);
                 dataContainerManager.AddConstraint(constraint, attr);
 
@@ -2386,7 +2288,6 @@ namespace BExIS.Xml.Helpers.Mapping
             DataContainerManager dataContainerManager = new DataContainerManager();
             try
             {
-
                 PatternConstraint constraint = new PatternConstraint(ConstraintProviderSource.Internal, "", "en-US", description, negated, null, null, null, patternString, false);
                 dataContainerManager.AddConstraint(constraint, attr);
 
@@ -2408,11 +2309,12 @@ namespace BExIS.Xml.Helpers.Mapping
             return constraints.Where(c => c is RangeConstraint).FirstOrDefault() as RangeConstraint;
         }
 
-        #endregion
+        #endregion constraints
 
-        #endregion
+        #endregion import To MetadatStructure
 
         #region delete Schema
+
         /// <summary>
         /// Delete all depending xsdFiles under the workspace
         /// && all generated mapping files
@@ -2463,7 +2365,6 @@ namespace BExIS.Xml.Helpers.Mapping
             return false;
         }
 
-
-        #endregion
+        #endregion delete Schema
     }
 }

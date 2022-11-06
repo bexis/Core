@@ -46,5 +46,10 @@
             title="" description="" icon=""
             controller="" action=""
             extends="." />
+
+   <Export tag="lunchbar" id="helpHowToCreditData" order="9"
+            title="How-to Credit Data" description="Link to the faq page" icon=""
+            controller="help" action="HowToCreditData"
+            extends="./lunchbarRoot/help" />
   </Exports>
 </Manifest>

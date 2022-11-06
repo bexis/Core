@@ -1,10 +1,13 @@
 ﻿using BExIS.Dlm.Services.Party;
+using BExIS.Dlm.Entities.Party;
 using BExIS.Modules.Sam.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.UI.Helpers;
+using BExIS.Utils.NH.Querying;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,20 +101,17 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return PartialView("_Instances", entityId);
         }
 
-        [GridAction]
+        [GridAction(EnableCustomBinding = false)]
         public ActionResult Instances_Select(long entityId)
         {
             var entityManager = new EntityManager();
             var entityPermissionManager = new EntityPermissionManager();
-            //var userManager = new UserManager();
 
             try
             {
                 var instanceStore = (IEntityStore)Activator.CreateInstance(entityManager.FindById(entityId).EntityStoreType);
-                //var user = userManager.FindByNameAsync(HttpContext.User.Identity.Name).Result;
-                //var keys = entityPermissionManager.GetKeys(user?.Id, entityId, RightType.Grant);
-                //var instances = instanceStore.GetEntities().Where(i => keys.Contains(i.Id)).Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
                 var instances = instanceStore.GetEntities().Select(i => EntityInstanceGridRowModel.Convert(i, entityPermissionManager.Exists(null, entityId, i.Id))).ToList();
+                
                 return View(new GridModel<EntityInstanceGridRowModel> { Data = instances });
             }
             finally
@@ -129,13 +129,12 @@ namespace BExIS.Modules.Sam.UI.Controllers
         [GridAction]
         public ActionResult Permissions_Select(long subjectId, long entityId, long instanceId)
         {
-            var entityPermissionManager = new EntityPermissionManager();
-            var subjectManager = new SubjectManager();
-            var partyManager = new PartyManager();
-            var entityManager = new EntityManager();
-
-            try
+            using (var entityPermissionManager = new EntityPermissionManager())
+            using (var subjectManager = new SubjectManager())
+            using (var partyManager = new PartyManager())
+            using (var entityManager = new EntityManager())
             {
+
                 var subject = subjectManager.SubjectRepository.Get(subjectId);
 
                 var entityPermissions = new List<ReferredEntityPermissionGridRowModel>();
@@ -171,7 +170,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
                 }
 
                 // Public Permission
-                var publicRights = entityPermissionManager.GetRights(null, entityId, instanceId);
+                var publicRights = entityPermissionManager.GetRights(subjectId: null, entityId, instanceId);
                 if (publicRights > 0)
                 {
                     entityPermissions.Add(ReferredEntityPermissionGridRowModel.Convert("Public Dataset", "", publicRights));
@@ -179,11 +178,7 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
                 return View(new GridModel<ReferredEntityPermissionGridRowModel> { Data = entityPermissions });
             }
-            finally
-            {
-                subjectManager.Dispose();
-                entityPermissionManager.Dispose();
-            }
+       
         }
 
         public void RemoveInstanceFromPublic(long entityId, long instanceId)
@@ -240,24 +235,54 @@ namespace BExIS.Modules.Sam.UI.Controllers
             return PartialView("_Subjects", new EntityInstanceModel() { EntityId = entityId, InstanceId = instanceId });
         }
 
-        [GridAction]
-        public ActionResult Subjects_Select(long entityId, long instanceId)
+        [GridAction(EnableCustomBinding = true)]
+        public ActionResult Subjects_Select(GridCommand command, long entityId, long instanceId)
         {
             var subjectManager = new SubjectManager();
             var entityPermissionManager = new EntityPermissionManager();
 
             try
             {
-                var subjects = new List<EntityPermissionGridRowModel>();
-                foreach (var subject in subjectManager.Subjects)
+                var subjectsDb = new List<Subject>();
+                var count = 0;
+                if (command != null)// filter subjects based on grid filter settings
                 {
-                    var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
-                    var effectiveRights = entityPermissionManager.GetEffectiveRights(subject.Id, entityId, instanceId);
+                    FilterExpression filter = TelerikGridHelper.Convert(command.FilterDescriptors.ToList());
+                    OrderByExpression orderBy = TelerikGridHelper.Convert(command.SortDescriptors.ToList());
 
-                    subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
+                    subjectsDb = subjectManager.GetSubjects(filter, orderBy, command.Page, command.PageSize, out count);
+                }
+                else
+                {
+                    subjectsDb = subjectManager.Subjects.ToList();
+                    count = subjectsDb.Count();
                 }
 
-                return View(new GridModel<EntityPermissionGridRowModel> { Data = subjects });
+                var subjects = new List<EntityPermissionGridRowModel>();
+                //using (PartyManager partyManager = new PartyManager())
+
+                //foreach (var subject in subjectsDb)
+                //{
+                //    var rights = entityPermissionManager.GetRights(subject.Id, entityId, instanceId);
+                //    var effectiveRights = entityPermissionManager.GetEffectiveRights(subject.Id, entityId, instanceId);
+
+                //    subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
+                //}
+
+                var rightsDic = entityPermissionManager.GetRights(subjectsDb, entityId, instanceId);
+                var effectiveRightsDic = entityPermissionManager.GetEffectiveRights(subjectsDb, entityId, instanceId);
+
+                foreach (var item in rightsDic)
+                {
+                    var subject = subjectsDb.Where(s => s.Id.Equals(item.Key)).FirstOrDefault();
+                    var rights = item.Value;
+                    var effectiveRights = effectiveRightsDic[item.Key];
+
+                    subjects.Add(EntityPermissionGridRowModel.Convert(subject, rights, effectiveRights));
+
+                }
+
+                return View(new GridModel<EntityPermissionGridRowModel> { Data = subjects, Total = count });
             }
             finally
             {

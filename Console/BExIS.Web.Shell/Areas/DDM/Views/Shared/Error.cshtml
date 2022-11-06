@@ -1,0 +1,14 @@
+﻿
+@{
+    ViewBag.Title = "Error";
+}
+
+<h2>Error</h2>
+
+@Html.ValidationSummary(true)
+
+<p>A dataset with such an ID does not exist.</p>
+<p>If you are an admin and see this error on a new instance, the search index may not exist. Please update the index and try again.</p>
+
+@Html.ActionLink("Search Manager", "SearchDesigner", "admin")
+

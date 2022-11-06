@@ -12,11 +12,11 @@ using Vaiona.Persistence.Api;
 
 /// <summary>
 ///
-/// </summary>        
+/// </summary>
 namespace BExIS.Xml.Helpers
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum XmlNodeType
     {
@@ -32,11 +32,11 @@ namespace BExIS.Xml.Helpers
     /// <summary>
     ///
     /// </summary>
-    /// <remarks></remarks>        
+    /// <remarks></remarks>
     public class XmlMetadataWriter : XmlWriter
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -47,7 +47,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -55,22 +55,23 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml = null)
         {
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId);
-
-            List<Int64> packageIds = metadataStructureManager.GetEffectivePackageIds(metadataStructureId).ToList();
-
-            // Create xml Document
-            // Create the xml document containe
-            XDocument doc = new XDocument();// Create the XML Declaration, and append it to XML document
-                                            //XDeclaration dec = new XDeclaration("1.0", null, null);
-                                            //doc.Add(dec);// Create the root element
-            XElement root = new XElement("Metadata");
-            root.SetAttributeValue("id", metadataStructure.Id.ToString());
-            doc.Add(root);
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
+                MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId);
+
+                List<Int64> packageIds = metadataStructureManager.GetEffectivePackageIds(metadataStructureId).ToList();
+
+                // Create xml Document
+                // Create the xml document containe
+                XDocument doc = new XDocument();// Create the XML Declaration, and append it to XML document
+                                                //XDeclaration dec = new XDeclaration("1.0", null, null);
+                                                //doc.Add(dec);// Create the root element
+                XElement root = new XElement("Metadata");
+                root.SetAttributeValue("id", metadataStructure.Id.ToString());
+                doc.Add(root);
+
+            
                 IList<MetadataPackageUsage> packages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Get(p => packageIds.Contains(p.Id));
                 List<MetadataAttributeUsage> attributes;
                 foreach (MetadataPackageUsage mpu in packages)
@@ -93,35 +94,6 @@ namespace BExIS.Xml.Helpers
                     role.Add(package);
 
                     setChildren(package, mpu, importXml);
-
-                    //attributes = mpu.MetadataPackage.MetadataAttributeUsages.ToList();
-
-                    //foreach (MetadataAttributeUsage mau in attributes)
-                    //{
-                    //    XElement attribute;
-
-                    //    XElement attributeRole = CreateXElement(mau.Label, XmlNodeType.MetadataAttributeUsage);
-                    //    if (_mode.Equals(XmlNodeMode.xPath))
-                    //    {
-                    //        attributeRole.SetAttributeValue("name", mau.Label);
-                    //        attributeRole.SetAttributeValue("id", mau.Id.ToString());
-                    //    }
-                    //    package.Add(attributeRole);
-
-                    //    attribute = CreateXElement(mau.MetadataAttribute.Name, XmlNodeType.MetadataAttribute);
-                    //    if (_mode.Equals(XmlNodeMode.xPath)) attribute.SetAttributeValue("name", mau.MetadataAttribute.Name);
-
-                    //    attribute.SetAttributeValue("roleId", mau.Id.ToString());
-                    //    attribute.SetAttributeValue("id", mau.MetadataAttribute.Id.ToString());
-                    //    attribute.SetAttributeValue("number", "1");
-
-                    //    string xpath = attributeRole.GetAbsoluteXPath() + attribute.GetAbsoluteXPath();
-
-                    //    attributeRole.Add(attribute);
-
-                    //    setChildren(attribute, mau, importXml);
-
-                    //}
                 }
 
                 return doc;
@@ -137,29 +109,24 @@ namespace BExIS.Xml.Helpers
             {
                 MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)usage;
                 metadataAttribute = metadataAttributeUsage.MetadataAttribute;
-
             }
             else if (usage is MetadataNestedAttributeUsage)
             {
                 MetadataNestedAttributeUsage mnau = (MetadataNestedAttributeUsage)usage;
                 metadataAttribute = mnau.Member;
-
             }
             else
             {
                 MetadataPackageUsage mpu = (MetadataPackageUsage)usage;
                 metadataPackage = mpu.MetadataPackage;
-
             }
 
             if (metadataAttribute != null && metadataAttribute.Self is MetadataCompoundAttribute)
             {
-
                 MetadataCompoundAttribute mca = this.GetUnitOfWork().GetReadOnlyRepository<MetadataCompoundAttribute>().Get(metadataAttribute.Self.Id);
 
                 foreach (MetadataNestedAttributeUsage nestedUsage in mca.MetadataNestedAttributeUsages)
                 {
-
                     if (importDocument != null)
                     {
                         string parentPath = element.GetAbsoluteXPathWithIndex();
@@ -181,8 +148,6 @@ namespace BExIS.Xml.Helpers
                             {
                                 typeList = AddAndReturnAttribute(element, nestedUsage, 1, num);
                             }
-
-
                         }
                         else
                         {
@@ -195,7 +160,6 @@ namespace BExIS.Xml.Helpers
                         {
                             setChildren(type, nestedUsage, importDocument);
                         }
-
                     }
                     else
                     {
@@ -204,23 +168,19 @@ namespace BExIS.Xml.Helpers
                         typeList = AddAndReturnAttribute(element, nestedUsage, 1, 1);
                         setChildren(typeList.FirstOrDefault(), nestedUsage, importDocument);
                     }
-
                 }
             }
             else
             {
                 if (metadataPackage != null)
                 {
-
                     foreach (MetadataAttributeUsage attrUsage in metadataPackage.MetadataAttributeUsages)
                     {
-
                         if (importDocument != null)
                         {
                             string parentPath = element.GetAbsoluteXPathWithIndex();
 
                             string usagePath = parentPath + "/" + attrUsage.Label;
-
 
                             XElement usageElement = importDocument.XPathSelectElement(usagePath);
                             List<XElement> typeList = new List<XElement>();
@@ -237,8 +197,6 @@ namespace BExIS.Xml.Helpers
                                 {
                                     typeList = AddAndReturnAttribute(element, attrUsage, 1, num);
                                 }
-
-
                             }
                             else
                             {
@@ -251,7 +209,6 @@ namespace BExIS.Xml.Helpers
                             {
                                 setChildren(type, attrUsage, importDocument);
                             }
-
                         }
                         else
                         {
@@ -260,7 +217,6 @@ namespace BExIS.Xml.Helpers
                             typeList = AddAndReturnAttribute(element, attrUsage, 1, 1);
                             setChildren(typeList.FirstOrDefault(), attrUsage, importDocument);
                         }
-
                     }
                 }
             }
@@ -271,7 +227,7 @@ namespace BExIS.Xml.Helpers
         #region package
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -287,7 +243,6 @@ namespace BExIS.Xml.Helpers
             if (Exist(xpath))
             {
                 role = Get(xpath);
-
             }
             else
             {
@@ -335,7 +290,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="metadataXml"></param>
         /// <param name="xpath"></param>
@@ -356,7 +311,6 @@ namespace BExIS.Xml.Helpers
             return metadataXml;
         }
 
-
         private void removeAndUpdate(XElement element, XElement parent)
         {
             int number = Convert.ToInt32(element.Attribute("number").Value);
@@ -371,7 +325,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="metadataXml"></param>
         /// <param name="xpath"></param>
@@ -390,7 +344,6 @@ namespace BExIS.Xml.Helpers
             return metadataXml;
         }
 
-
         private XElement clean(XElement element)
         {
             if (element != null)
@@ -401,19 +354,16 @@ namespace BExIS.Xml.Helpers
 
                     if (!e.HasElements && e.Value != null) e.Value = String.Empty;
                     else clean(e);
-
                 }
 
                 return element;
-
             }
 
             return null;
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -443,12 +393,13 @@ namespace BExIS.Xml.Helpers
             return metadataXml;
         }
 
-        #endregion
+        #endregion package
 
         #region attribute
+
         //Add Attribute to a package return a apackage
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -468,7 +419,16 @@ namespace BExIS.Xml.Helpers
                 MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)attributeUsage;
                 typeName = metadataAttributeUsage.MetadataAttribute.Name;
                 id = metadataAttributeUsage.MetadataAttribute.Id.ToString();
-                roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+
+                // changed by Sven & David @ 2021-04-28
+                // roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+                roleId = metadataAttributeUsage.Id.ToString();
+
+                if (metadataAttributeUsage.MetadataAttribute.Self is MetadataCompoundAttribute)
+                {
+                    MetadataCompoundAttribute mca = (MetadataCompoundAttribute)metadataAttributeUsage.MetadataAttribute.Self;
+                    children = mca.MetadataNestedAttributeUsages.ToList();
+                }
             }
             else
             {
@@ -483,7 +443,6 @@ namespace BExIS.Xml.Helpers
                     children = mca.MetadataNestedAttributeUsages.ToList();
                 }
             }
-
 
             if (!Exist(typeName, number, current))
             {
@@ -512,7 +471,6 @@ namespace BExIS.Xml.Helpers
 
                 role.Add(element);
                 current.Add(role);
-
             }
             else
             {
@@ -524,7 +482,7 @@ namespace BExIS.Xml.Helpers
 
         //Add Attribute to a package return a apackage
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -540,13 +498,12 @@ namespace BExIS.Xml.Helpers
             string id = "";
             string roleId = "";
 
-
             if (attributeUsage is MetadataAttributeUsage)
             {
                 MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)attributeUsage;
                 typeName = metadataAttributeUsage.MetadataAttribute.Name;
                 id = metadataAttributeUsage.MetadataAttribute.Id.ToString();
-                roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+                roleId = metadataAttributeUsage.Id.ToString();
             }
             else
             {
@@ -555,7 +512,6 @@ namespace BExIS.Xml.Helpers
                 id = mnau.Member.Id.ToString();
                 roleId = mnau.Id.ToString();
             }
-
 
             if (!Exist(typeName, number, current))
             {
@@ -580,24 +536,20 @@ namespace BExIS.Xml.Helpers
                     tmp.Add(element);
                 }
 
-
                 current.Add(role);
                 //Debug.WriteLine("Element:            " + element.Name);
 
                 return tmp;
-
             }
             else
             {
                 throw new Exception("attribute exist");
             }
-
-
         }
 
         //Add Attribute to a package return a apackage
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -610,7 +562,6 @@ namespace BExIS.Xml.Helpers
             string typeName = "";
             string id = "";
             string roleId = "";
-
 
             if (attributeUsage is MetadataAttributeUsage)
             {
@@ -626,7 +577,6 @@ namespace BExIS.Xml.Helpers
                 id = mnau.Member.Id.ToString();
                 roleId = mnau.Member.Id.ToString();
             }
-
 
             if (!Exist(typeName, number, current))
             {
@@ -659,7 +609,7 @@ namespace BExIS.Xml.Helpers
 
         //Add Attribute to a package return a apackage
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -675,23 +625,21 @@ namespace BExIS.Xml.Helpers
 
             /*
              * In the xml the structure is everytime usage/type
-             * 
+             *
              * e.g. personUsage/PersonType/name/NameType
-             * 
+             *
              * has a attribute has cardinality more then one
              * the usage is the sequence node
-             * 
-             * personUsage/PersonType/name/NameType[1] 
+             *
+             * personUsage/PersonType/name/NameType[1]
              * personUsage/PersonType/name/NameType[2]
-             * 
+             *
              * in this function the parent is e.g PersonType
              * so we need to add the usage name to the xpath to select the right node to add the attribute
              */
 
-
             string usageXPath = parentXPath + "/" + attributeUsage.Label;
             XElement role = Get(usageXPath);
-
 
             XElement element = CreateXElement(attributeTypeName, XmlNodeType.MetadataAttribute);
 
@@ -713,7 +661,7 @@ namespace BExIS.Xml.Helpers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -729,15 +677,15 @@ namespace BExIS.Xml.Helpers
 
             /*
             * In the xml the structure is everytime usage/type
-            * 
+            *
             * e.g. personUsage/PersonType/name/NameType
-            * 
+            *
             * has a attribute has cardinality more then one
             * the usage is the sequence node
-            * 
-            * personUsage/PersonType/name/NameType[1] 
+            *
+            * personUsage/PersonType/name/NameType[1]
             * personUsage/PersonType/name/NameType[2]
-            * 
+            *
             * in this function the parent is e.g PersonType
             * so we need to add the usage name to the xpath to select the right node to remove the attribute
             */
@@ -748,7 +696,6 @@ namespace BExIS.Xml.Helpers
             {
                 if (Exist(attributeName, number, role))
                 {
-
                     XElement attribute = Get(attributeName, number, role);
                     List<XElement> listOfPackagesAfter = GetChildren(attributeName, role).Where(p => p.Attribute("number") != null && Convert.ToInt64(p.Attribute("number").Value) > number).ToList();
 
@@ -767,13 +714,12 @@ namespace BExIS.Xml.Helpers
 
             return _tempXDoc;
         }
-        #endregion
 
+        #endregion attribute
 
         public XDocument Change(XDocument metadataXml, string firstXPath, string secondXPath)
         {
             this._tempXDoc = metadataXml;
-
 
             if (this._tempXDoc.XPathSelectElement(firstXPath) != null &&
                 this._tempXDoc.XPathSelectElement(secondXPath) != null)
@@ -790,17 +736,15 @@ namespace BExIS.Xml.Helpers
                 next.InnerXml = contentFromFirst;
 
                 metadataXml = XmlUtility.ToXDocument(xmlDocument);
-
             }
 
             return metadataXml;
         }
 
-
         #region update
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref=""/>
@@ -815,6 +759,41 @@ namespace BExIS.Xml.Helpers
         {
             _tempXDoc = metadataXml;
 
+            XElement parent = Get(parentXpath);
+
+            if (parent != null)
+            {
+                //attribute role exist
+                if (Exist(attributeUsage.Label, parent))
+                {
+                    XElement attributeRole = Get(attributeUsage.Label, parent);
+                    if (attributeRole != null)
+                    {
+                        XElement attribute = Get(attributeTypeName, number, attributeRole);
+                        if(value!=null) attribute.SetValue(value.ToString());
+                        else attribute.SetValue(string.Empty);
+                    }
+                }
+            }
+
+            return _tempXDoc;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref=""/>
+        /// <param name="metadataXml"></param>
+        /// <param name="packageUsage"></param>
+        /// <param name="packageNumber"></param>
+        /// <param name="attributeUsage"></param>
+        /// <param name="number"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public XDocument Update(XDocument metadataXml, BaseUsage attributeUsage, int number, object value, string attributeTypeName, string parentXpath, Dictionary<string, string> xmlAttrs)
+        {
+            _tempXDoc = metadataXml;
 
             XElement parent = Get(parentXpath);
 
@@ -828,33 +807,33 @@ namespace BExIS.Xml.Helpers
                     {
                         XElement attribute = Get(attributeTypeName, number, attributeRole);
                         attribute.SetValue(value.ToString());
+
+                        if (xmlAttrs != null)
+                        {
+                            foreach (var kvp in xmlAttrs)
+                            {
+                                //create or replace
+                                if (attribute.Attributes().Any(a => a.Name.ToString().Equals(kvp.Key)))
+                                {
+                                    XAttribute xattribute = attribute.Attributes().FirstOrDefault(a => a.Name.ToString().Equals(kvp.Key));
+
+                                    //replace
+                                    if (xattribute != null) xattribute.Value = kvp.Value;
+                                    //create
+                                    else
+                                    {
+                                        attribute.Add(new XAttribute(kvp.Key, kvp.Value));
+                                    }
+                                }
+                                else
+                                {
+                                    attribute.Add(new XAttribute(kvp.Key, kvp.Value));
+                                }
+                            }
+                        }
                     }
                 }
             }
-
-            //exist packageRole
-            //if (Exist(packageUsage.Label, packageUsage.Id))
-            //{
-            //    XElement packageRole = Get(parentXpath);//Get(packageUsage.Label, packageUsage.Id);
-
-            //    //exist package
-            //    if (Exist(parentName, packageNumber, packageRole))
-            //    {
-            //        XElement package = Get(parentXpath);
-
-            //        //attribute role exist
-            //        if (Exist(attributeUsage.Label, package))
-            //        {
-            //            XElement attributeRole = Get(attributeUsage.Label, package);
-            //            if (attributeRole != null)
-            //            {
-            //                XElement attribute = Get(attributeTypeName, number, attributeRole);
-            //                attribute.SetValue(value.ToString());
-            //            }
-            //        }
-            //    }
-            //}
-
 
             return _tempXDoc;
         }
@@ -887,7 +866,7 @@ namespace BExIS.Xml.Helpers
             return parent;
         }
 
-        #endregion
+        #endregion update
 
         #region static
 
@@ -902,8 +881,6 @@ namespace BExIS.Xml.Helpers
             return XmlNodeType.Other;
         }
 
-        #endregion
+        #endregion static
     }
-
-
 }

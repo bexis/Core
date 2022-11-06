@@ -21,12 +21,12 @@ namespace BExIS.Web.Shell
 
     public class MvcApplication : HttpApplication
     {
-
         private BExIS.App.Bootstrap.Application app = null;
+
         protected void Application_Start()
         {
-            // Extension of the view search engine by the case that the UI project with view can be found one directory lower. 
-            // This extension allows to store a complete module with libraries and Ui project in a parent directory. 
+            // Extension of the view search engine by the case that the UI project with view can be found one directory lower.
+            // This extension allows to store a complete module with libraries and Ui project in a parent directory.
             var tmp = new CustomViewEngine();
 
             foreach (var engine in ViewEngines.Engines)
@@ -97,6 +97,14 @@ namespace BExIS.Web.Shell
 
         protected virtual void Application_BeginRequest()
         {
+            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Origin", "*");
+            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Headers", "content-type, append,delete,entries,foreach,get,has,keys,set,values,Authorization");
+            if (
+                   Request.HttpMethod == "OPTIONS")
+            {
+                Response.End();
+            }
         }
 
         /// <summary>
@@ -120,16 +128,11 @@ namespace BExIS.Web.Shell
 
         protected void Application_Error(object sender, EventArgs e)
         {
-
             bool sendExceptions = false;
             bool.TryParse(ConfigurationManager.AppSettings["SendExceptions"], out sendExceptions);
 
-
             var error = Server.GetLastError();
             var code = (error is HttpException) ? (error as HttpException).GetHttpCode() : 500;
-
-
-
 
             if (
                 sendExceptions &&
@@ -146,9 +149,6 @@ namespace BExIS.Web.Shell
 
                 ErrorHelper.Log(Server.GetLastError().Message);
             }
-
         }
-
-
     }
 }

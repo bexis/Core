@@ -1,5 +1,7 @@
 ﻿using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Data;
+using BExIS.Dlm.Services.Party;
 using BExIS.Modules.Ddm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Entities.Objects;
@@ -28,7 +30,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("My Data", this.Session.GetTenant());
 
             DashboardModel model = GetDefaultDashboardModel();
 
@@ -107,6 +109,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             };
             headerItems.Add(headerItem);
 
+            headerItem = new HeaderItem()
+            {
+                Name = "Valid",
+                DisplayName = "is valid",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
             ViewData["DefaultHeaderList"] = headerItems;
 
             #endregion header
@@ -177,28 +187,30 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 List<long> gridCommands = datasetManager.GetDatasetLatestIds();
                 gridCommands.Skip(Convert.ToInt16(ViewData["CurrentPage"])).Take(Convert.ToInt16(ViewData["PageSize"]));
 
-                foreach (long datasetId in gridCommands)
+                List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(gridCommands, false);
+                foreach (var dsv in datasetVersions)
                 {
+                    var datasetId = dsv.Dataset.Id;
+                    
                     //get permissions
                     int rights = entityPermissionManager.GetEffectiveRights(user?.Id, entity.Id, datasetId);
 
                     if (rights > 0)
                     {
                         DataRow dataRow = model.NewRow();
-                        Object[] rowArray = new Object[7];
+                        Object[] rowArray = new Object[8];
+                        string isValid = "no";
 
                         if (datasetManager.IsDatasetCheckedIn(datasetId))
                         {
-                            //long versionId = datasetManager.GetDatasetLatestVersionId (datasetId); // check for zero value
-                            //DatasetVersion dsv = datasetManager.DatasetVersionRepo.Get(versionId);
+                            
+                            string title = dsv.Title;
+                            string description = dsv.Description;
 
-                            DatasetVersion dsv = datasetManager.GetDatasetLatestVersion(datasetId);
-
-                            //MetadataStructureManager msm = new MetadataStructureManager();
-                            //dsv.Dataset.MetadataStructure = msm.Repo.Get(dsv.Dataset.MetadataStructure.Id);
-
-                            string title = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.title);
-                            string description = xmlDatasetHelper.GetInformationFromVersion(dsv.Id, NameAttributeValues.description);
+                            if (dsv.StateInfo != null)
+                            {
+                                isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                            }
 
                             rowArray[0] = Convert.ToInt64(datasetId);
                             rowArray[1] = title;
@@ -216,7 +228,8 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                         rowArray[5] = (rights & (int)RightType.Delete) > 0 ? "✔" : "✘";
                         //rowArray[6] = (rights & (int)RightType.Download) > 0 ? "✔" : "✘";
                         rowArray[6] = (rights & (int)RightType.Grant) > 0 ? "✔" : "✘";
-
+                        rowArray[7] = isValid;
+                        
                         dataRow = model.NewRow();
                         dataRow.ItemArray = rowArray;
                         model.Rows.Add(dataRow);
@@ -243,9 +256,138 @@ namespace BExIS.Modules.Ddm.UI.Controllers
         /// </summary>
         /// <remarks></remarks>
         /// <seealso cref="_CustomMyDatasetBinding"/>
+        /// <param name="entityname">Name of entity</param>
+        /// <param name="rightType">Type of right (write, delete, grant, read)</param>
+        /// <param name="onlyTable">Return only table without header</param>
+        /// <returns>model</returns>
+        public ActionResult ShowMyDatasets(string entityname, RightType rightType, string onlyTable = "false")
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
+
+            List<MyDatasetsModel> model = new List<MyDatasetsModel>();
+
+            using (DatasetManager datasetManager = new DatasetManager())
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            using (UserManager userManager = new UserManager())
+            using (EntityManager entityManager = new EntityManager())
+            using (PartyTypeManager partyTypeManager = new PartyTypeManager())
+            using (PartyManager partyManager = new PartyManager())
+            {
+                // Entity, Entity Party Type and Entity Party
+                var entity = entityManager.FindByName(entityname);
+                var entityPartyType = partyTypeManager.PartyTypeRepository.Get(p => p.Title == entity.Name).FirstOrDefault();
+                var entityPartyIds = partyManager.Parties.Where(p => p.PartyType.Id == entityPartyType.Id).Select(p => p.Id).ToList();
+
+                List<long> datasetIds = new List<long>();
+
+                // get user
+                var user = userManager.FindByNameAsync(GetUsernameOrDefault()).Result;
+
+                if (user != null)
+                {
+                    ViewBag.userLoggedIn = true;
+
+                    // get datasets based on entity permissions
+                    datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname, typeof(Dataset), rightType);
+
+                    var userParty = partyManager.GetPartyByUser(user.Id);
+
+                    if (userParty != null)
+                    {
+                        // get datasets based on party relationships
+                        List<long> partyIds = partyManager.PartyRelationshipRepository.Get(p => p.SourceParty.Id == userParty.Id && p.Permission >= (int)rightType).Select(p => p.TargetParty.Id).ToList();
+
+                        foreach (var partyId in partyIds)
+                        {
+                            if(entityPartyIds.Contains(partyId))
+                            {
+                                long datasetId = 0;
+                                var success = long.TryParse(partyManager.Find(partyId).Name, out datasetId);
+                                if(success && !datasetIds.Contains(datasetId))
+                                {
+                                    datasetIds.Add(datasetId);
+                                }
+                            } 
+                        }
+                    }
+                }
+                else
+                {
+                    ViewBag.userLoggedIn = false;
+                    datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname, typeof(Dataset), RightType.Read);
+
+                }
+
+                List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, true);
+                foreach (var dsv in datasetVersions)
+                {
+
+                    Object[] rowArray = new Object[8];
+                    string isValid = "no";
+
+                    string type = "file";
+                    if (dsv.Dataset.DataStructure.Self is StructuredDataStructure)
+                    {
+                        type = "tabular";
+                    }
+
+
+                    if (dsv.Dataset.Status == DatasetStatus.CheckedIn)
+                    {
+
+                        string title = dsv.Title;
+                        string description = dsv.Description;
+
+                        if (dsv.StateInfo != null)
+                        {
+                            isValid = DatasetStateInfo.Valid.ToString().Equals(dsv.StateInfo.State) ? "yes" : "no";
+                        }
+
+                        rowArray[0] = Convert.ToInt64(dsv.Dataset.Id);
+                        rowArray[1] = title;
+                        rowArray[2] = description;
+                        rowArray[3] = type;
+                    }
+                    else
+                    {
+                        rowArray[0] = Convert.ToInt64(dsv.Dataset.Id);
+                        rowArray[1] = "";
+                        rowArray[2] = "Dataset is just in processing.";
+                        rowArray[3] = type;
+                    }
+
+                    rowArray[7] = true;
+
+                    model.Add(new MyDatasetsModel(
+                       (long)rowArray[0],
+                      (string)rowArray[1],
+                       (string)rowArray[2],
+                       (bool)rowArray[7],
+                       isValid, (string)rowArray[3]));
+
+
+                }
+            }
+            if (onlyTable == "true")
+            {
+                return PartialView("_myDatasetsView", model);
+            }
+            else
+            {
+                ViewBag.entityname = entityname;
+                return PartialView("_myDatasetsViewHeader", model);
+            }
+
+        }
+
+        /// <summary>
+        /// create the model of My Dataset table
+        /// </summary>
+        /// <remarks></remarks>
+        /// <seealso cref="_CustomMyDatasetBinding"/>
         /// <param>NA</param>
         /// <returns>model</returns>
-        public ActionResult ShowMyDatasets()
+        public ActionResult ShowMyDatasets_old()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Dashboard", this.Session.GetTenant());
 
@@ -312,6 +454,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             {
                 Name = "Grant",
                 DisplayName = "Grant",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
+            headerItem = new HeaderItem()
+            {
+                Name = "Valid",
+                DisplayName = "is valid",
                 DataType = "String"
             };
             headerItems.Add(headerItem);
@@ -417,6 +567,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             };
             headerItems.Add(headerItem);
 
+            headerItem = new HeaderItem()
+            {
+                Name = "Valid",
+                DisplayName = "is valid",
+                DataType = "String"
+            };
+            headerItems.Add(headerItem);
+
             return headerItems;
         }
 
@@ -499,43 +657,5 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #endregion mydatasets
 
-        #region requests & decisions
-
-        /// <summary>
-        /// load requests of a entity type & user
-        /// </summary>
-        /// <param name="id">Id of a entity type</param>
-        /// <returns></returns>
-        public ActionResult Requests(long id)
-        {
-            if (this.IsAccessible("SAM", "Requests", "Requests"))
-            {
-                var view = this.Render("SAM", "Requests", "Requests", new RouteValueDictionary()
-                {
-                    { "entityId", id }
-                });
-
-                return Content(view.ToHtmlString(), "text/html");
-            }
-
-            return PartialView("Error"); ;
-        }
-
-        public ActionResult Decisions(long id)
-        {
-            if (this.IsAccessible("SAM", "Requests", "Decisions"))
-            {
-                var view = this.Render("SAM", "Requests", "Decisions", new RouteValueDictionary()
-                {
-                    { "entityId", id }
-                });
-
-                return Content(view.ToHtmlString(), "text/html");
-            }
-
-            return PartialView("Error"); ;
-        }
-
-        #endregion requests & decisions
     }
 }
