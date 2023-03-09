@@ -33,9 +33,9 @@
                            item.Checkable = false;
                            item.Checked = false;
                            item.Expanded = true;
-                           item.LinkHtmlAttributes["class"] = "searchFacet t-headeritem bx-trunc-child";
-                           item.LinkHtmlAttributes["title"] = facet.Text + " (" + facet.Count + ")";
-
+                           item.LinkHtmlAttributes["class"] = "searchFacet t-headeritem";
+                           item.LinkHtmlAttributes["title"] = facet.Text + " ";
+           
                            var l = from f in facet.Childrens
                                    orderby f.Count descending, f.Name
                                    select f;
@@ -65,7 +65,7 @@
                                    {
                                        subitem.HtmlAttributes["class"] = "selected";
                                    }
-                                   subitem.LinkHtmlAttributes["class"] = "searchFacet t-item-child bx-trunc-child";
+                                   subitem.LinkHtmlAttributes["class"] = "searchFacet t-item-child";
                                    subitem.ActionName = "OnSelectTreeViewItem";
                                    subitem.ControllerName = @controller;
                                    subitem.LinkHtmlAttributes["title"] = t.Text + " (" + t.Count + ")";
