@@ -13,6 +13,7 @@ using BExIS.Dim.Entities.Mapping;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Authorization;
 using System.Xml;
+using BExIS.Modules.Bam.UI.Models;
 
 namespace BExIS.Dim.Helpers.Mapping
 {
