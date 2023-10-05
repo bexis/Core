@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Diese Datei wird vom Veröffentlichungs-/Paketierungsprozess Ihres Webprojekts verwendet. Sie können das Verhalten dieses Prozesses anpassen,
+indem Sie diese MSBuild-Datei bearbeiten. Weitere Informationen hierzu finden Sie unter https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\_work\publish\BAM</_PublishTargetUrl>
+    <History>True|2023-05-10T06:41:12.9213083Z;</History>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="Bam.Manifest.xml">
+      <publishTime>06/01/2022 09:29:27</publishTime>
+    </File>
+    <File Include="Bam.Settings.xml">
+      <publishTime>11/10/2022 09:21:01</publishTime>
+    </File>
+    <File Include="bin/Antlr3.Runtime.dll">
+      <publishTime>09/10/2013 18:29:20</publishTime>
+    </File>
+    <File Include="bin/Antlr3.Runtime.pdb">
+      <publishTime>09/10/2013 18:29:20</publishTime>
+    </File>
+    <File Include="bin/Bam.Manifest.xml">
+      <publishTime>06/01/2022 09:29:27</publishTime>
+    </File>
+    <File Include="bin/BExIS.App.Bootstrap.dll">
+      <publishTime>05/10/2023 08:41:08</publishTime>
+    </File>
+    <File Include="bin/BExIS.App.Bootstrap.dll.config">
+      <publishTime>09/09/2022 13:38:19</publishTime>
+    </File>
+    <File Include="bin/BExIS.App.Bootstrap.pdb">
+      <publishTime>05/10/2023 08:41:08</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Entities.dll">
+      <publishTime>05/10/2023 08:31:17</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Entities.pdb">
+      <publishTime>05/10/2023 08:31:17</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Orm.NH.dll">
+      <publishTime>05/10/2023 08:31:17</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Orm.NH.dll.config">
+      <publishTime>09/09/2022 13:38:10</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Orm.NH.pdb">
+      <publishTime>05/10/2023 08:31:17</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Services.dll">
+      <publishTime>05/10/2023 08:31:20</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Services.dll.config">
+      <publishTime>09/09/2022 13:38:21</publishTime>
+    </File>
+    <File Include="bin/BExIS.Dlm.Services.pdb">
+      <publishTime>05/10/2023 08:31:20</publishTime>
+    </File>
+    <File Include="bin/BExIS.Ext.Model.dll">
+      <publishTime>05/10/2023 08:31:17</publishTime>
+    </File>
+    <File Include="bin/BExIS.Ext.Model.pdb">
+      <publishTime>05/10/2023 08:31:17</publishTime>
+    </File>
+    <File Include="bin/BExIS.Ext.Services.dll">
+      <publishTime>05/10/2023 08:31:21</publishTime>
+    </File>
+    <File Include="bin/BExIS.Ext.Services.dll.config">
+      <publishTime>09/09/2022 13:38:21</publishTime>
+    </File>
+    <File Include="bin/BExIS.Ext.Services.pdb">
+      <publishTime>05/10/2023 08:31:21</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.dll">
+      <publishTime>05/10/2023 08:31:17</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.pdb">
+      <publishTime>05/10/2023 08:31:17</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.Transform.Validation.dll">
+      <publishTime>05/10/2023 08:31:20</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.Transform.Validation.dll.config">
+      <publishTime>09/09/2022 13:22:35</publishTime>
+    </File>
+    <File Include="bin/BExIS.IO.Transform.Validation.pdb">
+      <publishTime>05/10/2023 08:31:20</publishTime>
+    </File>
+    <File Include="bin/BExIS.Modules.Bam.UI.dll">
+      <publishTime>05/10/2023 08:41:09</publishTime>
+    </File>
+    <File Include="bin/BExIS.Modules.Bam.UI.pdb">
+      <publishTime>05/10/2023 08:41:09</publishTime>
+    </File>
+    <File Include="bin/BExIS.Security.Entities.dll">
+      <publishTime>05/10/2023 08:31:17</publishTime>
+    </File>
+    <File Include="bin/BExIS.Security.Entities.dll.config">
+      <publishTime>09/09/2022 13:37:49</publishTime>
+    </File>
+    <File Include="bin/BExIS.Security.Entities.pdb">
+      <publishTime>05/10/2023 08:31:17</publishTime>
+    </File>
+    <File Include="bin/BExIS.Security.Services.dll">
+      <publishTime>05/10/2023 08:31:20</publishTime>
+    </File>
+    <File Include="bin/BExIS.Security.Services.dll.config">
+      <publishTime>09/09/2022 13:38:20</publishTime>
+    </File>
+    <File Include="bin/BExIS.Security.Services.pdb">
+      <publishTime>05/10/2023 08:31:20</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.dll">
+      <publishTime>05/10/2023 08:41:01</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.dll.config">
+      <publishTime>09/09/2022 13:38:21</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.NH.dll">
+      <publishTime>05/10/2023 08:31:16</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.NH.dll.config">
+      <publishTime>09/09/2022 13:35:36</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.NH.pdb">
+      <publishTime>05/10/2023 08:31:16</publishTime>
+    </File>
+    <File Include="bin/BExIS.Utils.pdb">
+      <publishTime>05/10/2023 08:41:01</publishTime>
+    </File>
+    <File Include="bin/BExIS.Xml.Helpers.dll">
+      <publishTime>05/10/2023 08:41:04</publishTime>
+    </File>
+    <File Include="bin/BExIS.Xml.Helpers.dll.config">
+      <publishTime>09/09/2022 13:38:20</publishTime>
+    </File>
+    <File Include="bin/BExIS.Xml.Helpers.pdb">
+      <publishTime>05/10/2023 08:41:04</publishTime>
+    </File>
+    <File Include="bin/BExIS.Xml.Models.dll">
+      <publishTime>05/10/2023 08:31:17</publishTime>
+    </File>
+    <File Include="bin/BExIS.Xml.Models.pdb">
+      <publishTime>05/10/2023 08:31:17</publishTime>
+    </File>
+    <File Include="bin/bg-BG/BExIS.Utils.resources.dll">
+      <publishTime>05/10/2023 08:41:01</publishTime>
+    </File>
+    <File Include="bin/BouncyCastle.Crypto.dll">
+      <publishTime>10/19/2021 13:53:32</publishTime>
+    </File>
+    <File Include="bin/da-DK/BExIS.Utils.resources.dll">
+      <publishTime>05/10/2023 08:41:01</publishTime>
+    </File>
+    <File Include="bin/de-DE/BExIS.Utils.resources.dll">
+      <publishTime>05/10/2023 08:41:01</publishTime>
+    </File>
+    <File Include="bin/de/System.Net.Http.Formatting.resources.dll">
+      <publishTime>01/28/2015 05:02:46</publishTime>
+    </File>
+    <File Include="bin/de/System.Web.Helpers.resources.dll">
+      <publishTime>01/28/2015 05:04:34</publishTime>
+    </File>
+    <File Include="bin/de/System.Web.Http.resources.dll">
+      <publishTime>01/28/2015 05:02:58</publishTime>
+    </File>
+    <File Include="bin/de/System.Web.Http.WebHost.resources.dll">
+      <publishTime>01/28/2015 05:03:50</publishTime>
+    </File>
+    <File Include="bin/de/System.Web.WebPages.Deployment.resources.dll">
+      <publishTime>01/28/2015 05:04:34</publishTime>
+    </File>
+    <File Include="bin/de/System.Web.WebPages.Razor.resources.dll">
+      <publishTime>01/28/2015 05:04:34</publishTime>
+    </File>
+    <File Include="bin/de/System.Web.WebPages.resources.dll">
+      <publishTime>01/28/2015 05:04:34</publishTime>
+    </File>
+    <File Include="bin/en-US/BExIS.Utils.resources.dll">
+      <publishTime>05/10/2023 08:41:01</publishTime>
+    </File>
+    <File Include="bin/es-ES/BExIS.Utils.resources.dll">
+      <publishTime>05/10/2023 08:41:02</publishTime>
+    </File>
+    <File Include="bin/fr-FR/BExIS.Utils.resources.dll">
+      <publishTime>05/10/2023 08:41:01</publishTime>
+    </File>
+    <File Include="bin/Iesi.Collections.dll">
+      <publishTime>02/10/2013 11:44:52</publishTime>
+    </File>
+    <File Include="bin/MailKit.dll">
+      <publishTime>01/30/2022 17:21:04</publishTime>
+    </File>
+    <File Include="bin/MailKit.pdb">
+      <publishTime>01/30/2022 17:21:04</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/Administration/ResearchPlan.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/Data/ContentDescriptor.hbm.xml">
+      <publishTime>06/01/2022 09:29:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/Data/Dataset.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/Data/DatasetVersion.hbm.xml">
+      <publishTime>06/01/2022 09:29:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/Data/DataTuple.hbm.xml">
+      <publishTime>06/01/2022 09:29:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/Data/DataTupleVersion.hbm.xml">
+      <publishTime>06/01/2022 09:29:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/AggregateFunction.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Classifier.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Constraint.ComparisonConstraint.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Constraint.DomainConstraint.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Constraint.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Constraint.PatternConstraint.hbm.xml">
+      <publishTime>06/01/2022 09:29:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Constraint.RangeConstraint.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/ConversionMethod.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataContainer.DataAttribute.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataContainer.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataStructure.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataStructure.StructuredDataStructure.hbm.xml">
+      <publishTime>06/01/2022 09:29:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataStructure.UnStructuredDataStructure.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataType.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/DataView.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Dimension.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/ExtendedProperty.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/GlobalizationInfo.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Methodology.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Parameter.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Unit.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/DataStructure/Variable.hbm.xml">
+      <publishTime>06/01/2022 09:29:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/DataContainer.MetadataAttribute.Compound.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/DataContainer.MetadataAttribute.hbm.xml">
+      <publishTime>05/08/2023 08:43:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/DataContainer.MetadataAttribute.Parameter.hbm.xml">
+      <publishTime>05/08/2023 08:43:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/DataContainer.MetadataAttribute.Simple.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/MetadataAttributeUsage.hbm.xml">
+      <publishTime>06/01/2022 09:29:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/MetadataNestedAttributeUsage.hbm.xml">
+      <publishTime>06/01/2022 09:29:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/MetadataPackage.hbm.xml">
+      <publishTime>06/01/2022 09:29:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/MetadataPackageUsage.hbm.xml">
+      <publishTime>06/01/2022 09:29:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/MetadataParameterUsage.hbm.xml">
+      <publishTime>05/08/2023 08:43:26</publishTime>
+    </File>
+    <File Include="bin/Mappings/Default/MetadataStructure/MetadataStructure.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Mappings/PostgreSQL82Dialect/NativeObjects/Queries.hbm.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.Agent.Intercept.dll">
+      <publishTime>08/06/2015 14:16:50</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.DependencyCollector.dll">
+      <publishTime>10/29/2015 21:45:38</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.PerfCounterCollector.dll">
+      <publishTime>10/29/2015 21:58:00</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.ServerTelemetryChannel.dll">
+      <publishTime>10/29/2015 21:49:14</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.Web.dll">
+      <publishTime>10/29/2015 21:49:14</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AI.WindowsServer.dll">
+      <publishTime>10/29/2015 21:49:22</publishTime>
+    </File>
+    <File Include="bin/Microsoft.ApplicationInsights.dll">
+      <publishTime>10/28/2015 18:10:06</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.Identity.Core.dll">
+      <publishTime>11/25/2019 11:57:50</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.Identity.Owin.dll">
+      <publishTime>04/03/2015 19:07:22</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.dll">
+      <publishTime>05/11/2022 01:31:20</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.Cookies.dll">
+      <publishTime>05/11/2022 01:31:50</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.dll">
+      <publishTime>05/11/2022 01:31:38</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.OAuth.dll">
+      <publishTime>05/11/2022 01:31:50</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Web.Helpers.dll">
+      <publishTime>01/28/2015 05:03:58</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Web.Infrastructure.dll">
+      <publishTime>04/11/2022 21:09:46</publishTime>
+    </File>
+    <File Include="bin/MimeKit.dll">
+      <publishTime>01/30/2022 16:46:50</publishTime>
+    </File>
+    <File Include="bin/MimeKit.pdb">
+      <publishTime>01/30/2022 16:46:50</publishTime>
+    </File>
+    <File Include="bin/NCalc.dll">
+      <publishTime>06/20/2016 18:51:04</publishTime>
+    </File>
+    <File Include="bin/Newtonsoft.Json.dll">
+      <publishTime>03/17/2021 21:03:36</publishTime>
+    </File>
+    <File Include="bin/NHibernate.dll">
+      <publishTime>02/02/2017 13:35:28</publishTime>
+    </File>
+    <File Include="bin/nl-NL/BExIS.Utils.resources.dll">
+      <publishTime>05/10/2023 08:41:01</publishTime>
+    </File>
+    <File Include="bin/Owin.dll">
+      <publishTime>11/13/2012 13:19:34</publishTime>
+    </File>
+    <File Include="bin/pl-PL/BExIS.Utils.resources.dll">
+      <publishTime>05/10/2023 08:41:02</publishTime>
+    </File>
+    <File Include="bin/PostSharp.dll">
+      <publishTime>05/29/2019 10:56:52</publishTime>
+    </File>
+    <File Include="bin/pt-BR/BExIS.Utils.resources.dll">
+      <publishTime>05/10/2023 08:41:02</publishTime>
+    </File>
+    <File Include="bin/pt-PT/BExIS.Utils.resources.dll">
+      <publishTime>05/10/2023 08:41:02</publishTime>
+    </File>
+    <File Include="bin/ru-RU/BExIS.Utils.resources.dll">
+      <publishTime>05/10/2023 08:41:02</publishTime>
+    </File>
+    <File Include="bin/System.Buffers.dll">
+      <publishTime>02/19/2020 11:05:18</publishTime>
+    </File>
+    <File Include="bin/System.Linq.Dynamic.Core.dll">
+      <publishTime>06/26/2022 12:14:46</publishTime>
+    </File>
+    <File Include="bin/System.Linq.Dynamic.Core.pdb">
+      <publishTime>06/26/2022 12:14:46</publishTime>
+    </File>
+    <File Include="bin/System.Net.Http.Formatting.dll">
+      <publishTime>01/28/2015 05:02:42</publishTime>
+    </File>
+    <File Include="bin/System.Runtime.CompilerServices.Unsafe.dll">
+      <publishTime>02/19/2020 11:05:16</publishTime>
+    </File>
+    <File Include="bin/System.Web.Helpers.dll">
+      <publishTime>01/28/2015 05:04:30</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.dll">
+      <publishTime>01/28/2015 05:02:54</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.WebHost.dll">
+      <publishTime>01/28/2015 05:03:46</publishTime>
+    </File>
+    <File Include="bin/System.Web.Mvc.dll">
+      <publishTime>01/28/2015 05:02:18</publishTime>
+    </File>
+    <File Include="bin/System.Web.Razor.dll">
+      <publishTime>01/28/2015 05:02:32</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Deployment.dll">
+      <publishTime>01/28/2015 05:04:30</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.dll">
+      <publishTime>01/28/2015 05:04:30</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Razor.dll">
+      <publishTime>01/28/2015 05:04:30</publishTime>
+    </File>
+    <File Include="bin/Telerik.Web.Mvc.dll">
+      <publishTime>06/12/2013 18:52:40</publishTime>
+    </File>
+    <File Include="bin/uk-UA/BExIS.Utils.resources.dll">
+      <publishTime>05/10/2023 08:41:02</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Core.dll">
+      <publishTime>05/25/2022 10:57:29</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Entities.dll">
+      <publishTime>05/25/2022 10:57:29</publishTime>
+    </File>
+    <File Include="bin/Vaiona.IoC.dll">
+      <publishTime>05/25/2022 10:57:29</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Logging.dll">
+      <publishTime>05/25/2022 10:57:29</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Model.dll">
+      <publishTime>05/25/2022 10:57:29</publishTime>
+    </File>
+    <File Include="bin/Vaiona.MultiTenancy.Api.dll">
+      <publishTime>05/25/2022 10:57:29</publishTime>
+    </File>
+    <File Include="bin/Vaiona.MultiTenancy.Services.dll">
+      <publishTime>05/25/2022 10:57:29</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Persistence.Api.dll">
+      <publishTime>05/25/2022 10:57:29</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Utils.dll">
+      <publishTime>05/25/2022 10:57:29</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Web.dll">
+      <publishTime>05/25/2022 10:57:29</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Web.Mvc.dll">
+      <publishTime>05/25/2022 10:57:29</publishTime>
+    </File>
+    <File Include="bin/Vaiona.Web.Mvc.Modularity.dll">
+      <publishTime>05/25/2022 10:57:29</publishTime>
+    </File>
+    <File Include="bin/WebActivator.dll">
+      <publishTime>02/21/2011 15:11:44</publishTime>
+    </File>
+    <File Include="bin/WebMatrix.Data.dll">
+      <publishTime>01/28/2015 05:04:00</publishTime>
+    </File>
+    <File Include="bin/WebMatrix.WebData.dll">
+      <publishTime>01/28/2015 05:04:20</publishTime>
+    </File>
+    <File Include="bin/zh-CN/BExIS.Utils.resources.dll">
+      <publishTime>05/10/2023 08:41:02</publishTime>
+    </File>
+    <File Include="Content/bootstrap-theme.css">
+      <publishTime>09/22/2022 12:11:23</publishTime>
+    </File>
+    <File Include="Content/bootstrap-theme.css.map">
+      <publishTime>09/09/2022 13:30:46</publishTime>
+    </File>
+    <File Include="Content/bootstrap-theme.min.css">
+      <publishTime>09/22/2022 12:11:24</publishTime>
+    </File>
+    <File Include="Content/bootstrap-theme.min.css.map">
+      <publishTime>09/09/2022 13:30:46</publishTime>
+    </File>
+    <File Include="Content/bootstrap.css">
+      <publishTime>09/22/2022 12:11:24</publishTime>
+    </File>
+    <File Include="Content/bootstrap.css.map">
+      <publishTime>09/09/2022 13:30:46</publishTime>
+    </File>
+    <File Include="Content/bootstrap.min.css">
+      <publishTime>09/22/2022 12:11:24</publishTime>
+    </File>
+    <File Include="Content/bootstrap.min.css.map">
+      <publishTime>09/09/2022 13:30:46</publishTime>
+    </File>
+    <File Include="Content/Site.css">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.eot">
+      <publishTime>09/09/2022 13:30:46</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.svg">
+      <publishTime>09/22/2022 12:11:34</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.ttf">
+      <publishTime>09/09/2022 13:30:45</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.woff">
+      <publishTime>09/09/2022 13:30:45</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.woff2">
+      <publishTime>09/09/2022 13:30:45</publishTime>
+    </File>
+    <File Include="Scripts/ai.0.15.0-build58334.js">
+      <publishTime>09/09/2022 13:30:47</publishTime>
+    </File>
+    <File Include="Scripts/ai.0.15.0-build58334.min.js">
+      <publishTime>09/09/2022 13:30:47</publishTime>
+    </File>
+    <File Include="Scripts/ai.0.22.19-build00125.js">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Scripts/ai.0.22.19-build00125.min.js">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.js">
+      <publishTime>09/22/2022 12:00:46</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.min.js">
+      <publishTime>09/22/2022 12:00:46</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.10.2.js">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.10.2.min.js">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.10.2.min.map">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.6.0.js">
+      <publishTime>09/22/2022 12:00:46</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.6.0.min.js">
+      <publishTime>09/22/2022 12:00:46</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.6.0.min.map">
+      <publishTime>09/09/2022 13:30:45</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.6.0.slim.js">
+      <publishTime>09/22/2022 12:00:47</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.6.0.slim.min.js">
+      <publishTime>09/22/2022 12:00:47</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.6.0.slim.min.map">
+      <publishTime>09/09/2022 13:30:45</publishTime>
+    </File>
+    <File Include="Scripts/jquery-migrate-3.3.0.js">
+      <publishTime>09/22/2022 12:00:47</publishTime>
+    </File>
+    <File Include="Scripts/jquery-migrate-3.3.0.min.js">
+      <publishTime>09/22/2022 12:00:47</publishTime>
+    </File>
+    <File Include="Scripts/jquery.validate.js">
+      <publishTime>09/22/2022 12:00:47</publishTime>
+    </File>
+    <File Include="Scripts/jquery.validate.min.js">
+      <publishTime>09/22/2022 12:00:47</publishTime>
+    </File>
+    <File Include="Scripts/jquery.validate.unobtrusive.js">
+      <publishTime>09/09/2022 13:30:49</publishTime>
+    </File>
+    <File Include="Scripts/jquery.validate.unobtrusive.min.js">
+      <publishTime>09/09/2022 13:30:49</publishTime>
+    </File>
+    <File Include="Scripts/modernizr-2.6.2.js">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Scripts/modernizr-2.8.3.js">
+      <publishTime>09/22/2022 12:00:47</publishTime>
+    </File>
+    <File Include="Scripts/PartyHelper.js">
+      <publishTime>06/01/2022 09:29:27</publishTime>
+    </File>
+    <File Include="Scripts/respond.js">
+      <publishTime>09/22/2022 12:00:47</publishTime>
+    </File>
+    <File Include="Scripts/respond.matchmedia.addListener.js">
+      <publishTime>09/22/2022 12:00:47</publishTime>
+    </File>
+    <File Include="Scripts/respond.matchmedia.addListener.min.js">
+      <publishTime>09/22/2022 12:00:47</publishTime>
+    </File>
+    <File Include="Scripts/respond.min.js">
+      <publishTime>09/22/2022 12:00:47</publishTime>
+    </File>
+    <File Include="Scripts/_references.js">
+      <publishTime>09/22/2022 12:00:46</publishTime>
+    </File>
+    <File Include="Views/Help/Index.cshtml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Views/Help/Informations.xml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Views/Party/CreateEdit.cshtml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Views/Party/DeleteConfirm.cshtml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Views/Party/Index.cshtml">
+      <publishTime>06/01/2022 09:29:27</publishTime>
+    </File>
+    <File Include="Views/Party/View.cshtml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Views/Party/_addPartyRelationshipPartial.cshtml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Views/Party/_addPartyTypePair.cshtml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Views/Party/_editSystemPartyTypes.cshtml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Views/Party/_partiesDynamicGridPartial.cshtml">
+      <publishTime>06/01/2022 09:29:27</publishTime>
+    </File>
+    <File Include="Views/Party/_partiesPartial.cshtml">
+      <publishTime>06/01/2022 09:29:27</publishTime>
+    </File>
+    <File Include="Views/Party/_partyGridFields.cshtml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Views/Party/_relationshipEditViewPartial.cshtml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Views/Party/_templateRelationshipPartial.cshtml">
+      <publishTime>06/01/2022 09:29:27</publishTime>
+    </File>
+    <File Include="Views/PartyService/Edit.cshtml">
+      <publishTime>06/01/2022 09:29:27</publishTime>
+    </File>
+    <File Include="Views/PartyService/_customAttributesPartial.cshtml">
+      <publishTime>06/01/2022 09:29:27</publishTime>
+    </File>
+    <File Include="Views/PartyService/_partyRelationshipsPartial.cshtml">
+      <publishTime>06/01/2022 09:29:27</publishTime>
+    </File>
+    <File Include="Views/PartyService/_userRegisterationPartial.cshtml">
+      <publishTime>05/08/2023 08:43:33</publishTime>
+    </File>
+    <File Include="Views/Web.config">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="Views/_ViewStart.cshtml">
+      <publishTime>05/25/2022 10:57:27</publishTime>
+    </File>
+    <File Include="web.config">
+      <publishTime>05/10/2023 08:41:10</publishTime>
+    </File>
+  </ItemGroup>
+</Project>
