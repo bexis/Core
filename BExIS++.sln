@@ -209,8 +209,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TCD", "TCD", "{CBCBF5EA-792
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Modules.Tcd.UI", "Console\BExIS.Web.Shell\Areas\TCD\BExIS.Modules.Tcd.UI.csproj", "{4ED52787-64BB-4AAE-B325-3F231AC7550B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Tcd.Helpers", "Console\BExIS.Web.Shell\Areas\TCD\BExIS.Tcd.Helpers\BExIS.Tcd.Helpers.csproj", "{028FF94A-D430-4AA3-88B7-9538900328FB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Dim.Helpers.Tests", "Modules\DIM\BExIS.Dim.Helpers.Tests\BExIS.Dim.Helpers.Tests.csproj", "{A1354F07-B8CE-4632-B1A1-1D5BD18E7F0E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BExIS.Dim.Helpers.UnitTests", "Modules\DIM\BExIS.Dim.Helpers.UnitTests\BExIS.Dim.Helpers.UnitTests.csproj", "{968E655A-B818-4471-B653-91525A3DFA75}"
