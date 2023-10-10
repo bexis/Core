@@ -1509,13 +1509,14 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                     if (featurePermissionManager.HasAccess(subject.Id, feature.Id))
                                         DSlink = "/RPM/DataStructureEdit/?dataStructureId=" + dataStructureId;
                                 }
-                    //        }
+                                //        }
                             }
-                        
 
-                        else
-                        {
-                            dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(dataStructureId);
+
+                            else
+                            {
+                                dataStructure = uow.GetReadOnlyRepository<DataStructure>().Get(dataStructureId);
+                            }
                         }
                     }
 
