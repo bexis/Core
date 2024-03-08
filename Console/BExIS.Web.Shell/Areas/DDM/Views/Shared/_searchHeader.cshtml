@@ -58,17 +58,6 @@
                </td>
   
            </tr>
-
-           @if (HttpContext.Current.User != null &&
-               HttpContext.Current.User.Identity != null &&
-               !string.IsNullOrEmpty(HttpContext.Current.User.Identity.Name))
-           {
-           <tr>
-               <td>
-                   @Html.CheckBox("OnlyPublic", @onlyPublic, new { onclick = "onShowOnlyPublicChanged(this)" }) <b style="vertical-align:top">public only</b>
-               </td>
-           </tr>
-           }
        </table>
   </div>      
      
