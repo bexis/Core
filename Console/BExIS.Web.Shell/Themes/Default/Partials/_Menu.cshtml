@@ -22,11 +22,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            @if (!String.IsNullOrEmpty(Html.GetTenant().Brand))
+            @if(!string.IsNullOrEmpty(Html.GetTenant().Brand))
             {
-            <a href="@Url.Action("Index", "Home", new { area = "" })" class="navbar-brand">
-                @Html.Brand(Html.GetTenant().BrandPath, Html.GetTenant().ShortName)
-            </a>
+                <a href="@Url.Action("Index", "Home", new { area = "" })" class="navbar-brand">
+                    @Html.Brand(Html.GetTenant().BrandPath, Html.GetTenant().ShortName)
+                </a>
+            }
             }
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
