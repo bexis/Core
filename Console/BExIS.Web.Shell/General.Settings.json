@@ -34,10 +34,10 @@
         "hostAnonymous": false,
         "hostSecureSocketOptions": 1,
         "hostCertificateRevocation": false,
-        "accountName": "<account_name>",
-        "accountPassword": "<account_password>",
-        "fromName": "<from_name>",
-        "fromAddress": "<from_address>"
+        "accountName": "we95lez",
+        "accountPassword": ".bl2039",
+        "fromName": "bexis",
+        "fromAddress": "bexis@listserv.uni-jena.de"
       },
       "type": "JSON",
       "description": "The application name is used in several places in the system. e.g. as title in the email"
@@ -118,7 +118,7 @@
     {
       "key": "systemEmail",
       "title": "System E-Mail Address",
-      "value": "david.schoene@uni-jena.de",
+      "value": "eleonora.petzold@uni-jena.de",
       "type": "String",
       "description": "All administrative information will be sent to this email."
     },
@@ -148,7 +148,7 @@
       "title": "Person E-Mail Attribute Name",
       "value": "Email",
       "type": "String",
-      "description": "david.schoene@uni-jena.de"
+      "description": "eleonora.petzold@uni-jena.de"
     }
 
   ]
