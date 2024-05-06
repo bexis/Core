@@ -278,6 +278,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DOV", "DOV", "{765A4D97-2C8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Modules.Dov.UI", "Console\BExIS.Web.Shell\Areas\DOV\BExIS.Modules.Dov.UI.csproj", "{A0257057-769F-4D6C-958A-CCACD6EBC52B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SWS", "SWS", "{DCDD0791-611E-4C92-AB39-D49F086174FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2046,10 +2048,11 @@ Global
 		{A2B47C9B-9466-4C52-8BD4-7E99C82732AB} = {A99F4ABA-D0E6-49F3-87CD-9A15B5BD34F2}
 		{765A4D97-2C88-417E-A57F-32FE27EE52E0} = {692AFF14-3A57-47D8-912F-093EC8F561C4}
 		{A0257057-769F-4D6C-958A-CCACD6EBC52B} = {765A4D97-2C88-417E-A57F-32FE27EE52E0}
+		{DCDD0791-611E-4C92-AB39-D49F086174FD} = {692AFF14-3A57-47D8-912F-093EC8F561C4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
 		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
+		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
