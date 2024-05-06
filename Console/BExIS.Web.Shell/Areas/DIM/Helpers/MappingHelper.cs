@@ -1193,6 +1193,13 @@ namespace BExIS.Modules.Dim.UI.Helper
 
                     simplemapping.TransformationRule = transformationRule;
                     mappingManager.UpdateMapping(simplemapping);
+
+                    if (bothDirections)
+                    {
+                        simplemappingReverse.TransformationRule = transformationRule;
+                        mappingManager.UpdateMapping(simplemappingReverse);
+                    }
+
                 }
 
                 sm.Id = simplemapping.Id;
