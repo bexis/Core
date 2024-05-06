@@ -12,7 +12,6 @@
     }
 
 }
-
 <div class="navbar navbar-default" style="z-index: 1337">
     <div class="container-fluid shadow-md" id="menubar" style="background-color: var(--bg-color-level-5); padding: 8px 12px;">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -28,6 +27,7 @@
                 <a href="@Url.Action("Index", "Home", new { area = "" })" class="navbar-brand">
                     @Html.Brand(Html.GetTenant().BrandPath, Html.GetTenant().ShortName)
                 </a>
+            }
             }
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->

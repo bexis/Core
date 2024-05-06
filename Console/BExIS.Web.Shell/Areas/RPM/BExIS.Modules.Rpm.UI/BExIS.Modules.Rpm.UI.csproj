@@ -168,6 +168,7 @@
     </Content>
     <Content Include="Rpm.Settings.json" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\BexisServer_2010-testsite.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_dev.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />

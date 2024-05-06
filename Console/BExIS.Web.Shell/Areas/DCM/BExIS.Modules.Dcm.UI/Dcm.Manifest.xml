@@ -21,7 +21,7 @@
 				extends="./settingsRoot" />
 		
 		<Export tag="menubar" id="create" order="1"
-				title="Create" description="Create a new Entity" icon=""
+				title="Upload" description="Create a new Entity" icon=""
 				controller="create" action=""
 				extends="./menubarRoot" />
 		
