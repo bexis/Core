@@ -83,7 +83,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
         }
 
-        public static EntityTemplateModel ConvertTo(EntityTemplate entityTemplate)
+        public static EntityTemplateModel ConvertTo(EntityTemplate entityTemplate, bool withLinkedSubjects = true)
         {
             EntityTemplateModel model = new EntityTemplateModel();
             model.Id = entityTemplate.Id;
@@ -106,15 +106,21 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             {
                 long etId = entityTemplate.Id;
                 var datasetsetIdsWithThisTemplate = datasetManager.DatasetRepo.Query().Where(d => d.EntityTemplate.Id.Equals(etId)).Select(d => d.Id).ToList();
-                var dsvs = datasetManager.GetDatasetLatestVersions(datasetsetIdsWithThisTemplate);
-                // get throw all the subjects that are linked to the entitytemplate
-                foreach (var dsv in dsvs)
+                model.InUse = datasetsetIdsWithThisTemplate.Count > 0 ? true : false; // set in use if count greater then 0
+
+                if (withLinkedSubjects) // load linked subject - not needed in create
                 {
-                    var l = new ListItem();
-                    l.Id = dsv.Dataset.Id;
-                    l.Text = dsv != null ? dsv.Title.ToString() : "Dataset is checked out."; // if a version is available, get the title
-                    l.Group = entityTemplate.EntityType.Name; // add entity name
-                    model.LinkedSubjects.Add(l);
+                    var dsvs = datasetManager.GetDatasetLatestVersions(datasetsetIdsWithThisTemplate);
+
+                    // get throw all the subjects that are linked to the entitytemplate
+                    foreach (var dsv in dsvs)
+                    {
+                        var l = new ListItem();
+                        l.Id = dsv.Dataset.Id;
+                        l.Text = dsv != null ? dsv.Title.ToString() : "Dataset is checked out."; // if a version is available, get the title
+                        l.Group = entityTemplate.EntityType.Name; // add entity name 
+                        model.LinkedSubjects.Add(l);
+                    }
                 }
             }
 

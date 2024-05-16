@@ -78,6 +78,8 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
         /// list of all suject that are created withthis template
         /// </summary>
         public virtual List<ListItem> LinkedSubjects { get; set; }
+        
+        public bool InUse { get; set; }
 
         public EntityTemplateModel()
         {
