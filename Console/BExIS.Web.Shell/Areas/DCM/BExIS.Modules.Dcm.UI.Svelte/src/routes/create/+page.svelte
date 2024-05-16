@@ -1,7 +1,7 @@
 <script lang="ts">
 	import List from './List.svelte';
 	import Form from './Form.svelte';
-	import { Page, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
+	import { ErrorMessage, Page, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
 	import type { linkType } from '@bexis2/bexis2-core-ui';
 
@@ -80,8 +80,8 @@
 					/>
 				{/if}
 			</div>
-		{:else}
-			<Spinner />
-		{/if}
+			{:catch error}
+			<ErrorMessage {error} />
+		{/await}
 	</div>
 </Page>
