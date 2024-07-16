@@ -1,4 +1,4 @@
-﻿using BExIS.Dim.Entities.Publication;
+﻿using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
 using BExIS.Dim.Helpers.Export;
 using BExIS.Dim.Services;
@@ -54,9 +54,9 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 Repository dataRepo = new Repository();
                 dataRepo.Name = "generic";
-                dataRepo.Broker = broker;
+                broker.Repository = dataRepo;
 
-                GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(dataRepo);
+                GenericDataRepoConverter dataRepoConverter = new GenericDataRepoConverter(broker);
                 Tuple<string, string> tmp = new Tuple<string, string>(dataRepoConverter.Convert(datasetVersionId), "application/zip");
 
                 return File(tmp.Item1, tmp.Item2, Path.GetFileName(tmp.Item1));
@@ -214,7 +214,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     LoggerFactory.LogCustom("Primary Data Start");
 
                     // check the data sturcture type ...
-                    if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) >0)
+                    if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) > 0)
                     {
                         OutputDataManager odm = new OutputDataManager();
                         // apply selection and projection
@@ -246,7 +246,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     string zipPath = publishingManager.GetDirectoryPath(id, brokerName);
                     string dynamicZipPath = publishingManager.GetDynamicDirectoryPath(id, brokerName);
                     string zipFilePath = Path.Combine(zipPath, zipName);
-                    string dynamicFilePath = Path.Combine(dynamicZipPath, zipName);
+                    //string dynamicFilePath = Path.Combine(dynamicZipPath, zipName);
 
                     FileHelper.CreateDicrectoriesIfNotExist(Path.GetDirectoryName(zipFilePath));
 
@@ -265,11 +265,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                     LoggerFactory.LogCustom("Datastructure Start");
 
-                    long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
-                    DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+                   
 
-                    if (dataStructure != null)
+                    if (datasetVersion.Dataset.DataStructure != null)
                     {
+                        long dataStructureId = datasetVersion.Dataset.DataStructure.Id;
+                        DataStructure dataStructure = dataStructureManager.StructuredDataStructureRepo.Get(dataStructureId);
+
                         try
                         {
                             string dynamicPathOfDS = "";
@@ -313,7 +315,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                                 if (FileHelper.FileExist(path))
                                 {
-                                    if(!zip.Any(entry => entry.FileName.EndsWith(name)))
+                                    if (!zip.Any(entry => entry.FileName.EndsWith(name)))
                                         zip.AddFile(path, "");
                                 }
                             }
@@ -440,7 +442,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             long datasetId = dsv.Dataset.Id;
             long metadatastructureId = dsv.Dataset.MetadataStructure.Id;
-            long datastructureId = dsv.Dataset.DataStructure.Id;
+            long datastructureId = dsv.Dataset.DataStructure==null?0: dsv.Dataset.DataStructure.Id;
             long researchplanId = dsv.Dataset.ResearchPlan.Id;
 
             string title = dsv.Title;

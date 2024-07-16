@@ -35,7 +35,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 entityTemplate.MetadataStructure = metadataStructure;
             }
 
-
             // entity
             using (var entityManager = new EntityManager())
             {
@@ -44,7 +43,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             }
 
             return entityTemplate;
-
         }
 
         public static EntityTemplate Merge(EntityTemplateModel model)
@@ -53,7 +51,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             using (var entityManager = new EntityManager())
             using (var metadataSrtuctureManager = new MetadataStructureManager())
             {
-
                 EntityTemplate entityTemplate = entityTemplateManager.Repo.Get(model.Id);
                 if (entityTemplate != null)
                 {
@@ -76,7 +73,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                     // entity
                     var entity = entityManager.EntityRepository.Get(model.EntityType.Id);
                     entityTemplate.EntityType = entity;
-
                 }
 
                 return entityTemplate;
@@ -118,18 +114,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                         var l = new ListItem();
                         l.Id = dsv.Dataset.Id;
                         l.Text = dsv != null ? dsv.Title.ToString() : "Dataset is checked out."; // if a version is available, get the title
-                        l.Group = entityTemplate.EntityType.Name; // add entity name 
+                        l.Group = entityTemplate.EntityType.Name; // add entity name
                         model.LinkedSubjects.Add(l);
                     }
                 }
             }
 
-
             return model;
-
         }
-
-
-
     }
 }
