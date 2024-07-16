@@ -15,7 +15,6 @@
     To view more details of a dataset, click the View details button available in each row.
 }
 
-
 @section LeftPane
 {
     @foreach (var item in Model.Entities)
@@ -29,9 +28,6 @@
 
                 <li><a entityid="@item.Key" class="request">My Requests</a></li>
                 <li><a entityid="@item.Key" class="decision">Decisions</a></li>
-
-            </ul>
-        }
 
         if (@item.Value == "Publication")
         {
@@ -49,7 +45,6 @@
 <div id="dashboard_content">
 
     @*Html.Partial("_myDatasetGridView", Model.MyDatasets) *@
-
 </div>
 
 <div id="dashboard_content">
@@ -65,7 +60,6 @@
     <script type="text/javascript">
 
         /****Requests & Decisions*****/
-
 
         function grid_requests_onDataBound() {
             addTooltips();
@@ -96,7 +90,6 @@
                 }
             });
         }
-
 
         /****Dashboard*****/
 
@@ -150,7 +143,6 @@
                 }
             );
         });
-
         $(".publication").click(function () {
             var entityname = "Publication";
             var rightType = "edit";

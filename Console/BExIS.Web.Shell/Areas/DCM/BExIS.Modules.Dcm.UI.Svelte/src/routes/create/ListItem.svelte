@@ -10,7 +10,6 @@
 	export let metadataStructure;
 	export let allowedFileTypes = [];
 	export let inUse = false;
-
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

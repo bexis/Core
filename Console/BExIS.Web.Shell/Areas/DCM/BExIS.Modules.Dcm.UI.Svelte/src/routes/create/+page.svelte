@@ -1,13 +1,13 @@
 <script lang="ts">
 	import List from './List.svelte';
 	import Form from './Form.svelte';
-	import { ErrorMessage, Page, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
+	import { Api, ErrorMessage, Page, host, pageContentLayoutType } from '@bexis2/bexis2-core-ui';
 
 	import type { linkType } from '@bexis2/bexis2-core-ui';
 
 	import { fade } from 'svelte/transition';
 
-	import { Spinner, positionType  } from '@bexis2/bexis2-core-ui';
+	import { Spinner, positionType } from '@bexis2/bexis2-core-ui';
 	import { getEntityTemplateList } from './services';
 	import { goTo } from '$services/BaseCaller';
 
@@ -19,13 +19,11 @@
 	// $:systemkeys= [];
 	$: selected = entitytemplate;
 
-
 	$: isOpen = false;
 
 	async function load() {
 		entitytemplates = await getEntityTemplateList();
 	}
-
 	function handleSelect(e) {
 		console.log('on select');
 		//remove form from dom
@@ -65,9 +63,9 @@
 >
 	<div in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
 		{#await load()}
-		<div class="text-surface-800">
-			<Spinner position={positionType.center} label="loading entity templates" />
-		</div>
+			<div class="text-surface-800">
+				<Spinner position={positionType.center} label="loading entity templates" />
+			</div>
 		{:then result}
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
 				<List items={entitytemplates} on:select={handleSelect} />
@@ -80,7 +78,7 @@
 					/>
 				{/if}
 			</div>
-			{:catch error}
+		{:catch error}
 			<ErrorMessage {error} />
 		{/await}
 	</div>
