@@ -79,6 +79,8 @@ namespace BExIS.Modules.Dcm.UI.Models.EntityTemplate
 
         public bool InUse { get; set; }
 
+        public bool InUse { get; set; }
+
         public EntityTemplateModel()
         {
             Id = 0;
