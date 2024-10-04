@@ -157,8 +157,8 @@ namespace BExIS.Web.Shell.Helpers
             }
             else
             {
-                MenuItem register = new MenuItem("Register", "account/register", "shell");
-                MenuItem login = new MenuItem("Login", "account/login", "shell");
+                MenuItem register = new MenuItem("Register", "/account/register", "shell");
+                MenuItem login = new MenuItem("Login", "/account/login", "shell");
 
                 menuItems.Add(register);
                 menuItems.Add(login);
@@ -272,7 +272,7 @@ namespace BExIS.Web.Shell.Helpers
                 if (string.IsNullOrEmpty(operation.Attribute("area").Value)) area = "shell";
                 else area = operation.Attribute("area").Value.ToLower();
 
-                bool permission = featurePermissionManager.HasAccess<User>(name, area, controller, action);
+                bool permission = featurePermissionManager.HasAccessAsync<User>(name, area, controller, action).Result;
 
                 System.Web.HttpContext.Current.Session[identifier] = permission;
 
