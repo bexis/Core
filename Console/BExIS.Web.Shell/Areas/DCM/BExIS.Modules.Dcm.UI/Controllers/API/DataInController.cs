@@ -33,6 +33,7 @@ using Vaiona.Web.Mvc.Modularity;
 using BExIS.Modules.Dcm.UI.Helpers;
 using System.Xml;
 using BExIS.Dim.Entities.Mappings;
+using Remotion.Linq.Parsing.Structure.NodeTypeProviders;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -96,7 +97,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (d == null)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "the dataset with the id (" + data.DatasetId + ") does not exist.");
 
-                    if (!entityPermissionManager.HasEffectiveRight(user.Name, typeof(Dataset), data.DatasetId, RightType.Write))
+                    if (!entityPermissionManager.HasEffectiveRightsAsync(user.Name, typeof(Dataset), data.DatasetId, RightType.Write).Result)
                         return Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "The token is not authorized to write into the dataset.");
                 }
 
@@ -165,19 +166,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         pkVariables = dataStructure.Variables.Where(v => v.IsKey).ToList();
 
                         // prepare pk index list from data
-                        int[] primaryKeyIndexes = new int[pkVariables.Count];
+                        List<int> primaryKeyIndexes = new List<int>();
                         for (int i = 0; i <= dataStructure.Variables.Count - 1; i++)
                         {
                             var variable = dataStructure.Variables.ElementAt(i);
                             if (variable.IsKey)
                             {
-                                primaryKeyIndexes[i] = data.Columns.ToList().IndexOf(variable.Label);
+                                primaryKeyIndexes.Add(data.Columns.ToList().IndexOf(variable.Label));
                             }
                         }
 
                         //check primary with data : uniqueness
                         //bool IsUniqueInDb = uploadHelper.IsUnique2(dataset.Id, variables.Select(v=>v.Id).ToList()); // may can removed
-                        bool IsUniqueInData = uploadHelper.IsUnique(primaryKeyIndexes, data.Data);
+
+                        bool IsUniqueInData = uploadHelper.IsUnique(primaryKeyIndexes.ToArray(), data.Data);
+
 
                         if (!IsUniqueInData)
                         {
