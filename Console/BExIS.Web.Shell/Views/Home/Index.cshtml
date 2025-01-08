@@ -3,12 +3,12 @@
 @using BExIS.Utils.WebHelpers
 @using Vaiona.Web.Mvc.Modularity;
 
-
-
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <!-- Animate css -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.css">
-<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.4.2/css/all.css' integrity='sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns' crossorigin='anonymous'>
+<!-- <link rel='stylesheet' href='https://use.fontawesome.com/releases/v6.6.0/css/all.css' integrity='sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns' crossorigin='anonymous'> -->
+<link rel='stylesheet' href='https://use.fontawesome.com/releases/v6.6.0/css/all.css'>
+
 <link rel="stylesheet" type="text/css" href="@Url.Content("~/css/custom.css")" />
 
 <script type="text/javascript">
@@ -35,11 +35,10 @@
                                     Non-project persons are welcome to access and download publicly available datasets without registering. Please note the data agreement in the <a href="/TermsAndConditions/Index" title="See Terms and Conditions" style="color:white">terms and conditions</a>.</br></br>
                                     For project members the registration is required for data upload, to access project internal information and functions, and for dataset search and collaborative data sharing.
                                 </p>
-</div>
+                            </div>
                             <div class="wow">
                                 @Html.ActionLink("Login", "Login", "Account", new { area = "" }, htmlAttributes: new { @class = "btn btn-lg btn-info", id = "loginLink" })
                                 @Html.ActionLink("Register", "Register", "Account", new { area = "" }, htmlAttributes: new { @class = "btn btn-lg btn-info", id = "registerLink" })
-                               
                             </div>
                         </div>
                     </div>
@@ -48,96 +47,150 @@
         </div>
         <!-- END TOP SECTION -->
     </header>
+
     <main id="main">
         <!-- BEGIN ABOUT SECTION -->
         <div class="container options">
             <div class="row">
-                <a href="~/ddm/publicsearch/">
-                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" style="text-align: center;">
-                        <div class="about">
-                            <i class="fas fa-lock-open fa-3x"></i>
-                            <h2>Public Data</h2>
-                        </div>
-                    </div>
-                </a>
-                <a href="~/tcd/PublicClimateData/Index">
-                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" style="text-align: center;">
-                        <div class="about">
-                            <i class="fas fa-thermometer-half fa-3x"></i>
-                            <h2>Public Climate Data</h2>
-                        </div>
-                    </div>
-                </a>
-                <a href="https://github.com/bexis/Documents/blob/master/HowTo/HowToRegister.md" target="_blank">
-                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s" style="text-align: center;">
-                        <div class="about">
-                            <i class="fas fa-sign-in-alt fa-3x"></i>
-                            <h2>How-to Register</h2>
+				<div class="col">
+					<a href="~/ddm/publicsearch/">
+						<div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" style="text-align: center;">
+							<div class="about">
+								<i class="fas fa-lock-open fa-3x"></i>
+								<h2>Public Data</h2>
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col">	
+					<a href="~/tcd/PublicClimateData/Index">
+						<div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" style="text-align: center;">
+							<div class="about">
+								<i class="fas fa-thermometer-half fa-3x"></i>
+								<h2>Public Climate Data</h2>
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col">	
+					<a href="~/lui/LUICalculation/index">
+						<div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" style="text-align: center;">
+							<div class="about">
+								<i class="fas fa-solid fa-sun-plant-wilt fa-3x"></i>
+								<h2>LUI Tool</h2>
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col">	
+					<a href="https://www.biodiversity-exploratories.de/en/public-data-bexis/" target="_blank">
+						<div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s" style="text-align: center;">
+							<div class="about">
+								<i class="fas fa-solid fa-info fa-3x"></i>
+								<h2>About Public Data</h2>
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col">
+					<a href="/TermsAndConditions/Index">
+						<div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
+							<div class="about">
+								<i class="fas fa-solid fa-lock  fa-3x"></i>
+								<h2>About Non-Public Data</h2>
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col">
+					<a href="/fmt/DmpFiles/Index">
+						<div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
+							<div class="about">
+								<i class="fas fa-solid fa-file-invoice  fa-3x"></i>
+								<h2>Data Management Plans</h2>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col">
+					<a href="https://github.com/bexis/Documents/blob/master/HowTo/HowToSearch.md" target="_blank">
+						<div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
+							<div class="about">
+								<i class="fas fa-search fa-3x"></i>
+								<h2>How-to Search</h2>
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col">
+					<a href="https://github.com/bexis/Documents/blob/master/HowTo/HowToCreditData.md" target="_blank">
+						<div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
+							<div class="about">
+								<i class="fas fa-quote-left fa-3x"></i>
+								<h2>How-to Credit Data</h2>
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col">	
+					<a href="https://github.com/bexis/Documents/blob/master/HowTo/HowToRegister.md" target="_blank">
+						<div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s" style="text-align: center;">
+							<div class="about">
+								<i class="fas fa-sign-in-alt fa-3x"></i>
+								<h2>How-to Register</h2>
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col">
+					<a href="https://github.com/bexis/Documents/blob/master/HowTo/HowToUpload.md" target="_blank">
+						<div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s" style="text-align: center;">
+							<div class="about">
+								<i class="fas fa-file-upload fa-3x"></i>
+								<h2>How-to Upload</h2>
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col">
+					<a href="~/footer/contactus">
+						<div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
+							<div class="about">
+								<i class="far fa-comment-dots fa-3x"></i>
+								<h2>Contact Us</h2>
+							</div>
+						</div>
+					</a>
+				</div>
+				<div class="col">
+					<a href="/TermsAndConditions/Index">
+						<div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
+							<div class="about">
+								<i class="far fa-file-alt fa-3x"></i>
+								<h2>Terms and Conditions</h2>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
 
-                        </div>
-                    </div>
-                </a>
-                <a href="https://github.com/bexis/Documents/blob/master/HowTo/HowToUpload.md" target="_blank">
-                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s" style="text-align: center;">
-                        <div class="about">
-                            <i class="fas fa-file-upload fa-3x"></i>
-                            <h2>How-to Upload</h2>
-
-                        </div>
-                    </div>
-                </a>
-                <a href="https://github.com/bexis/Documents/blob/master/HowTo/HowToSearch.md" target="_blank">
-                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
-                        <div class="about">
-                            <i class="fas fa-search fa-3x"></i>
-                            <h2>How-to Search</h2>
-
-                        </div>
-                    </div>
-                </a>
-                <a href="https://github.com/bexis/Documents/blob/master/HowTo/HowToCreditData.md" target="_blank">
-                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
-                        <div class="about">
-                            <i class="fas fa-quote-left fa-3x"></i>
-                            <h2>How-to Credit Data</h2>
-
-                        </div>
-                    </div>
-                </a>
-                <a href="~/footer/contactus">
-                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
-                        <div class="about">
-                            <i class="far fa-comment-dots fa-3x"></i>
-                            <h2>Contact Us</h2>
-                        </div>
-                    </div>
-                </a>
-                <a href="/TermsAndConditions/Index">
-                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
-                        <div class="about">
-                            <i class="far fa-file-alt fa-3x"></i>
-                            <h2>Terms and Conditions</h2>
-                        </div>
-                    </div>
-                </a>
-
+        <div class="container options">
+            <!--   <a style="color:#777; cursor:not-allowed;">
+            <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="1.1s" style="text-align: center;">
+                <div class="about">
+                    <b class="fas fa-3x">DOI</b>
+                    <h2>Get DOI</h2>
+                    <p>(Plaese contact us)</p>
+                </div>
             </div>
-            <div class="container options">
-                
-                <!--   <a style="color:#777; cursor:not-allowed;">
-        <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="1.1s" style="text-align: center;">
-            <div class="about">
-                <b class="fas fa-3x">DOI</b>
-                <h2>Get DOI</h2>
-                <p>(Plaese contact us)</p>
-            </div>
+            </a>-->
         </div>
-    </a>-->
-
-            </div>
-            </div>
         
-        <!-- END ABOUT SECTION -->
+    <!-- END ABOUT SECTION -->
     </main>
 </div>
 
