@@ -162,6 +162,16 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 #endregion Requests
 
 
+                #region Curation
+
+                Feature curationFeature = featureManager.FeatureRepository.Get().FirstOrDefault(f => f.Name.Equals("Curation") && f.Parent.Equals(DataDiscovery));
+                if (curationFeature == null) curationFeature = featureManager.Create("Curation", "Curation", DataDiscovery);
+
+                operationManager.Create("DDM", "Curation", "*", curationFeature);
+
+                #endregion
+
+
                 #endregion SECURITY
             }
 
@@ -197,10 +207,13 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                     conceptManager.CreateMappingKey("Title", "", "", false, false, "data/title", concept);
                 //version
                 if (!keys.Any(k => k.Name.Equals("data/version")))
-                    conceptManager.CreateMappingKey("Version", "", "", false, false, "data/version", concept);
-                //date
-                if (!keys.Any(k => k.Name.Equals("data/date")))
-                    conceptManager.CreateMappingKey("Date", "", "", false, false, "data/date", concept);
+                    conceptManager.CreateMappingKey("Version", "", "", true, false, "data/version", concept);
+                //year
+                if (!keys.Any(k => k.Name.Equals("data/year")))
+                    conceptManager.CreateMappingKey("Year", "", "", true, false, "data/year", concept);
+                //entityType
+                if (!keys.Any(k => k.Name.Equals("data/entityType")))
+                    conceptManager.CreateMappingKey("EntityType", "", "", true, false, "data/entityType", concept);
 
                 //doi
                 if (!keys.Any(k => k.Name.Equals("data/doi")))
@@ -209,7 +222,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 //projects
                 MappingKey projects = null;
                 if (!keys.Any(k => k.Name.Equals("data/projects")))
-                    projects = conceptManager.CreateMappingKey("Projects", "", "", true, false, "data/projects", concept);
+                    projects = conceptManager.CreateMappingKey("Projects", "", "", true, true, "data/projects", concept);
 
                 if (!keys.Any(k => k.Name.Equals("data/projects/project")))
                     conceptManager.CreateMappingKey("Project", "", "", true, false, "data/projects/project", concept, projects);

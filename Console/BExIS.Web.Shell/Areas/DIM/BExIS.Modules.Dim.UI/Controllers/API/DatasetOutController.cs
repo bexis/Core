@@ -8,6 +8,7 @@ using BExIS.Modules.Dim.UI.Helpers;
 using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
+using BExIS.Utils.Data.Helpers;
 using BExIS.Utils.Route;
 using BExIS.Xml.Helpers;
 using NameParser;
@@ -37,6 +38,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
     ///
     /// The information about a dataset shows the title, description, data structure, and metadata structure.
     /// </remarks>
+    [RoutePrefix("api/dataset")]
     public class DatasetOutController : ApiController
     {
         // GET api/Dataset
@@ -44,7 +46,8 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
         /// Get a list of all datasets Id´s in the system.
         /// </summary>
         [BExISApiAuthorize]
-        [GetRoute("api/Dataset")]
+        [HttpGet]
+        [Route("")]
         [ResponseType(typeof(ApiSimpleDatasetModel))]
         public IEnumerable<ApiSimpleDatasetModel> Get()
         {
@@ -90,7 +93,8 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
         ///
         /// <param name="id">Identifier of a dataset</param>
         [BExISApiAuthorize]
-        [GetRoute("api/Dataset/{id}")]
+        [HttpGet]
+        [GetRoute("{id:long}")]
         [ResponseType(typeof(ApiDatasetModel))]
         public HttpResponseMessage Get(long id)
         {
@@ -116,6 +120,12 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                 ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                 // get content
                 ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, versionNumber, dataset.MetadataStructure.Id, dataStructureId);
+                var datastructureId = dataset.DataStructure==null?0: dataset.DataStructure.Id;
+
+                // get links
+                EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();
+                datasetModel.Links.From = entityReferenceHelper.GetSourceReferences(dataset.Id, dataset.EntityTemplate.EntityType.Id, versionNumber);
+                datasetModel.Links.To = entityReferenceHelper.GetTargetReferences(dataset.Id, dataset.EntityTemplate.EntityType.Id, versionNumber);
 
                 // create response and return as JSON
                 var response = Request.CreateResponse(HttpStatusCode.OK);
@@ -136,7 +146,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
         /// <param name="id">Identifier of a dataset</param>
         /// <param name="versionId">Version Id of a dataset</param>
         [BExISApiAuthorize]
-        [GetRoute("api/Dataset/{id}/{versionId}")]
+        [GetRoute("{id}/{versionId}")]
         [ResponseType(typeof(ApiDatasetModel))]
         public HttpResponseMessage Get(long id, long versionId)
         {
@@ -151,7 +161,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
         /// <param name="id">Identifier of a dataset</param>
         /// <param name="version_number">Version of a dataset</param>
         [BExISApiAuthorize]
-        [GetRoute("api/Dataset/{id}/version_number/{version_number}")]
+        [GetRoute("{id}/version_number/{version_number}")]
         [ResponseType(typeof(ApiDatasetModel))]
         public HttpResponseMessage Get(long id, int version_number)
         {
@@ -185,7 +195,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
         /// <param name="id">Identifier of a dataset</param>
         /// <param name="version_name">Version name of a dataset</param>
         [BExISApiAuthorize]
-        [GetRoute("api/Dataset/{id}/version_name/{version_name}")]
+        [GetRoute("{id}/version_name/{version_name}")]
         [ResponseType(typeof(ApiDatasetModel))]
         public HttpResponseMessage Get(long id, string version_name)
         {
@@ -214,7 +224,7 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
         /// <param name="id">Identifier of a dataset</param>
         /// <param name="tag">tag number of a dataset</param>
         [BExISApiAuthorize]
-        [GetRoute("api/Dataset/{id}/tag/{tag}")]
+        [GetRoute("{id}/tag/{tag}")]
         [ResponseType(typeof(ApiDatasetModel))]
         public HttpResponseMessage Get(long id, double tag)
         {
@@ -273,6 +283,11 @@ namespace BExIS.Modules.Dim.UI.Controllers.API
                     ApiDatasetHelper apiDatasetHelper = new ApiDatasetHelper();
                     // get content
                     ApiDatasetModel datasetModel = apiDatasetHelper.GetContent(datasetVersion, id, version, metadataStructureId, dataset.DataStructure.Id);
+
+
+                    EntityReferenceHelper entityReferenceHelper = new EntityReferenceHelper();
+                    datasetModel.Links.From = entityReferenceHelper.GetSourceReferences(dataset.Id, dataset.EntityTemplate.EntityType.Id, version);
+                    datasetModel.Links.To = entityReferenceHelper.GetTargetReferences(dataset.Id, dataset.EntityTemplate.EntityType.Id, version);
 
                     // create response and return as JSON
                     var response = Request.CreateResponse(HttpStatusCode.OK);

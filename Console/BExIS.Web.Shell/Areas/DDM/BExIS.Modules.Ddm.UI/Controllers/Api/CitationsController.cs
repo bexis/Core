@@ -451,28 +451,28 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                     model = (CitationDataModel)serializer.Deserialize(reader);
                 }
 
-                if(String.IsNullOrEmpty(model.Version))
+                if (String.IsNullOrEmpty(model.Version))
                     model.Version = datasetVersion.VersionNo.ToString();
-                if(String.IsNullOrEmpty(model.Date))
+                if (String.IsNullOrEmpty(model.Date))
                 {
-                    if(String.IsNullOrEmpty(datasetVersion.PublicAccessDate.ToString()))
+                    if (String.IsNullOrEmpty(datasetVersion.PublicAccessDate.ToString()))
                         model.Date = datasetVersion.PublicAccessDate.ToString();
                     else
                         model.Date = datasetVersion.Timestamp.ToString();
                 }
-                if(String.IsNullOrEmpty(model.DOI))
+                if (String.IsNullOrEmpty(model.DOI))
                 {
                     using (var publicationManager = new PublicationManager())
                     {
                         var pub = publicationManager.GetPublication(datasetVersion.Dataset.Id);
-                        if(pub != null)
+                        if (pub != null)
                         {
-                            if(!String.IsNullOrEmpty(pub.Doi))
-                                model.DOI = pub.Doi;    
+                            if (!String.IsNullOrEmpty(pub.Doi))
+                                model.DOI = pub.Doi;
                         }
                     }
                 }
-                    
+
             }
 
             return model;

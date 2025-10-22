@@ -18,7 +18,6 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
-using BExIS.Utils.Config;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
@@ -29,6 +28,7 @@ using System.Xml.Linq;
 using System.Xml;
 using System.Xml.XPath;
 using Vaiona.Entities.Common;
+using BExIS.Utils.Config;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
@@ -244,6 +244,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         [JsonNetFilter]
         [HttpPost]
+        [CustomValidateAntiForgeryToken]
         public JsonResult Create(CreateModel data)
         {
             if (data == null) return Json(false);
@@ -316,12 +317,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                         {
                             string xpath = target.XPath;
 
-                            // if the mapping is on type, then it is the last element and the value should set there
-                            // e.g. mappingt to title is usage, set value to title/titleType = "title of the dataset"
-                            // if the mapping is on usage, then the value should set on type and this element is the child of the usage
-                            if (target.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
-                               target.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
-                                xpath = target.XPath+@"/"+ target.Name+"Type";
+                            //// if the mapping is on type, then it is the last element and the value should set there
+                            //// e.g. mappingt to title is usage, set value to title/titleType = "title of the dataset"
+                            //// if the mapping is on usage, then the value should set on type and this element is the child of the usage
+                            //if (target.Type.Equals(LinkElementType.MetadataAttributeUsage) ||
+                            //   target.Type.Equals(LinkElementType.MetadataNestedAttributeUsage))
+                            //    xpath = target.XPath+@"/"+ target.Name+"Type";
 
                             var targetXElement = metadataXml.XPathSelectElement(xpath);
                             // set value
@@ -369,7 +370,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     dm.EditDatasetVersion(workingCopy, null, null, null);
 
                     // close check out
-                    dm.CheckInDataset(datasetId, "Init creation a " + entityTemplate.EntityType.Name.ToLower() + " based on " + entityTemplate.Name.ToLower(), GetUsernameOrDefault(), ViewCreationBehavior.None, TagType.Copy);
+                    dm.CheckInDataset(datasetId,  entityTemplate.EntityType.Name + " created based on category: " + entityTemplate.Name, GetUsernameOrDefault(), ViewCreationBehavior.None, TagType.Copy);
                 }
 
                 #endregion update version
