@@ -454,15 +454,15 @@
 
 	.content {
 		flex-grow: 1;
-		overflow-y: auto;
+		/* overflow-y: auto; */
 
 		/*  height: calc(100vh - 180px); /* Subtracts header height set via function  */
 
-		/* padding-top: 20px; */
+		padding-top: 90px;
 		/* background: #f4f4f4; */
 		width: calc(100% - 400px);
 		margin-left: 300px;
-		overflow-y: scroll; /* Allow scrolling */
+		/*overflow-y: scroll; /* Allow scrolling */
 		scrollbar-width: none; /* Hide scrollbar (Firefox) */
 	}
 	/*
