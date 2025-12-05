@@ -17,20 +17,23 @@
 
 @section LeftPane
 {
-    @foreach (var item in Model.Entities)
+    @foreach (var type in new[] { "Dataset", "Publication" })
     {
+        var item = Model.Entities.FirstOrDefault(e => e.Value == type);
+        if (item.Value == null) { continue; }
 
         <h3>@item.Value</h3>
         <ul>
+            <li>
+                <a class="show" entity="@item.Value.ToLower()">My @item.Value</a>
+            </li>
 
-            <li><a class="show" entity="@item.Value.ToLower()">My @{@item.Value}s</a></li>
-            @if (@item.Value == "Dataset")
+            @if (item.Value == "Dataset")
             {
                 <li><a entityid="@item.Key" class="request">My Requests</a></li>
                 <li><a entityid="@item.Key" class="decision">Decisions</a></li>
             }
         </ul>
-
     }
 }
 
