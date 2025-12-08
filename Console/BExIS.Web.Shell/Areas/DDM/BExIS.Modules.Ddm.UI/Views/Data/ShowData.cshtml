@@ -242,17 +242,10 @@
             </div>
         </div>
 
-   
-    <div class="datasetview_header">
+        <div class="datasetview_header">
         <div class="datasetview_header-title">
             @{Html.RenderAction("GetCitationOrTitle", "Data", new { Id = Model.Id, datasetVersionId = Model.VersionId });}
         </div>
-
-
-        <div class="datasetview_header">
-            <div class="datasetview_header-title">
-                @{Html.RenderAction("GetCitationOrTitle", "Data", new { datasetVersionId = Model.VersionId });}
-            </div>
 
             <div class="datasetview_header-toggle flex">
 
