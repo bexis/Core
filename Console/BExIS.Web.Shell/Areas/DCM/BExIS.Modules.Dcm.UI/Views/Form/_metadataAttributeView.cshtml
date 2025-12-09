@@ -4,20 +4,6 @@
 @using System.Text.RegularExpressions
 @using BExIS.Modules.Dcm.UI.Models.Metadata
 
-<script>
-    function OnChangeDefault(val) {
-            $.post("/DCM/Form/ValidateMetadataAttributeUsage",
-                {
-            value: val,
-                    id: @Model.Id,
-                    parentid: @Model.Parent.Id,
-                    number: @Model.Number,
-                    parentModelNumber: @Model.ParentModelNumber,
-                    ParentStepId: @Model.ParentStepId
-                });
-    }
-</script>
-
 
 @{
     string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
@@ -89,6 +75,36 @@
     }
 
     locked = Model.Locked;
+
+    <script>
+        function OnChangeDefault(val) {
+            console.log("Value", val);
+            $.post("/DCM/Form/ValidateMetadataAttributeUsage",
+                {
+            value: val,
+                    id: @Model.Id,
+                    parentid: @Model.Parent.Id,
+                    number: @Model.Number,
+                    parentModelNumber: @Model.ParentModelNumber,
+                    ParentStepId: @Model.ParentStepId,
+                    entityId: getId()
+                });
+        }
+
+        function getId() {
+
+            const metadataContainer = document.getElementById("MetadataEditor");
+            console.log("get id ", metadataContainer);
+
+            let id = 0;
+            if (metadataContainer) { // Check if the element exists
+                id = metadataContainer.getAttribute("entityid"); // Get the value of the "data-value" attribute
+                console.log("id", id); // Output the value (e.g., "123")
+            }
+
+            return id;
+        }
+    </script>
 
     // Set default values
     if (idByXpath == "Metadata_publicationDetails_1__publicationDetailsType_1_metadataSchema_1" && Model.Value == "")
