@@ -96,7 +96,7 @@
 				<span class="chip"></span>
 				<p class="shrink">
 					{#if date && date.length > 0}
-						{date}
+						<b>Creation date:</b> {date}
 					{/if}
 				</p>
 			</div>
