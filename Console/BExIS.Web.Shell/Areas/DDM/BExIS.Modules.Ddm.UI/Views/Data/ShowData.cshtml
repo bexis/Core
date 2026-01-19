@@ -314,19 +314,23 @@
                     {
                         <a class="bx-button small function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })"><span class="fa fa-download" style="padding-right: 5px;"></span>Download Dataset</a>
                     }
-                    <div id="citation" datasetid="@Model.Id" version="@Model.Version"></div>
-                }
-                else
-                {
 
-
-                    if (Model.HasRequestRight)
-                    {
-                        if (Model.RequestAble)
+                        if (!Model.Labels.ContainsKey("Publication"))
                         {
+                            <div id="citation" datasetid="@Model.Id" version="@Model.Version"></div>
+                        }
+                    }
+                    else
+                    {
 
-                            if (Model.RequestExist)
+
+                        if (Model.HasRequestRight)
+                        {
+                            if (Model.RequestAble)
                             {
+
+                                if (Model.RequestExist)
+                                {
                                 <button id="sendRequestBt" class="bx-button small function bx-disabled" title="Send request to the owner of the dataset for the rights to see and download the primary data." disabled="disabled">Request Pending</button>
                             }
                             else if (!has_data)
