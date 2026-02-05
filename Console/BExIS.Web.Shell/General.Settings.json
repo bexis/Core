@@ -4,15 +4,17 @@
   "description": "The default landing page for the search in the form of <moduleId>, <controller>, <action>. The application's home page will redirect here. The module must be available and active. Otherwise, another redirect happens to the home page, which causes a loop.     The designated action must be set to public in the feature permission mgmt, otherwise the request will be redirected to the login page.     The 'type' attribute must be compatible with the System.TypeCode case-sensitive.",
   "entries": [
     {
+      "description": "The application name is used in several places in the system. e.g. as title in the email",
       "key": "applicationName",
       "title": "Application Name",
-      "value": "AppLocal",
       "type": "String",
-      "description": "(Short) name of the BEXIS2 instance. The name is e.g., used in the breadcrumb or as prefix in emails sent via the system. Avoid special characters or to long names."
+      "value": "BExIS-Dev"
     },
     {
+      "description": "The application name is used in several places in the system. e.g. as title in the email",
       "key": "jwt",
       "title": "JWT",
+      "type": "JSON",
       "value": {
         "validateAudience": false,
         "validateIssuer": false,
@@ -21,26 +23,24 @@
         "issuerSigningKey": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
         "validateLifetime": false,
         "validLifetime": 1
-      },
-      "type": "JSON",
-      "description": "JWT settings. <br><b>Do not change any keys!</b>"
+      }
     },
     {
+      "description": "The application name is used in several places in the system. e.g. as title in the email",
       "key": "smtp",
-      "title": "SMTP Configurations",
+      "title": "SMTP",
+      "type": "JSON",
       "value": {
         "hostName": "smtp.uni-jena.de",
         "hostPort": 587,
         "hostAnonymous": false,
         "hostSecureSocketOptions": 1,
         "hostCertificateRevocation": false,
-        "accountName": "<account_name>",
-        "accountPassword": "<account_password>",
-        "fromName": "<from_name>",
-        "fromAddress": "<from_address>"
-      },
-      "type": "JSON",
-      "description": "SMPT settings. <br><b>Do not change any keys!</b>"
+        "accountName": "we95lez",
+        "accountPassword": ".bl2039",
+        "fromName": "bexis",
+        "fromAddress": "bexis@listserv.uni-jena.de"
+      }
     },
     {
       "key": "ldaps",
@@ -116,84 +116,84 @@
           "value": "https://github.com/BEXIS2/Core/wiki/FAQ"
         }
       ]
-    },    
-      {
-        "key": "landingPage",
-        "title": "Landing Page (without login)",
-        "value": "ddm, publicsearch, index",
-        "type": "String",
-        "description": "User is not logging in -> app goes to e.g. (ddm, publicsearch, index). If no destination is entered, the landingpage.htm is loaded from the tenant/content/landingpage.htm"
-      },
-      {
-        "key": "showMenuOnLandingPage",
-        "title": "Show menu on landing page",
-        "value": "true",
-        "type": "Boolean",
-        "description": "Show or hide menu on your own created landing page"
-      },
-      {
-        "key": "showHeaderOnLandingPage",
-        "title": "Show header on landing page",
-        "value": "true",
-        "type": "Boolean",
-        "description": "Show or hide header on your own created landing page"
-      },
-      {
-        "key": "showFooterOnLandingPage",
-        "title": "Show footer on landing page",
-        "value": "true",
-        "type": "Boolean",
-        "description": "Show or hide footer on your own created landing page"
-      },
-      {
-        "key": "landingPageForUsers",
-        "title": "Landing Page after login for users with permission",
-        "value": "ddm, search, index",
-        "type": "String",
-        "description": "User logged in, but does not have permission to view the page; shell, home, nopermission is by default; Alternatives must be in a module NOT shell"
-      },
-      {
-        "key": "landingPageForUsersNoPermission",
-        "title": "Landing Page after login for users with no permission",
-        "value": "shell, home, nopermission",
-        "type": "String",
-        "description": "Landing page for users, after logging in successfully without permission."
-      },
-      {
-        "key": "systemEmail",
-        "title": "System E-Mail Address",
-        "value": "david.schoene@uni-jena.de",
-        "type": "String",
-        "description": "All administrative information will be sent to this email."
-      },
-      {
-        "key": "usePersonEmailAttributeName",
-        "title": "Use Person E-Mail Attribute Name",
-        "value": false,
-        "type": "Boolean",
-        "description": "To activate the linkage between between user email and a party email set Use Person E-Mail Attribute Name to true and define the party party attribute. If one of the email addresses is changed the other is changed as well."
-      },
-      {
-        "key": "personEmailAttributeName",
-        "title": "Person E-Mail Attribute Name",
-        "value": "Email",
-        "type": "String",
-        "description": "To activate the linkage between between user email and a party email set Use Person E-Mail Attribute Name to true and define the party party attribute. If one of the email addresses is changed the other is changed as well."
-      },
-      {
-        "key": "useMultimediaModule",
-        "title": "Use Multimedia Module?",
-        "value": true,
-        "type": "Boolean",
-        "description": "This flag turns on/off the Multimedia Module."
-      },
-      {
-        "key": "faq",
-        "title": "FAQ",
-        "value": "https://github.com/BEXIS2/Core/wiki/FAQ",
-        "type": "String",
-        "description": "FAQ URL. Can link to an external page."
-      }
+    },
+    {
+      "key": "landingPage",
+      "title": "Landing Page (without login)",
+      "value": "ddm, publicsearch, index",
+      "type": "String",
+      "description": "User is not logging in -> app goes to e.g. (ddm, publicsearch, index). If no destination is entered, the landingpage.htm is loaded from the tenant/content/landingpage.htm"
+    },
+    {
+      "key": "showMenuOnLandingPage",
+      "title": "Show menu on landing page",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show or hide menu on your own created landing page"
+    },
+    {
+      "key": "showHeaderOnLandingPage",
+      "title": "Show header on landing page",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show or hide header on your own created landing page"
+    },
+    {
+      "key": "showFooterOnLandingPage",
+      "title": "Show footer on landing page",
+      "value": "true",
+      "type": "Boolean",
+      "description": "Show or hide footer on your own created landing page"
+    },
+    {
+      "key": "landingPageForUsers",
+      "title": "Landing Page after login for users with permission",
+      "value": "ddm, search, index",
+      "type": "String",
+      "description": "User logged in, but does not have permission to view the page; shell, home, nopermission is by default; Alternatives must be in a module NOT shell"
+    },
+    {
+      "key": "landingPageForUsersNoPermission",
+      "title": "Landing Page after login for users with no permission",
+      "value": "shell, home, nopermission",
+      "type": "String",
+      "description": "Landing page for users, after logging in successfully without permission."
+    },
+    {
+      "key": "systemEmail",
+      "title": "System E-Mail Address",
+      "value": "david.schoene@uni-jena.de",
+      "type": "String",
+      "description": "All administrative information will be sent to this email."
+    },
+    {
+      "key": "usePersonEmailAttributeName",
+      "title": "Use Person E-Mail Attribute Name",
+      "value": false,
+      "type": "Boolean",
+      "description": "To activate the linkage between between user email and a party email set Use Person E-Mail Attribute Name to true and define the party party attribute. If one of the email addresses is changed the other is changed as well."
+    },
+    {
+      "key": "personEmailAttributeName",
+      "title": "Person E-Mail Attribute Name",
+      "value": "Email",
+      "type": "String",
+      "description": "To activate the linkage between between user email and a party email set Use Person E-Mail Attribute Name to true and define the party party attribute. If one of the email addresses is changed the other is changed as well."
+    },
+    {
+      "key": "useMultimediaModule",
+      "title": "Use Multimedia Module?",
+      "value": true,
+      "type": "Boolean",
+      "description": "This flag turns on/off the Multimedia Module."
+    },
+    {
+      "key": "faq",
+      "title": "FAQ",
+      "value": "https://github.com/BEXIS2/Core/wiki/FAQ",
+      "type": "String",
+      "description": "FAQ URL. Can link to an external page."
+    }
 
   ]
 }
