@@ -1,72 +1,66 @@
 {
-  "id": "dcm",
-  "name": "Dataset Creation",
   "description": "...",
   "entries": [
-
     {
+      "description": "This number of cells determines whether an upload of structured data should be executed directly or async.",
       "key": "celllimit",
       "title": "Number of cells for direct upload instead of async",
-      "value": 2000,
-      "description": "This number of cells determines whether an upload of structured data should be executed directly or async.",
       "type": "Int32",
-      "options": []
+      "value": 2000
     },
     {
-      "key": "fileuploadDescription",
-      "title": "File upload description",
-      "value": "required",
       "description": "If it is activated, adding a description per file is possible.",
-      "type": "String",
+      "key": "fileuploadDescription",
       "options": [
         "none",
         "active",
         "required"
-      ]
+      ],
+      "title": "File upload description",
+      "type": "String",
+      "value": "required"
     },
     {
+      "description": "Allow multiple files to be uploaded at the same time.",
       "key": "allowMultiFileupload",
       "title": "Multiple file upload",
-      "value": true,
-      "description": "Allow multiple files to be uploaded at the same time.",
       "type": "Boolean",
-      "options": []
+      "value": true
     },
     {
-      "key": "attachmentDescription",
-      "title": "Attachment description",
-      "value": "active",
       "description": "If it is activated, adding a description per file is possible.",
-      "type": "String",
+      "key": "attachmentDescription",
       "options": [
         "none",
         "active",
         "required"
-      ]
+      ],
+      "title": "Attachment description",
+      "type": "String",
+      "value": "active"
     },
     {
+      "description": "Allow multiple files to be uploaded at the same time.",
       "key": "allowMultiAttachmentUpload",
       "title": "Multiple attachment upload",
-      "value": false,
-      "description": "Allow multiple files to be uploaded at the same time.",
       "type": "Boolean",
-      "options": []
+      "value": true
     },
     {
+      "description": "Enables the loading of an external metadata form when editing entities",
       "key": "useExternalMetadataForm",
       "title": "Use external metadata form",
-      "value": false,
-      "description": "Enables the loading of an external metadata form when editing entities",
       "type": "Boolean",
-      "options": []
+      "value": false
     },
     {
+      "description": "Define the origin from where the external metadata form should be loaded",
       "key": "externalMetadataFormUrl",
       "title": "External metadata form destination url",
-      "value": "",
-      "description": "Define the origin from where the external metadata form should be loaded",
       "type": "String",
-      "options": []
+      "value": ""
     }
-  ]
+  ],
+  "id": "dcm",
+  "name": "Dataset Creation"
 }
