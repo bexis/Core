@@ -10,8 +10,8 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter({
-			pages: '../BExIS.Modules.Sam.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
-			assets: '../BExIS.Modules.Sam.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
+			pages: '../BExIS.Modules.Smm.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
+			assets: '../BExIS.Modules.Smm.UI/Scripts/svelte', // ../BExIS.Modules.Dcm.UI/Scripts/svelte
 			fallback: null,
 			precompress: true,
 			preprocess: true,
