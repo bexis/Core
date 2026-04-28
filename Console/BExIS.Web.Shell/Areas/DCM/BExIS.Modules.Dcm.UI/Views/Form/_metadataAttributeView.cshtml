@@ -309,18 +309,18 @@
                                         value = @Model.Value.ToString();
                                     }
 
-                                    // show info text on top (simple is optional / complex mandatory)
-                                    if ((@hasSimpleMapping) && Model.PartyMappingExist && Model.MappingSelectionField)
-                                    {
-                                        <div style="color: gray">If possible, use an entry from autocomplete list.</div>
-                                    }
+                                // show info text on top (simple is optional / complex mandatory)
+                                if ((@hasSimpleMapping) && Model.PartyMappingExist && Model.MappingSelectionField)
+                                {
+                                    <div style="color: gray">If possible, use an entry from autocomplete list.</div>
+                                }
 
                                     if ((hasComplexMapping) && Model.PartyMappingExist && Model.MappingSelectionField)
                                     {
                                         <div style="color: gray">Use an entry from autocomplete list.</div>
                                     }
 
-                                    <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping.ToString()" id="@idInput" idbyxpath="@idByXpath" onKeyUp="OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping.ToString()" partyid="@partyid" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath" isMappingSelection="@isMappingSelection">
+                                <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping.ToString()" id="@idInput" idbyxpath="@idByXpath" onKeyUp="OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping.ToString()" partyid="@partyid" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath" isMappingSelection="@isMappingSelection">
 
                                     // add icons to show linked / not linked party entries; hide both by default
                                     var notLinkedID = @idInput + "_notLinked";
@@ -350,44 +350,44 @@
                                         var cache = {};
                                         $( "#@idInput" ).autocomplete({
 
-                                        minLength: 1,
-                                        delay: 300, // this is in milliseconds
-                                        change: function (event, ui) { OnChangeTextInput(event, ui); },
-                                        select: function (event, ui) { OnClose(event, ui); },
-                                        json: true,
-                                        source: function(request, response){
-                                            // New request 300ms after key stroke
-                                            var $this = $(this);
-                                            var term = request.term;
-                                            var $element = $(this.element);
-                                            request["text"] = request.term;
+                                                        minLength: 1,
+                                                        delay: 300, // this is in milliseconds
+                                                        change: function (event, ui) { OnChangeTextInput(event, ui); },
+                                                        select: function (event, ui) { OnClose(event, ui); },
+                                                        json: true,
+                                                        source: function(request, response){
+                                                            // New request 300ms after key stroke
+                                                            var $this = $(this);
+                                                            var term = request.term;
+                                                            var $element = $(this.element);
+                                                            request["text"] = request.term;
 
-                                            if ( term in cache ) {
-                                              response( cache[ term ] );
-                                              return;
-                                            }
+                                                            if ( term in cache ) {
+                                                              response( cache[ term ] );
+                                                              return;
+                                                            }
 
-                                            var previous_request = $element.data( "jqXHR" );
-                                            if( previous_request ) {
-                                                previous_request.abort();
-                                            }
+                                                            var previous_request = $element.data( "jqXHR" );
+                                                            if( previous_request ) {
+                                                                previous_request.abort();
+                                                            }
 
-                                            $element.data( "jqXHR", $.ajax( {
-                                                type: "POST",
-                                                url: "/DCM/Form/_AutoCompleteAjaxLoading/@Model.Id?type=@Model.Source.GetType().Name",
-                                                data: request,
-                                                dataType: "json",
-                                                success: function( data ){
+                                                            $element.data( "jqXHR", $.ajax( {
+                                                                type: "POST",
+                                                                url: "/DCM/Form/_AutoCompleteAjaxLoading/@Model.Id?type=@Model.Source.GetType().Name",
+                                                                data: request,
+                                                                dataType: "json",
+                                                                success: function( data ){
 
-                                                    //console.log(data);
+                                                                    //console.log(data);
 
-                                                    var list = [];
-                                                    for (i = 0; i < data.length; i++) {
-                                                        list.push(data[i]["Text"]);
-                                                    }
+                                                                    var list = [];
+                                                                    for (i = 0; i < data.length; i++) {
+                                                                        list.push(data[i]["Text"]);
+                                                                    }
 
-                                                    cache[ term ] = list;
-                                                    response(list);
+                                                                    cache[ term ] = list;
+                                                                    response(list);
 
                                                 }//success
                                             }));
