@@ -53,7 +53,7 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
-    public class CreateDatasetController : BaseController
+    public class CreateDatasetController : Controller
     {
         private CreateTaskmanager TaskManager;
         private XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
@@ -90,10 +90,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             using (DatasetManager dm = new DatasetManager())
             using (DataStructureManager dsm = new DataStructureManager())
             using (ResearchPlanManager rpm = new ResearchPlanManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityTemplateManager entityTemplateManager = new EntityTemplateManager())
             using (MetadataStructureManager msm = new MetadataStructureManager())
             {
+                EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
             
                 string title = "";
@@ -209,7 +209,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
                             #endregion set references
 
-                            Task.Run(() => reindex(datasetId));
+                            //update search
+                            await reindex(datasetId);
+
 
                             LoggerFactory.LogData(datasetId.ToString(), typeof(Dataset).Name, Vaiona.Entities.Logging.CrudState.Created);
 
@@ -380,7 +382,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             DatasetManager datasetManager = new DatasetManager();
             EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
             //get all datasetsid where the current userer has access to
-            UserManager userManager = new UserManager();
             XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
 
             try
@@ -402,8 +403,6 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             finally
             {
                 datasetManager.Dispose();
-                entityPermissionManager.Dispose();
-                userManager.Dispose();
             }
         }
 
@@ -848,6 +847,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         private async Task<bool> reindex(long datasetId)
         {
+
             // reindex
             ISearchProvider provider = IoCFactory.Container.ResolveForSession<ISearchProvider>();
             provider?.UpdateSingleDatasetIndex(datasetId, (IndexingAction)Enum.Parse(typeof(IndexingAction), "CREATE"), false);

@@ -11,19 +11,40 @@
       "value": "BExIS-Dev"
     },
     {
-      "description": "The application name is used in several places in the system. e.g. as title in the email",
+      "key": "security",
+      "title": "Security",
+      "value": {
+        "userValidatorConfiguration": {
+          "allowOnlyAlphanumericUserNames": true,
+          "requireUniqueEmail": true
+        },
+        "passwordValidatorConfiguration": {
+          "requiredLength": 8,
+          "requireDigit": true,
+          "requireLowercase": true,
+          "requireUppercase": true,
+          "requireNonAlphanumeric": false
+        }
+      },
+      "type": "JSON",
+      "description": "Security Settings."
+    },
+    {
       "key": "jwt",
       "title": "JWT",
       "type": "JSON",
       "value": {
-        "validateAudience": false,
-        "validateIssuer": false,
+        "isActive": false,
+        "validateAudience": true,
+        "validateIssuer": true,
         "validAudience": "http://localhost:3000",
         "validIssuer": "https://localhost:7041",
-        "issuerSigningKey": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
-        "validateLifetime": false,
+        "issuerSigningKey": "abcdefghijklmnopqrstuvwxyz",
+        "validateLifetime": true,
         "validLifetime": 1
-      }
+      },
+      "type": "JSON",
+      "description": "JWT settings. You need to set/change all necessary properties - e.g. \"issuerSigningKey\", \"validAudience\" and \"validIssuer\"."
     },
     {
       "description": "The application name is used in several places in the system. e.g. as title in the email",
@@ -31,6 +52,7 @@
       "title": "SMTP",
       "type": "JSON",
       "value": {
+        "isActive": true,
         "hostName": "smtp.uni-jena.de",
         "hostPort": 587,
         "hostAnonymous": false,
