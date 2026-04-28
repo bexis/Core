@@ -299,21 +299,24 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="z-index:100000; margin-top:10px;">
 
-                            @if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
-                            {
-                                <li>@*<a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a>*@</li>
-                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId, withFilter, withUnits })">... with Excel</a></li>
-                            }
-                            <li><a id="csv-download" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })">... with CSV</a></li>
-                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId, withFilter,withUnits })">... with TSV</a></li>
-                            <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId, withFilter,withUnits })">... with TXT</a></li>
-                        </ul>
-                    </span>
-                }
-                else
-                {
-                    <a class="bx-button small function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })"><span class="fa fa-download" style="padding-right: 5px;"></span>Download Dataset</a>
-                }
+                                @if (@total < 1048576) // hide Excel download for bigger datasets, which exceed the max number of rows in excel
+                                {
+                                    <li>@*<a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsm", version = Model.VersionId })">... with Template</a>*@</li>
+                                    <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "application/xlsx", version = Model.VersionId, withFilter, withUnits })">... with Excel</a></li>
+                                }
+                                <li><a id="csv-download" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/csv", version = Model.VersionId })" >... with CSV</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/tsv", version = Model.VersionId, withFilter,withUnits })">... with TSV</a></li>
+                                <li><a href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, format = "text/plain", version = Model.VersionId, withFilter,withUnits })">... with TXT</a></li>
+                            </ul>
+                        </span>
+                        }
+                        else
+                        {
+                        <a id="downloadBt" class="bx-button small function" href="@Url.Action("DownloadZip", "Data", new { id = @Model.Id, version = Model.VersionId, format = "" })"><span class="fa fa-download" style="padding-right: 5px;"></span>Download Dataset</a>
+                        }
+                        }
+                        else
+                        {
 
                 @*if (!Model.Labels.ContainsKey("Publication"))
                 {
@@ -580,11 +583,17 @@
         if (aggreed == 'true' || aggreed == 'True' || aggreed == true) {
             $("#dropdownMenu1").removeAttr("disabled");
             $("#dropdownMenu1").removeClass("bx-disabled")
+            //downloadBt
+            $("#downloadBt").removeAttr("disabled");
+            $("#downloadBt").removeClass("bx-disabled")
+
         }
         else
         {
             $("#dropdownMenu1").attr("disabled", "disabled");
             $("#dropdownMenu1").addClass("bx-disabled")
+            $("#downloadBt").attr("disabled", "disabled");
+            $("#downloadBt").addClass("bx-disabled")
         }
         }
 

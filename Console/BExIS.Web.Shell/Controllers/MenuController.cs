@@ -1,7 +1,10 @@
-﻿using BExIS.App.Bootstrap.Helpers;
+﻿using BExIS.App.Bootstrap.Extensions;
+using BExIS.App.Bootstrap.Helpers;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Subjects;
 using BExIS.UI.Models;
 using BExIS.Web.Shell.Helpers;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Linq;
 using System.Web;
@@ -12,16 +15,29 @@ namespace BExIS.Web.Shell.Controllers
 {
     public class MenuController : Controller
     {
+        private readonly UserManager _userManager;
+
+        public MenuController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
         // GET: Menu
         public JsonResult Index()
         {
             string userName = "";
+            string fullName = "";
             bool isAuthenticated = false;
 
             if (HttpContext.User != null && !string.IsNullOrEmpty(HttpContext.User.Identity.Name))
             {
-                userName = HttpContext.User.Identity.Name;
-                isAuthenticated = true;
+                var user = _userManager.FindByNameAsync(HttpContext.User.Identity.Name).Result;
+
+                if(user != null)
+                {
+                    userName = user.UserName;
+                    fullName = user.FullName ?? user.UserName;
+                    isAuthenticated = true;
+                }
             }
             else
             {
@@ -31,6 +47,7 @@ namespace BExIS.Web.Shell.Controllers
                 if (user != null)
                 {
                     userName = user.Name;
+                    fullName = user.FullName ?? user.UserName;
                     isAuthenticated = true;
                 }
             }
@@ -60,7 +77,7 @@ namespace BExIS.Web.Shell.Controllers
             MenuHelper.AdditionalHelpBar(menu.LaunchBar.FirstOrDefault(i =>i.Title.Equals("Help")));
 
 
-            menu.AccountBar = MenuHelper.AccountBar(isAuthenticated, userName);
+            menu.AccountBar = MenuHelper.AccountBar(isAuthenticated, fullName);
 
             if (Session.GetTenant().ExtendedMenus != null)
                 menu.Extended = MenuHelper.ExtendedMenu(Session.GetTenant().ExtendedMenus.Element("ExtendedMenu"));
