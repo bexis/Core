@@ -250,7 +250,11 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                 bool isPublic = false;
                 if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset id should be greater then 0.");
 
-                if(useTags && version_number == 0)
+                if(version_number == 0 && tag_number == 0)
+                {
+                    datasetVersion = dm.GetDatasetLatestVersion(id);
+                }
+                else if(useTags && version_number == 0)
                 {
                     if (tag_number <= 0)
                         return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Tag not exist");
