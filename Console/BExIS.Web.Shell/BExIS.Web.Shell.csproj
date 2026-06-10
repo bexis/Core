@@ -905,8 +905,7 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="General.Settings.json" />
     <None Include="packages.config" />
-    <None Include="Properties\PublishProfiles\BexisServer_v4-ProdTestsite.pubxml" />
-    <None Include="Properties\PublishProfiles\BexisServer_2030-testsite.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_BE_DevSite.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_dev.pubxml" />

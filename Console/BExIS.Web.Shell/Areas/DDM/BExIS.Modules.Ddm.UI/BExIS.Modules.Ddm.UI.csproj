@@ -222,6 +222,7 @@
     <Content Include="Scripts\ddm.js" />
     <Content Include="Ddm.Settings.json" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\BexisServer_BE_DevSite.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_dev.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_rc.pubxml" />
