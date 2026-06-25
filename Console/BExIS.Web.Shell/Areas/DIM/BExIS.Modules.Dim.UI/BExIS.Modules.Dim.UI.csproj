@@ -772,6 +772,7 @@
     <Content Include="Dim.Settings.json" />
     <Content Include="App_Data\submissionConfig.json" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\BexisServer_BE_DevSite.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_dev.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
