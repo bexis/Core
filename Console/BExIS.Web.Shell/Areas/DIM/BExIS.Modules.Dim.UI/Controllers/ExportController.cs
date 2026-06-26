@@ -2,6 +2,7 @@
 using BExIS.Dim.Entities.Publications;
 using BExIS.Dim.Helpers;
 using BExIS.Dim.Helpers.Export;
+using BExIS.Dim.Helpers.Models;
 using BExIS.Dim.Services;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Entities.DataStructure;
@@ -12,8 +13,6 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.Dlm.Services.Party;
 using BExIS.IO;
 using BExIS.IO.Transform.Output;
-using BExIS.Modules.Dim.UI.Helpers;
-using BExIS.Modules.Dim.UI.Models.Api;
 using BExIS.Modules.Dim.UI.Models.Download;
 using BExIS.Modules.Dim.UI.Models.Export;
 using BExIS.Security.Entities.Subjects;
@@ -239,7 +238,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
                     // check the data sturcture type ...
-                    if (format != null && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) > 0)
+                    if (!string.IsNullOrEmpty(format) && datasetVersion.Dataset.DataStructure.Self is StructuredDataStructure && dm.GetDataTuplesCount(datasetVersion.Id) > 0)
                     {
                         OutputDataManager odm = new OutputDataManager();
 
@@ -456,6 +455,8 @@ namespace BExIS.Modules.Dim.UI.Controllers
                 publicationManager.Dispose();
             }
         }
+
+
 
         private string getCDTypeName(string mimeType)
         {

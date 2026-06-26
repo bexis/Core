@@ -1,5 +1,5 @@
 import type { SimpleComponentData, validationStoretype } from './models';
-import { metadataStore, hideStore, validationStore, configStore, activeStore } from './stores';
+import { metadataStore,systemMappingsStore, hideStore, validationStore, configStore, activeStore } from './stores';
 import { get } from 'svelte/store';
 // Utility functions for metadata handling
 // Get and set values in the metadata store based on a dot-separated path
@@ -16,6 +16,7 @@ export function getNodeByPath(path: string) {
 }
 
 export function getByPath(path: string) {
+	console.log("🚀 ~ getByPath ~ path:", path)
 	let obj: any;
 		metadataStore.subscribe((v) => {
 			obj = v;
@@ -32,6 +33,14 @@ export function getRefByPath(path: string) {
 	path = path + '.@ref';
 	return getNodeByPath(path);
 }
+
+export function getPartyIdByPath(path: string) {
+
+	const obj	= getNodeByPath(path);
+	const	partyId = obj ? obj['@partyid'] : null;
+	return partyId;
+}
+
 // Set value in an object based on a dot-separated path
 export function setValueByPath(obj: any, path: string, value: any) {
 	const parts = path.split('.');
@@ -46,7 +55,7 @@ export function setValueByPath(obj: any, path: string, value: any) {
 	return obj;
 }
 // Update metadata store with a new value at the specified path
-export function updateMetadataStore(path: string, value: any, isMulti?: boolean, ref?: any): any {
+export function updateMetadataStore(path: string, value: any, isMulti?: boolean, ref?: any, partyid?:number): any {
  
 	let obj: any = {};
 	if (path !== undefined && path !== null && path !== '') {
@@ -63,6 +72,9 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 					if (ref !== undefined && ref !== null) {
 						obj = setValueByPath(obj, path + '.@ref', ref);
 					}
+					if (partyid !== undefined && partyid !== null) {
+						obj = setValueByPath(obj, path + '.@partyid', partyid);
+					}
 					if (
 						obj !== undefined &&
 						obj !== null &&
@@ -75,10 +87,16 @@ export function updateMetadataStore(path: string, value: any, isMulti?: boolean,
 					}
 				}
 			}
+			else if((value === undefined || value === null) && partyid	!== undefined && partyid !== null)
+			{
+				const parent = getByPath(path);
+				parent["@partyid"] = partyid;
+			 //console.log("🚀 ~ updateMetadataStore ~ parent:", parent)
+			}
 
 		}
 	}
-	console.log('Updated metadata store:', obj);
+	//console.log('Updated metadata store:', obj);
 	return obj;
 }
 
@@ -126,6 +144,21 @@ export function getConfigStore(): any {
 		config = v;
 	});
 	return config;
+}
+
+// SystemMappings Store Functions
+// Set system mappings data in the systemMappings store
+export function setSystemMappingsStore(systemMappings: any) {
+	systemMappingsStore.set(systemMappings);
+}
+
+// Get system mappings data from the systemMappings store
+export function getSystemMappingsStore(): any {
+	let systemMappings: any;
+	systemMappingsStore.subscribe((v) => {
+		systemMappings = v;
+	});
+	return systemMappings;
 }
 
 // Get anchor point for a given component name from the config store
@@ -265,31 +298,36 @@ export function activateShow(path: string) {
 	hideStore.set(hideStoreValue);
 }
 
-
-// utils.js or inside <script>
 export function hasValue(node) {
-  if (node === null || node === undefined) return false;
+  if (node == null) return false;
 
-  // If it's an array, check if any element has a value
-  if (Array.isArray(node)) {
-    return node.some(hasValue);
-  }
+  // if (Array.isArray(node)) {
+  //   return node.some(hasValue);
+  // }
 
-  // If it's an object, check if any property has a value
   if (typeof node === 'object') {
-    return Object.values(node).some(hasValue);
+    return Object.entries(node).some(([key, value]) => {
+      if (key === '@ref' || key === '@partyid' || key.charAt(0) === '@') return false;
+      return hasValue(value);
+    });
   }
 
-  // If it's a string, trim it and check length; otherwise, check truthiness (for numbers/bools)
-  return typeof node === 'string' ? node.trim().length > 0 : true;
+  if (typeof node === 'string') {
+  	//console.log("🚀 ~ hasValue ~ node:", node, node.trim().length)
+		 return node.trim().length > 0;
+  }
+
+  //return Boolean(node);
+
+		return false;
 }
 
 // p = path:string & r = required: boolean
 export function isActive(p:string, r:boolean):boolean {
   // logic to determine if the component is active
+
   const node = getNodeByPath(p);
   const hasData = hasValue(node); // replace with actual check for data presence
-
   if(r) {
     return true; // if required, it's always active
   } else if (hasData)
@@ -315,7 +353,6 @@ export function setInactive(path: string): void {
 		activeStore.set(activeStoreValue);
 	}
 }
-
 
 // element at this node should be cleaned
 // #t should be ''
@@ -429,6 +466,7 @@ export function ValidationStoreSetSimpleTypeValid(path: string, isValid: boolean
 // Create a SimpleComponentData validation item
 // based on the provided parameters and simple component properties
 export function createSimpleComponentValidationItem(path: string, label: string, required: boolean, simpleComponent: any): SimpleComponentData {
+
 	let simpleComponentValidationItem: SimpleComponentData = { label: label, path: path, required: required, isValid: false,	errorMessage: '' };
 
  let item = simpleComponent.properties['#text'];
@@ -472,3 +510,27 @@ if (item.maximum && item.maximum != undefined && item.maximum != null && item.ma
 	return simpleComponentValidationItem;
 }
 
+
+export function removeJsonPathIndices(path) {
+			// Matches a dot followed by one or more digits
+			// The '\b' ensures we only match whole numbers, not numbers embedded in words
+			return path.replace(/\.\d+\b/g, '');
+}
+
+export function getParentPath(path) {
+			if (typeof path !== 'string' || !path.includes('.')) {
+        return ''; // Return empty if there's no dot to remove
+    }
+
+    // Find the position of the very last dot
+    const lastDotIndex = path.lastIndexOf('.');
+
+    // Slice the string from the start up to that last dot
+    return path.substring(0, lastDotIndex);
+}
+
+export function getPartyIdFromParent(path) {
+			
+  // get party id from parent path, which is the last number in the path
+
+}

@@ -29,8 +29,7 @@
 	let model: ValidationModel | null;
 	$: model;
 
-	onMount(async () => {
-		latestFileUploadDate.subscribe((s) => {
+	latestFileUploadDate.subscribe((s) => {
 			if (s > 0) {
 				console.log(
 					'🚀 ~ file: Validation.svelte:37 ~ onMount ~ latestFileUploadDate:',
@@ -39,6 +38,7 @@
 				reload('latestFileUploadDate');
 			}
 		});
+
 		latestDataDescriptionDate.subscribe((s) => {
 			if (s > 0) {
 				console.log(
@@ -48,6 +48,7 @@
 				reload('latestDataDescriptionDate');
 			}
 		});
+
 		latestFileReaderDate.subscribe((s) => {
 			if (s > 0) {
 				console.log(
@@ -57,15 +58,19 @@
 				reload('latestFileReaderDate');
 			}
 		});
+
 		latestSubmitDate.subscribe((s) => {
 			if (s > 0) {
-				console.log(
-					'🚀 ~ file: Validation.svelte:49 ~ onMount ~ latestSubmitDate:',
-					$latestSubmitDate
-				);
+				// console.log(
+				// 	'🚀 ~ file: Validation.svelte:49 ~ onMount ~ latestSubmitDate:',
+				// 	$latestSubmitDate
+				// );
 				//reload('latestSubmitDate');
 			}
 		});
+
+	onMount(async () => {
+		
 	});
 
 	async function reload(type) {
