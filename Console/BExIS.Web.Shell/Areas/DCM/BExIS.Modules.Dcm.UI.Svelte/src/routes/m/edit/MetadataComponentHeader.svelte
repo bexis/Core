@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { empty, getNodeByPath, hasValue, isActive, setActive, setInactive, toggleShow } from '$lib/components/utils/metadata/metadataComponentUtils';
+	import { empty, getNodeByPath, getPartyIdByPath, hasValue, isActive, setActive, setInactive, toggleShow, activateShow } from '$lib/components/utils/metadata/metadataComponentUtils';
 	import { convertDisplayName } from '../metadataShared';
-	import { faPlus, faChevronUp, faChevronDown, faQuestion } from '@fortawesome/free-solid-svg-icons';
+	import { faPlus, faChevronUp, faChevronDown, faQuestion, faTrash, faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+  import {faCircleQuestion as faCircleQuestionRegular} from '@fortawesome/free-regular-svg-icons';
   import Fa from 'svelte-fa';
-  import { activeStore, hideStore, validationStore } from '$lib/components/utils/metadata/stores';
+  import { activeStore, hideStore, metadataStore, validationStore, showAllDescriptionsStore } from '$lib/components/utils/metadata/stores';
   import { onMount } from 'svelte';
+
 	
 
  export let required: boolean = false;
@@ -13,28 +15,35 @@
  export let p:string = '';
  export let description: string = '';
  
- let active: boolean = false;
- $:active;
+
+
 
  let label: string = path.split('.').length > 1 ? path.split('.')[path.split('.').length - 1] : path;
- let showDescription: boolean = false;
+
+// set showDescription  if showAllDescriptionsStore is true or false; use local if showAllDescriptionsStore is null or undefined
+ $:showDescription = $showAllDescriptionsStore !== null && $showAllDescriptionsStore !== undefined ? $showAllDescriptionsStore : false;
 
  const togglePath = p!=='' ? p : path; 
 
+export let active: boolean = false;
+$:active;
 
- onMount(() => {
-  // console.log('MetadataComponentHeader mounted with path: ', path);   
+
+ onMount(() => { 
+
+		//console.log('complexComponentWrapper onMount', path, $activeStore);
     if(!$activeStore.includes(path)) {
       initActivity();
     }
     else {
       active = true;
     }
-    //console.log('init-active', $activeStore);
- });
+
+  });
 
 function initActivity() {
-  active = isActive(p,required);
+  active = isActive(path,required);
+
   if(active) {
     setActive(path)
   }
@@ -43,10 +52,14 @@ function initActivity() {
   } 
 }
 
-function changeFn(active: boolean) {
+function changeFn(a: boolean) {
   
+
+  active = !a;
+
   if(active) {
     setActive(path)
+    activateShow(path);
   }
   else {
     setInactive(path);
@@ -72,47 +85,49 @@ function removeFromValidationStore(path: string) {
 
 </script>
 
-
-
-<div class="card flex h-10 bg-primary-300 dark:bg-primary-800 pl-2 items-center">
-
- 
+<div class="card flex min-h-8 bg-primary-300 dark:bg-primary-800 pl-2 items-center gap-2">
 <div>
     {#if !required}
-      <input class="checkbox" type="checkbox" bind:checked={active} on:change={()=>changeFn(active)}/>
-    {:else}
-      <h4 class="h4 text-red-500">
-        *
-      </h4>
+
+      {#if !active}
+         <button class="badge mt-1" on:click={()=>changeFn(active)} title="Add {convertDisplayName(label, true)} node"><Fa icon={faPlus} /></button>
+      {:else}
+         <button class="badge mt-1" on:click={()=>changeFn(active)} title="Remove {convertDisplayName(label, true)} node. Content will be lost." ><Fa icon={faTrash}/></button>
+      {/if}
+
+      <!-- <Fa icon={faPlus} class="text-green-500" />
+
+      <input class="checkbox" type="checkbox" bind:checked={active} on:change={()=>changeFn(active)}/> -->     
     {/if}
 </div>
- <div class="text-left grow pl-2">
+ <button class="text-left grow" on:click={() => toggleShow(togglePath)} type="button">
 	   <h4 id="{path}" class="h4">
-    {convertDisplayName(label, true)} 
-   </h4>
- </div>
-
- 
- {#if description && showDescription}
-  <div	class="text-sm text-gray-500 py-1">{@html description}</div>
- {/if}
- <div class="text-left flex justify-end w-2 px-6 ">
-  {#if description}
-				<button class="badge" on:click={()=>showDescription = !showDescription}><Fa icon={faQuestion} /></button>
+    {convertDisplayName(label, true)}  
+    {#if required}
+      <span class="text-red-500">*</span>
+    {/if}
+     {#if description}
+				<button class="badge h-full mt-1" on:click|stopPropagation={()=>showDescription = !showDescription} title="Show Description"><Fa icon={faCircleQuestionRegular} size="lg"/></button>
 		{/if}
+   </h4>
+ </button>
+
+
+ <div class="text-left flex justify-end w-2 px-6 ">
+ 
  </div>
  <div class="text-left flex justify-end w-2 px-2">
 
   {#if $activeStore.includes(path)}
     {#if !$hideStore.includes(path) }
       <button
-        class="btn h-9 w-10 text-right"
+        class="btn-sm text-right"
         title="Open or close {convertDisplayName(label, true)}"
-        on:click={() => toggleShow(togglePath)}><Fa icon={faChevronUp} /></button
+        on:click={() => toggleShow(togglePath)} ><Fa icon={faChevronUp} /></button
       >
       {:else}
       <button
-        class="btn h-9 w-10 text-right"
+        class="btn-sm text-right"
         title="Open or close {convertDisplayName(label, true)}"
         on:click={() => toggleShow(togglePath)}><Fa icon={faChevronDown} /></button
       >
@@ -120,3 +135,6 @@ function removeFromValidationStore(path: string) {
     {/if}
  </div>
 </div>
+ {#if description && showDescription}
+  <div	class="text-sm text-gray-500 py-1 pl-2">{@html description}</div>
+ {/if}

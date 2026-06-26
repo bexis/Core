@@ -6,6 +6,7 @@ using BExIS.IO;
 using BExIS.Modules.Dcm.UI.Hooks;
 using BExIS.Modules.Dcm.UI.Models.Edit;
 using BExIS.Security.Entities.Subjects;
+using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Hooks;
 using BExIS.UI.Hooks.Caches;
@@ -35,14 +36,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     [SessionState(SessionStateBehavior.ReadOnly)]
     public class AttachmentUploadController : Controller
     {
+        private readonly UserManager _userManager;
+        
+        public AttachmentUploadController(UserManager userManager)
+        {
+            _userManager = userManager;
+        }
         /// <summary>
         /// entry for hook
         /// </summary>
         /// <returns></returns>
-        public ActionResult Start(long id, int version)
+        [JsonNetFilter]
+        public JsonResult Start(long id, int version)
         {
-            //return View();
-            return RedirectToAction("load", new { id, version });
+            // return RedirectToAction("load", new { id, version });
+            var jsonResult = Load(id, version);
+            return jsonResult;
         }
 
         // GET: FileUpload
@@ -209,7 +218,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     using (var emailService = new EmailService())
                     {
                         emailService.Send(MessageHelper.GetAttachmentDeleteHeader(id, typeof(Dataset).Name),
-                                        MessageHelper.GetAttachmentDeleteMessage(id, file.Name, username),
+                                        MessageHelper.GetAttachmentDeleteMessage(id, file.Name, GetDisplayName()),
                                         GeneralSettings.SystemEmail
                                         );
                     }
@@ -420,6 +429,21 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             }
         }
 
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch
+            {
+                return "DEFAULT";
+            }
+        }
         #endregion helper
     }
 }

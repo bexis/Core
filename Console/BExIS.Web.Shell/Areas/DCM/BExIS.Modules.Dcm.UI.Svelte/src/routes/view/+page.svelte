@@ -1,17 +1,23 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 
-	import { getView } from './services';
-	import { getViewStart } from '../../services/HookCaller';
-	import { setApiConfig, Spinner } from '@bexis2/bexis2-core-ui';
+	import { getApiDataset, getView } from './services';
+	import { ErrorMessage, type linkType, Page, pageContentLayoutType, positionType, setApiConfig, Spinner } from '@bexis2/bexis2-core-ui';
 
 	import Header from './Header.svelte';
-	import TabContent from './Tab.svelte';
-	import Debug from '../../lib/components/Debug.svelte';
-	import { TabGroup, Tab } from '@skeletonlabs/skeleton';
+
 
 	//types
-	import type { ViewModel, Hook } from '../../models/View';
+	import type { ViewModel, Hook, ApiDatasetModel } from '../../models/View';
+	import { fade } from 'svelte/transition';
+	import Hooks from './Hooks.svelte';
+	import Links from './Links.svelte';
+
+	import Versions from './version/Versions.svelte';
+	import Keywords from './Keywords.svelte';
+	import Funding from './Funding.svelte';
+	import Tags from './version/Tags.svelte';
+	import Download from './Download.svelte';
+
 
 	let title = '';
 
@@ -20,18 +26,21 @@
 	let version: number = 0;
 	let model: ViewModel;
 
-	// tabs
-	let activeTab = 'metadata';
+	let isPartOfCollection: boolean = false;
 
-	let tabSet = 0;
+
 
 	let hookList: Hook[];
 	$: hooks = hookList;
 
-	// for test ui
-	$: testPage = '';
+ const links: linkType[] = [
+		{
+			label: 'Manual',
+			url: '/home/docs/Datasets#dataset-view-page'
+		}
+	];
 
-	onMount(async () => {
+	async function load () {
 		// get data from parent
 		container = document.getElementById('view');
 		id = container?.getAttribute('dataset');
@@ -44,56 +53,74 @@
 		// load data from server
 		model = await getView(id);
 
-		console.log('onmount', model);
-
-		hooks = model.hooks;
+		hooks = model.settings.hooks;
 		title = model.title;
 		version = model.version;
 		id = model.id;
 
-		console.log(model);
+		console.log('model',model);
 		console.log('hooks', hooks);
 
-		//test ui as html
-		// const resTestPage = await fetch('dcm/view/test');
-		// testPage = await resTestPage.text();
-	});
+		// check if dataset is part of a collection
+		isPartOfCollectionFunc();
 
-	async function loadTab(action, id, version) {
-		let test = await getViewStart(action, id, version);
-		return test;
 	}
+
+	function isPartOfCollectionFunc() {
+		if(model.links.to.filter(link => link.referenceType === 'Collection').length > 0){
+			isPartOfCollection = true;
+		}
+	}
+
+
 </script>
+<Page title="Edit: ({id} | {title})" contentLayoutType={pageContentLayoutType.center} {links}>
 
-<div>
-	<!-- Header -->
-	<Header {id} {version} {title} />
+<div class="flex flex-col gap-2" in:fade={{ delay: 500 }} out:fade={{ delay: 500 }}>
 
-	{#if hooks}
-		<TabGroup>
-			<!-- nav -->
-			{#each hooks as hook, i}
-				{#if hook.status == 2}
-					<Tab bind:group={tabSet} name={hook.name} value={i}>{hook.name}</Tab>
-				{/if}
-			{/each}
+	{#await load()}
+			<div class="text-surface-800">
+				<Spinner position={positionType.center} label="loading entity templates" />
+			</div>
+		{:then result}
 
-			<!-- content -->
+		<Header	{id} {version} {title} labels = {model.labels} license = {model.additionalInformations['license']} {isPartOfCollection} hasEditRight={model.hasEditRight}/>
 
-			<!-- Tab Panels --->
-			<svelte:fragment slot="panel">
-				{#each hooks as hook, i}
-					{#if hook.status == 2}
-						<TabContent {id} {version} {...hook} active={tabSet == i} />
-					{/if}
-				{/each}
-			</svelte:fragment>
-		</TabGroup>
-	{:else}
-		<div>
-			<Spinner label="loading dataset {title}" />
+		<div class="flex">
+				<div class="flex-grow card	p-5 w-3/4">
+						{model.description}
+				</div>
+				<div class="flex flex-col ml-5 gap-3 w-1/4">
+						<Download {id} {version}
+						 versionId={model.versionId}
+							downloadAccess= {model.downloadAccess}
+							hasDatastructure= {model.dataStructureId	!== undefined && model.dataStructureId > 0}
+							hasData= {model.hasData}
+							isPublic= {model.isPublic}
+							data_aggrement = {model.settings.dataAggrement}
+							total = {model.count}
+						/> 
+						{#if model.settings.useTags}
+						 <Tags  {id} {version}  tag={model.tag}/>
+							{:else}
+							<Versions	{id} {version} />	
+						{/if}
+
+						<Funding f={model.additionalInformations['funder']}  />
+						<Keywords k={model.additionalInformations['keyword']} />
+				</div>
 		</div>
-	{/if}
 
-	<Debug {hooks} />
+
+		<Links	links={model.links.to} />
+
+	 <Hooks	{id} {version} hooks={hooks} />
+	
+		{:catch error}
+			<ErrorMessage {error} />
+		{/await}
+
 </div>
+
+</Page>
+

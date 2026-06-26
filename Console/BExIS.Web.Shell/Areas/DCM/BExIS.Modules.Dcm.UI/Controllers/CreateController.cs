@@ -36,10 +36,12 @@ namespace BExIS.Modules.Dcm.UI.Controllers
     [SessionState(SessionStateBehavior.ReadOnly)]
     public class CreateController : Controller
     {
+        private readonly UserManager _userManager;
         private readonly GroupManager _groupManager;
-
-        public CreateController(GroupManager groupManager)
+        
+        public CreateController(UserManager userManager, GroupManager groupManager)
         {
+            _userManager = userManager;
             _groupManager = groupManager;
         }
 
@@ -173,7 +175,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 using (var emailService = new EmailService())
                 {
                     emailService.Send(MessageHelper.GetCreateDatasetHeader(ds.Id, entityTemplate.Name),
-                        MessageHelper.GetCreateDatasetMessage(ds.Id, datasetVersionToCopy.Title + "_copy", GetUsernameOrDefault(), entityTemplate.Name),
+                        MessageHelper.GetCreateDatasetMessage(ds.Id, datasetVersionToCopy.Title + "_copy", GetDisplayName(), entityTemplate.Name),
                         destinations
                         );
                 }
@@ -450,9 +452,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 using (var emailService = new EmailService())
                 {
                     emailService.Send(MessageHelper.GetCreateDatasetHeader(datasetId, entityTemplate.Name),
-                                            MessageHelper.GetCreateDatasetMessage(datasetId, title, GetUsernameOrDefault(), entityTemplate.Name),
-                                            destinations
-                                            );
+                    MessageHelper.GetCreateDatasetMessage(datasetId, title, GetDisplayName(), entityTemplate.Name),
+                    destinations);
                 }   
 
                 #endregion send notifications
@@ -468,7 +469,9 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             List<EntityTemplateModel> entityTemplateModels = new List<EntityTemplateModel>();
             using (var entityTemplateManager = new EntityTemplateManager())
             {
-                foreach (var e in entityTemplateManager.Repo.Query(e=>e.Activated).OrderBy(e=>e.Order).ToList())
+                // get entity templates without extension
+                string extensionName = Convert.ToString(EntityType.Extension);
+                foreach (var e in entityTemplateManager.Repo.Query(e=>e.Activated && !e.EntityType.Name.ToLower().Equals(extensionName.ToLower())).ToList())
                 {
                     entityTemplateModels.Add(EntityTemplateHelper.ConvertTo(e, false));
                 }
@@ -489,6 +492,22 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             catch { }
 
             return !string.IsNullOrWhiteSpace(username) ? username : "DEFAULT";
+        }
+
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch
+            {
+                return "DEFAULT";
+            }
         }
 
         public DatasetVersion setMetadata(DatasetVersion datasetVersionToCopy, DatasetVersion datasetVersion)
