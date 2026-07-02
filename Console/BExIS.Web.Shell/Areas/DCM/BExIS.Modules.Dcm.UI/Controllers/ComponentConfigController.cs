@@ -3,11 +3,14 @@ using BExIS.UI.Helpers;
 using Newtonsoft.Json;
 using System.IO;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Vaiona.Utils.Cfg;
 
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class ComponentConfigController : Controller
     {
         public ActionResult Index(long id = 0)

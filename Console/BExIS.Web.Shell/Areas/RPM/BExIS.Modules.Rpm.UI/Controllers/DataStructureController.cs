@@ -26,6 +26,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using System.Web.UI.HtmlControls;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Mvc.Data;
@@ -33,6 +34,8 @@ using Vaiona.Web.Mvc.Modularity;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
+    
+    [SessionState(SessionStateBehavior.ReadOnly)]
     public class DataStructureController : Controller
     {
         public ActionResult Index()
@@ -804,7 +807,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     foreach (var variableTemplate in variableTemplates.Where(t => t.Approved))
                     {
-                        list.Add(_helper.ConvertTo(variableTemplate, "other"));
+                        list.Add(_helper.ConvertTo(variableTemplate, unitManager, "other"));
                     }
                 }
 
