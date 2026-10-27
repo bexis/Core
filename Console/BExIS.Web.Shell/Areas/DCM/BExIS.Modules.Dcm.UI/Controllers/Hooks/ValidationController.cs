@@ -46,9 +46,11 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         /// <returns></returns>
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
         [JsonNetFilter]
-        public ActionResult Start(long id, int version = 0)
+        public JsonResult Start(long id, int version)
         {
-            return RedirectToAction("Validate", new { id, version });
+            // return RedirectToAction("load", new { id, version });
+            var jsonResult = Validate(id, version);
+            return jsonResult;
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "id", RightType.Write)]
@@ -234,7 +236,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                                                     if (fileErrors == null || fileErrors.Count == 0)
                                                     {
                                                         // check if primary key is set
-                                                        if (!enforcePrimaryKey && !hasPrimaryKey)
+                                                        if (!hasPrimaryKey)
                                                         {
                                                             fileWarnings.Add(new Warning(ErrorType.PrimaryKey, "No primary key has been defined for the selected data structure, which can lead to problems when updating data. To avoid this, define a primary key in the data structure above.", "Primary Key"));
                                                         }

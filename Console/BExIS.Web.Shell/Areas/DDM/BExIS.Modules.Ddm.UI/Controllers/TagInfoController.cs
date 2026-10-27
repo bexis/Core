@@ -1,6 +1,9 @@
 ﻿using BExIS.App.Bootstrap.Attributes;
 using BExIS.App.Bootstrap.Helpers;
 using BExIS.Dlm.Entities.Curation;
+using BExIS.Dlm.Entities.Data;
+using BExIS.Dlm.Services.Data;
+using BExIS.Security.Entities.Subjects;
 using BExIS.Security.Services.Subjects;
 using BExIS.Security.Services.Utilities;
 using BExIS.UI.Helpers;
@@ -88,14 +91,24 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             var message = data.Message;
 
-
+            using (DatasetManager dm = new DatasetManager())
             using (var emailService = new EmailService())
             {
-                var header = $"Relaese Tag Request for ID {datasetID} by {userName}";
+                {
+                    // Convert datasetID to long
+                    if (!long.TryParse(datasetID, out long datasetIdLong))
+                    {
+                        // Handle the error
+                        return Json(false, JsonRequestBehavior.AllowGet);
+                    }
 
-                emailService.Send(header, message,
-                    new List<string>() { GeneralSettings.SystemEmail }
-                );
+                    // var dataset = dm.GetDataset(datasetIdLong);
+                    var latestVersion = dm.GetDatasetLatestVersion(datasetIdLong);
+
+                    emailService.Send(MessageHelper.GetReleaseTagHeader(datasetIdLong, typeof(Dataset).Name), MessageHelper.GetReleaseTagMessage(GetDisplayName(), datasetIdLong, typeof(Dataset).Name, latestVersion.Title, message),
+                        new List<string>() { GeneralSettings.SystemEmail }
+                    );
+                }
             }
 
             return Json(true, JsonRequestBehavior.AllowGet);
@@ -120,7 +133,23 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             return null;
         }
-      
+
+        public string GetDisplayName()
+        {
+            string username = string.Empty;
+            try
+            {
+                username = HttpContext.User.Identity.Name;
+                User user = _userManager.FindByNameAsync(username).Result;
+
+                return user.DisplayName;
+            }
+            catch
+            {
+                return "DEFAULT";
+            }
+        }
+
     }
 
     public class Data
@@ -134,4 +163,5 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             Message = "";
         }
     }
+
 }
