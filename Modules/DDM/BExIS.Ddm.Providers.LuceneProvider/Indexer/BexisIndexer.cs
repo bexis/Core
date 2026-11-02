@@ -686,8 +686,6 @@ namespace BExIS.Ddm.Providers.LuceneProvider.Indexer
 
             }
             
-        }
-
         private void indexPrimaryData(long id, List<XmlNode> categoryNodes, ref Document dataset, string docId, XmlDocument metadata)
         {
             using (DatasetManager dm = new DatasetManager())
