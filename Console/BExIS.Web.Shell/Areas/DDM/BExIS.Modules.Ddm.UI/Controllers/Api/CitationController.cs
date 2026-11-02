@@ -250,33 +250,15 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                 bool isPublic = false;
                 if (id == 0) return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Dataset id should be greater then 0.");
 
-                if(version_number == 0 && tag_number == 0)
-                {
-                    datasetVersion = dm.GetDatasetLatestVersion(id);
-                }
-                else if(useTags && version_number == 0)
-                {
-                    if (tag_number <= 0)
-                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "Tag not exist");
-                    try
-                    {
-                        var versionId = dm.GetLatestVersionByTagNr(id, tag_number).Id;
-                        datasetVersion = dm.GetDatasetVersion(versionId);
-                    }
-                    catch
-                    {
-                        return Request.CreateErrorResponse(HttpStatusCode.PreconditionFailed, "This tag does not exist for this dataset");
-                    }
-                }
-                else 
-                {
+                //try to get dataset version by version number or tag number
+                HttpResponseMessage error = TryGetDatasetVersion(dm, id, version_number, tag_number, useTags, out datasetVersion);
 
                 if (error != null)
                     return error;
 
                 // Check if a dataset version was set
-                if (datasetVersion == null) 
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest or given version.");
+                if (datasetVersion == null)
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "It is not possible to load the latest or given version.");
 
                 //entity permissions
                 if (id > 0)
@@ -295,7 +277,7 @@ namespace BExIS.Modules.MCD.UI.Controllers.API
                 CitationDataModel model = CitationsHelper.CreateCitationDataModel(datasetVersion, format);
                 string citationString = "";
                 if (CitationsHelper.IsCitationDataModelValid(model))
-                    citationString =  CitationsHelper.GetCitationString(model, format, isPublic, datasetVersion.Dataset.Id, useTags);
+                    citationString = CitationsHelper.GetCitationString(model, format, isPublic, datasetVersion.Dataset.Id, useTags);
                 else
                     citationString = "Citation metadata is incomplete.";
 
